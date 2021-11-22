@@ -18,8 +18,20 @@
             "/Users/maksimspuskels/Developer/PiouPiou/.bloop/pioupiou/scala-2.13/classes",
             "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.6/scala-library-2.13.6.jar",
             "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.13/1.1.2/scala-parser-combinators_2.13-1.1.2.jar",
+            "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest_2.13/3.2.10/scalatest_2.13-3.2.10.jar",
             "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-flatspec_2.13/3.2.10/scalatest-flatspec_2.13-3.2.10.jar",
             "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-core_2.13/3.2.10/scalatest-core_2.13-3.2.10.jar",
+            "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-featurespec_2.13/3.2.10/scalatest-featurespec_2.13-3.2.10.jar",
+            "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-freespec_2.13/3.2.10/scalatest-freespec_2.13-3.2.10.jar",
+            "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-funsuite_2.13/3.2.10/scalatest-funsuite_2.13-3.2.10.jar",
+            "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-funspec_2.13/3.2.10/scalatest-funspec_2.13-3.2.10.jar",
+            "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-propspec_2.13/3.2.10/scalatest-propspec_2.13-3.2.10.jar",
+            "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-refspec_2.13/3.2.10/scalatest-refspec_2.13-3.2.10.jar",
+            "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-wordspec_2.13/3.2.10/scalatest-wordspec_2.13-3.2.10.jar",
+            "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-diagrams_2.13/3.2.10/scalatest-diagrams_2.13-3.2.10.jar",
+            "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-matchers-core_2.13/3.2.10/scalatest-matchers-core_2.13-3.2.10.jar",
+            "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-shouldmatchers_2.13/3.2.10/scalatest-shouldmatchers_2.13-3.2.10.jar",
+            "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-mustmatchers_2.13/3.2.10/scalatest-mustmatchers_2.13-3.2.10.jar",
             "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.13.6/scala-reflect-2.13.6.jar",
             "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-compatible/3.2.10/scalatest-compatible-3.2.10.jar",
             "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalactic/scalactic_2.13/3.2.10/scalactic_2.13-3.2.10.jar",
@@ -188,6 +200,23 @@
                 },
                 {
                     "organization": "org.scalatest",
+                    "name": "scalatest_2.13",
+                    "version": "3.2.10",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "scalatest_2.13",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest_2.13/3.2.10/scalatest_2.13-3.2.10.jar"
+                        },
+                        {
+                            "name": "scalatest_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest_2.13/3.2.10/scalatest_2.13-3.2.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
                     "name": "scalatest-flatspec_2.13",
                     "version": "3.2.10",
                     "configurations": "default",
@@ -217,6 +246,193 @@
                             "name": "scalatest-core_2.13",
                             "classifier": "sources",
                             "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-core_2.13/3.2.10/scalatest-core_2.13-3.2.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-featurespec_2.13",
+                    "version": "3.2.10",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-featurespec_2.13",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-featurespec_2.13/3.2.10/scalatest-featurespec_2.13-3.2.10.jar"
+                        },
+                        {
+                            "name": "scalatest-featurespec_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-featurespec_2.13/3.2.10/scalatest-featurespec_2.13-3.2.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-freespec_2.13",
+                    "version": "3.2.10",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-freespec_2.13",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-freespec_2.13/3.2.10/scalatest-freespec_2.13-3.2.10.jar"
+                        },
+                        {
+                            "name": "scalatest-freespec_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-freespec_2.13/3.2.10/scalatest-freespec_2.13-3.2.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-funsuite_2.13",
+                    "version": "3.2.10",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-funsuite_2.13",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-funsuite_2.13/3.2.10/scalatest-funsuite_2.13-3.2.10.jar"
+                        },
+                        {
+                            "name": "scalatest-funsuite_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-funsuite_2.13/3.2.10/scalatest-funsuite_2.13-3.2.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-funspec_2.13",
+                    "version": "3.2.10",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-funspec_2.13",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-funspec_2.13/3.2.10/scalatest-funspec_2.13-3.2.10.jar"
+                        },
+                        {
+                            "name": "scalatest-funspec_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-funspec_2.13/3.2.10/scalatest-funspec_2.13-3.2.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-propspec_2.13",
+                    "version": "3.2.10",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-propspec_2.13",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-propspec_2.13/3.2.10/scalatest-propspec_2.13-3.2.10.jar"
+                        },
+                        {
+                            "name": "scalatest-propspec_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-propspec_2.13/3.2.10/scalatest-propspec_2.13-3.2.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-refspec_2.13",
+                    "version": "3.2.10",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-refspec_2.13",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-refspec_2.13/3.2.10/scalatest-refspec_2.13-3.2.10.jar"
+                        },
+                        {
+                            "name": "scalatest-refspec_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-refspec_2.13/3.2.10/scalatest-refspec_2.13-3.2.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-wordspec_2.13",
+                    "version": "3.2.10",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-wordspec_2.13",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-wordspec_2.13/3.2.10/scalatest-wordspec_2.13-3.2.10.jar"
+                        },
+                        {
+                            "name": "scalatest-wordspec_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-wordspec_2.13/3.2.10/scalatest-wordspec_2.13-3.2.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-diagrams_2.13",
+                    "version": "3.2.10",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-diagrams_2.13",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-diagrams_2.13/3.2.10/scalatest-diagrams_2.13-3.2.10.jar"
+                        },
+                        {
+                            "name": "scalatest-diagrams_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-diagrams_2.13/3.2.10/scalatest-diagrams_2.13-3.2.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-matchers-core_2.13",
+                    "version": "3.2.10",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-matchers-core_2.13",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-matchers-core_2.13/3.2.10/scalatest-matchers-core_2.13-3.2.10.jar"
+                        },
+                        {
+                            "name": "scalatest-matchers-core_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-matchers-core_2.13/3.2.10/scalatest-matchers-core_2.13-3.2.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-shouldmatchers_2.13",
+                    "version": "3.2.10",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-shouldmatchers_2.13",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-shouldmatchers_2.13/3.2.10/scalatest-shouldmatchers_2.13-3.2.10.jar"
+                        },
+                        {
+                            "name": "scalatest-shouldmatchers_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-shouldmatchers_2.13/3.2.10/scalatest-shouldmatchers_2.13-3.2.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest-mustmatchers_2.13",
+                    "version": "3.2.10",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "scalatest-mustmatchers_2.13",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-mustmatchers_2.13/3.2.10/scalatest-mustmatchers_2.13-3.2.10.jar"
+                        },
+                        {
+                            "name": "scalatest-mustmatchers_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/maksimspuskels/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalatest/scalatest-mustmatchers_2.13/3.2.10/scalatest-mustmatchers_2.13-3.2.10-sources.jar"
                         }
                     ]
                 },

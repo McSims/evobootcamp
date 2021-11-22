@@ -1,4 +1,4 @@
-[0m[[0m[0mdebug[0m] [0m[0m[pioupiou-build-build] Classpath dependencies List()[0m
-[0m[[0m[0mdebug[0m] [0m[0m[pioupiou-build-build] Dependencies from configurations List()[0m
-[0m[[0m[0mdebug[0m] [0m[0mBloop wrote the configuration of project 'pioupiou-build-build' to '/Users/maksimspuskels/Developer/PiouPiou/project/project/.bloop/pioupiou-build-build.json'[0m
-[0m[[0m[32msuccess[0m] [0m[0mGenerated .bloop/pioupiou-build-build.json[0m
+[debug] [pioupiou-build-build] Classpath dependencies List()
+[debug] [pioupiou-build-build] Dependencies from configurations List()
+[debug] Bloop wrote the configuration of project 'pioupiou-build-build' to '/Users/maksimspuskels/Developer/PiouPiou/project/project/.bloop/pioupiou-build-build.json'
+[success] Generated .bloop/pioupiou-build-build.json
