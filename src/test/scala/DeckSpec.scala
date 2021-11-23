@@ -45,7 +45,7 @@ class DeckSpec extends AnyFlatSpec {
   }
 
   it should "shuffle trash cards" in {
-    assert(shortDeck.shuffle(shortDeck.cards) != shortDeck.cards)
+    assert(shortDeck.shuffle(fullDeck.cards) != fullDeck.cards)
   }
 
   it should "shuffle trash cards when no cards for exchange" in {
