@@ -29,6 +29,7 @@ case class Deck(cards: List[Card], trashCards: List[Card]) {
   }
 
   def exchange(card: Card): (Card, Deck) = {
+    // todo: Maybe we need to distinguish playcard from additional cards (egg & chick). By the rules of the game we are not able to exchange them.
     val newTrash = trashCards :+ card
     if (cards.isEmpty) {
       val shuffledTrash = shuffle(newTrash)
@@ -42,6 +43,7 @@ case class Deck(cards: List[Card], trashCards: List[Card]) {
     }
   }
 
+  // todo: it seems private functionality not needed to be exposed. How do we test this?
   def shuffle(cards: List[Card]): List[Card] = {
     Random.shuffle(cards)
   }
