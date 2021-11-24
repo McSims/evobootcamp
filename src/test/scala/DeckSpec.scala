@@ -62,4 +62,11 @@ class DeckSpec extends AnyFlatSpec {
     result._2.cards.foreach((card) => assert(card == PiouPiouCards.nest))
   }
 
+  it should "accept cards to trash" in {
+    val dropList = List(PiouPiouCards.rooster, PiouPiouCards.rooster)
+    var result = shortDeck.drop(dropList)
+    assert(result.trashCards == dropList)
+    assert(result.cards == shortDeck.cards)
+  }
+
 }

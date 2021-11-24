@@ -44,8 +44,9 @@ case class Deck(cards: List[Card], trashCards: List[Card]) {
   }
 
   // todo: it seems private functionality not needed to be exposed. How do we test this?
-  def shuffle(cards: List[Card]): List[Card] = {
-    Random.shuffle(cards)
-  }
+  def shuffle(cards: List[Card]): List[Card] = Random.shuffle(cards)
+
+  def drop(cardsToDrop: List[Card]): Deck =
+    Deck(cards, trashCards ::: cardsToDrop)
 
 }
