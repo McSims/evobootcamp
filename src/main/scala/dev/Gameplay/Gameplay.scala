@@ -5,9 +5,12 @@ import Deck._
 import Card.PiouPiouCards
 import scala.collection.mutable.HashMap
 
+// G. what do you think about this abstract classes
 abstract class SuplementaryCard
 abstract class AchievementCard
 
+// todo: rename to Game
+// todo: class vs object difference?
 class Gameplay(numberOfPlayers: Int) {
 
   var deck: Deck = Deck(PiouPiouCards.allAvailableCards, List())

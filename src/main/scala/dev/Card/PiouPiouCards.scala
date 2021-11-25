@@ -54,6 +54,7 @@ object PiouPiouCards {
   def chick = Chick(chickName, chickId, chickImage)
 
   def availableEggs: List[SuplementaryCard] = (0 until 18).map(_ => egg).toList
+
   def allAvailableCards: List[Card] = {
     val nests = (0 until 7).map(_ => nest).toArray
     val roosters = (0 until 10).map(_ => rooster).toArray
