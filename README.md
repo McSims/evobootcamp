@@ -2,23 +2,12 @@
 ### Panic in the hen house, the fox is on the prowl and the eggs have not yet hatched...
 </br>
 
-<p align="left">
-<img src="./resources/hen.png" width="100" height="150"/> 
-<img src="./resources/rooster.png" width="100" height="150"/> 
-<img src="./resources/nest.png" width="100" height="150"/>
-<img src="./resources/fox.png" width="100" height="150"/>
-<img src="./resources/egg.png" width="100" height="150"/>
-<img src="./resources/chick.png" width="100" height="150"/>
-<img src="./resources/oblozka.png" width="100" height="150"/>
-<br>
-    &nbsp;&nbsp;&nbsp;&nbsp; Hen card &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    Rooster card &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    Nest card &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    Fox card &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    Egg card &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    Chick card &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    Cover card
-</p> 
+
+|<img src="./resources/hen.png" width="100" height="150"/> | <img src="./resources/rooster.png" width="100" height="150"/> | <img src="./resources/nest.png" width="100" height="150"/> | <img src="./resources/fox.png" width="100" height="150"/> | <img src="./resources/egg.png" width="100" height="150"/> | <img src="./resources/chick.png" width="100" height="150"/> | <img src="./resources/oblozka.png" width="100" height="150"/>
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|Hen card|Rooster card|Nest card|Fox card|Egg card|Chick card|Cover card|
+
+</br>
 
 When it is his turn to play, the player chooses:
 </br>
