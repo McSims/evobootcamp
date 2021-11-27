@@ -6,23 +6,22 @@ import Gameplay._
 case class PlayCard(name: CardName, id: CardId, imageUrl: CardImageUrl)
     extends Card
 
-case class Egg(
+case class EggCard(
     name: CardName,
     id: CardId,
     imageUrl: CardImageUrl
-) extends SuplementaryCard
+) extends Egg
 
-case class Chick(
+case class ChickCard(
     name: CardName,
     id: CardId,
     imageUrl: CardImageUrl
-) extends AchievementCard
+) extends Chick
 
 case class CardName(val name: String) extends AnyVal
 case class CardId(val name: String) extends AnyVal
 case class CardImageUrl(val name: String) extends AnyVal
 
-// todo: looks like we need to remove egg and chick cards, since this is only gameplay thing...
 object PiouPiouCards {
   private def eggName = CardName("Egg")
   private def nestName = CardName("Nest")
@@ -50,10 +49,10 @@ object PiouPiouCards {
   def chicken = PlayCard(chickenName, chickenId, chickenImage)
   def fox = PlayCard(foxName, foxId, foxImage)
 
-  def egg = Egg(eggName, eggId, eggImage)
-  def chick = Chick(chickName, chickId, chickImage)
+  def egg = EggCard(eggName, eggId, eggImage)
+  def chick = ChickCard(chickName, chickId, chickImage)
 
-  def availableEggs: List[SuplementaryCard] = (0 until 18).map(_ => egg).toList
+  def availableEggs: List[Egg] = (0 until 18).map(_ => egg).toList
 
   def allAvailableCards: List[Card] = {
     val nests = (0 until 7).map(_ => nest).toArray

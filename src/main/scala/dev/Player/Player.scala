@@ -7,6 +7,6 @@ import Gameplay._
 // todo: all achievements are supplementary
 case class Player(
     cards: List[Card],
-    eggs: List[SuplementaryCard],
-    chicks: List[AchievementCard]
+    eggs: List[Egg],
+    chicks: List[Chick]
 )

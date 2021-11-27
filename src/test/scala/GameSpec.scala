@@ -1,9 +1,9 @@
 import org.scalatest.flatspec.AnyFlatSpec
 import Gameplay._
 
-class GameplaySpec extends AnyFlatSpec {
+class GameSpec extends AnyFlatSpec {
 
-  val gameplay = new Gameplay(3)
+  val gameplay = new Game(3)
 
   "Gameplay" should "deal cards to players" in {
     assert(gameplay.players.length == 3)

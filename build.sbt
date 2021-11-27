@@ -24,6 +24,8 @@ version := "1.0"
 // You can define other libraries as dependencies in your build like this:
 
 libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
+libraryDependencies += "com.typesafe.akka" %% "akka-actor-typed" % "2.6.17"
+libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % "2.6.17"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.10" % "test"
 libraryDependencies += "org.scalatest" %% "scalatest-flatspec" % "3.2.10" % "test"
