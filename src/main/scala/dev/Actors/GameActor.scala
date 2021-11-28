@@ -17,6 +17,7 @@ class GameActor(var players: List[Player], deck: Deck) extends Actor {
       players = players :+ player
       sender() ! player
     }
+
     case AllPlayers => sender() ! players
   }
 }

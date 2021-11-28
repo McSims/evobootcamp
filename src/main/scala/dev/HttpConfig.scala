@@ -11,8 +11,24 @@ import org.http4s.implicits._
 import org.http4s.server.blaze.BlazeServerBuilder
 
 import scala.concurrent.ExecutionContext
+import Actors.GameActor
+import akka.actor
+import Player._
+import Actors.CreatePlayer
+import Card.PiouPiouCards
+import Deck._
+import Actors.AllPlayers
 
 object HttpServer extends IOApp {
+
+  val system = actor.ActorSystem("PiouPiouActorSystem")
+
+  val gamesActor = system.actorOf(
+    actor.Props(
+      new GameActor(List(), Deck(PiouPiouCards.allAvailableCards, List()))
+    ),
+    name = "gameactor"
+  )
 
   private val jsonRoutes = {
 
@@ -24,8 +40,14 @@ object HttpServer extends IOApp {
 
     HttpRoutes.of[IO] {
 
-      case GET -> Root / "games" =>
-        Ok(s"Will respond with available games!")
+      case GET -> Root / "games" => {
+        val player = gamesActor ! CreatePlayer
+        Ok(player)
+      }
+
+      case GET -> Root / "players" => {
+        Ok(gamesActor ! AllPlayers)
+      }
 
       // curl -XPOST "localhost:9001/json" -d '{"name": "John"}' -H "Content-Type: application/json"
       case req @ POST -> Root / "json" =>
