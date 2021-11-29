@@ -3,7 +3,7 @@ package dev.Actors
 package Actors
 
 import akka.actor._
-import Gameplay._
+import Game._
 import Deck._
 import Player._
 import Card._
