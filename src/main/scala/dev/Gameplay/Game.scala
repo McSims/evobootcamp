@@ -1,4 +1,4 @@
-package Gameplay
+package Game
 
 import Player._
 import Deck._

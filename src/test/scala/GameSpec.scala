@@ -1,5 +1,5 @@
 import org.scalatest.flatspec.AnyFlatSpec
-import Gameplay._
+import Game._
 
 class GameSpec extends AnyFlatSpec {
 

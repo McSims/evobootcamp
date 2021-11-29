@@ -10,9 +10,9 @@ import Card._
 
 sealed trait PlayerMessage
 
-case class NewCardsMessage(cards: List[Card]) extends PlayerMessage
-case class NewEggMessage(egg: Egg) extends PlayerMessage
-case class NewChickMessage(chick: Chick) extends PlayerMessage
+case class NewCardsMessage(cards: List[PlayCard]) extends PlayerMessage
+case class NewEggMessage(egg: EggCard) extends PlayerMessage
+case class NewChickMessage(chick: ChickCard) extends PlayerMessage
 
 class PlayerActor(var player: Player) extends Actor {
 

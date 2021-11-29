@@ -12,12 +12,22 @@ import org.http4s.server.blaze.BlazeServerBuilder
 
 import scala.concurrent.ExecutionContext
 import Actors.GameActor
-import akka.actor
+
 import Player._
-import Actors.CreatePlayer
-import Card.PiouPiouCards
 import Deck._
-import Actors.AllPlayers
+import Card._
+import Game._
+
+import Actors._
+
+import akka.actor
+import akka.pattern.ask
+import akka.util.Timeout
+import akka.compat.Future
+
+import java.util.concurrent.TimeUnit
+import scala.concurrent.Await
+import io.circe.Encoder
 
 object HttpServer extends IOApp {
 
@@ -35,18 +45,25 @@ object HttpServer extends IOApp {
     import io.circe.generic.auto._
     import org.http4s.circe.CirceEntityCodec._
 
+    //todo: remove
     final case class User(name: String)
     final case class Greeting(text: String)
+
+    implicit val timeout = Timeout(5, TimeUnit.SECONDS)
 
     HttpRoutes.of[IO] {
 
       case GET -> Root / "games" => {
-        val player = gamesActor ! CreatePlayer
-        Ok(player)
+        val future = gamesActor ? CreatePlayer
+        val result = Await.result(future, timeout.duration).asInstanceOf[Player]
+        Ok(result)
       }
 
       case GET -> Root / "players" => {
-        Ok(gamesActor ! AllPlayers)
+        val future = gamesActor ? AllPlayers
+        val result =
+          Await.result(future, timeout.duration).asInstanceOf[List[Player]]
+        Ok(result)
       }
 
       // curl -XPOST "localhost:9001/json" -d '{"name": "John"}' -H "Content-Type: application/json"

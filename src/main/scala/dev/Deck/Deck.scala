@@ -4,15 +4,15 @@ import scala.util.Random
 import java.{util => ju}
 import scala.annotation.tailrec
 
-abstract class Card
+import Card.PlayCard
 
 // todo: started with trait for deck but couldnt finish implementing it. As need to return instance itself.
-case class Deck(cards: List[Card], trashCards: List[Card]) {
+case class Deck(cards: List[PlayCard], trashCards: List[PlayCard]) {
 
   def dealCards(
       numberOfPlayers: Int,
       numberOfCards: Int
-  ): (Option[List[List[Card]]], Deck) = {
+  ): (Option[List[List[PlayCard]]], Deck) = {
     // Check if we have enough cards for players
     val isEnoughCardsForDeal = numberOfCards * numberOfPlayers > cards.length
     // todo: extract game rules from the deck... Deck should be reusable for any game.
@@ -28,7 +28,7 @@ case class Deck(cards: List[Card], trashCards: List[Card]) {
     }
   }
 
-  def exchange(card: Card): (Card, Deck) = {
+  def exchange(card: PlayCard): (PlayCard, Deck) = {
     // todo: Maybe we need to distinguish playcard from additional cards (egg & chick). By the rules of the game we are not able to exchange them.
     val newTrash = trashCards :+ card
     if (cards.isEmpty) {
@@ -44,9 +44,9 @@ case class Deck(cards: List[Card], trashCards: List[Card]) {
   }
 
   // todo: it seems private functionality not needed to be exposed. How do we test this?
-  def shuffle(cards: List[Card]): List[Card] = Random.shuffle(cards)
+  def shuffle(cards: List[PlayCard]): List[PlayCard] = Random.shuffle(cards)
 
-  def drop(cardsToDrop: List[Card]): Deck =
+  def drop(cardsToDrop: List[PlayCard]): Deck =
     Deck(cards, trashCards ::: cardsToDrop)
 
 }

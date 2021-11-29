@@ -10,7 +10,7 @@ import Player._
 import Card._
 import Deck._
 
-class GameSpec()
+class GameActorSpec()
     extends TestKit(ActorSystem("GameSpec"))
     with ImplicitSender
     with AnyWordSpecLike

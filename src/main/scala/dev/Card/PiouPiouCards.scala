@@ -1,22 +1,21 @@
 package Card
 
 import Deck._
-import Gameplay._
+import Game._
 
 case class PlayCard(name: CardName, id: CardId, imageUrl: CardImageUrl)
-    extends Card
 
 case class EggCard(
     name: CardName,
     id: CardId,
     imageUrl: CardImageUrl
-) extends Egg
+)
 
 case class ChickCard(
     name: CardName,
     id: CardId,
     imageUrl: CardImageUrl
-) extends Chick
+)
 
 case class CardName(val name: String) extends AnyVal
 case class CardId(val name: String) extends AnyVal
@@ -52,9 +51,9 @@ object PiouPiouCards {
   def egg = EggCard(eggName, eggId, eggImage)
   def chick = ChickCard(chickName, chickId, chickImage)
 
-  def availableEggs: List[Egg] = (0 until 18).map(_ => egg).toList
+  def availableEggs: List[EggCard] = (0 until 18).map(_ => egg).toList
 
-  def allAvailableCards: List[Card] = {
+  def allAvailableCards: List[PlayCard] = {
     val nests = (0 until 7).map(_ => nest).toArray
     val roosters = (0 until 10).map(_ => rooster).toArray
     val chickens = (0 until 10).map(_ => chicken).toArray
