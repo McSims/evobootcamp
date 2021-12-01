@@ -11,7 +11,7 @@ import org.http4s.implicits._
 import org.http4s.server.blaze.BlazeServerBuilder
 
 import scala.concurrent.ExecutionContext
-import Actors.GameActor
+import Actors.GamesActor
 
 import Player._
 import Deck._
@@ -29,50 +29,56 @@ import java.util.concurrent.TimeUnit
 import scala.concurrent.Await
 import io.circe.Encoder
 
+import Actors.GamesActor
+import Actors.AllGames
+import Actors.NewGame
+
 object HttpServer extends IOApp {
 
   val system = actor.ActorSystem("PiouPiouActorSystem")
 
-  val gamesActor = system.actorOf(
-    actor.Props(
-      new GameActor(List(), Deck(PiouPiouCards.allAvailableCards, List()))
-    ),
-    name = "gameactor"
-  )
+  val gamesActor =
+    system.actorOf(actor.Props(new GamesActor(List())), name = "gamesactor")
 
   private val jsonRoutes = {
 
     import io.circe.generic.auto._
     import org.http4s.circe.CirceEntityCodec._
 
-    //todo: remove
-    final case class User(name: String)
-    final case class Greeting(text: String)
-
     implicit val timeout = Timeout(5, TimeUnit.SECONDS)
+
+    case class JoinGameRequest(gameId: String)
+
+    implicit val ec: scala.concurrent.ExecutionContext =
+      scala.concurrent.ExecutionContext.global
 
     HttpRoutes.of[IO] {
 
       case GET -> Root / "games" => {
-        val future = gamesActor ? CreatePlayer
-        val result = Await.result(future, timeout.duration).asInstanceOf[Player]
-        Ok(result)
-      }
-
-      case GET -> Root / "players" => {
-        val future = gamesActor ? AllPlayers
+        val future = gamesActor ? AllGames
         val result =
-          Await.result(future, timeout.duration).asInstanceOf[List[Player]]
+          Await.result(future, timeout.duration).asInstanceOf[List[Game2]]
         Ok(result)
       }
 
-      // curl -XPOST "localhost:9001/json" -d '{"name": "John"}' -H "Content-Type: application/json"
-      case req @ POST -> Root / "json" =>
-        req.as[User].flatMap { user =>
-          val greeting =
-            Greeting(text = s"Hello, ${user.name}!")
-          Ok(greeting)
-        }
+      case POST -> Root / "create_game" => {
+        val future = gamesActor ? NewGame
+        val result =
+          Await.result(future, timeout.duration).asInstanceOf[Game2]
+        Ok(result)
+      }
+
+      case req @ POST -> Root / "join_game" => {
+        // need to discuss how to handle errors for senders?
+        // issue that I have too much info from DTO and only want piece of it to response? Another case class?
+        for {
+          game <- req.as[JoinGameRequest]
+          player <- IO
+            .fromFuture(IO(gamesActor ? JoinGame(game.gameId)))
+            .map(_.asInstanceOf[Player])
+          response <- Ok(player)
+        } yield response
+      }
     }
   }
 

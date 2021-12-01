@@ -4,13 +4,42 @@ import Player._
 import Deck._
 import Card.PiouPiouCards
 import scala.collection.mutable.HashMap
+import java.util.UUID
+import cats.data.Validated
 
-abstract class Egg
-abstract class Chick
+import java.util.UUID
+
+sealed trait GameValidation {
+  def errorMessage: String
+}
+
+case object MaximumNumberOfPlayersReached extends GameValidation {
+  def errorMessage: String = "Reached maximum number of players."
+}
+
+// todo: unit test Game2 and deprecate Game
+case class Game2(
+    gameId: UUID,
+    players: List[Player],
+    deck: Deck
+) {
+
+  def joinGame: Either[GameValidation, (Player, Game2)] = {
+    if (players.length > 4) {
+      Left(MaximumNumberOfPlayersReached)
+    } else {
+      val player = Player(List(), List(), List())
+      players :+ player
+      Right((player, Game2(gameId, players :+ player, deck)))
+    }
+  }
+
+}
 
 class Game(numberOfPlayers: Int) {
 
   var deck: Deck = Deck(PiouPiouCards.allAvailableCards, List())
+
   var players: List[Player] = {
     val cardsWithDeck = deck.dealCards(numberOfPlayers, 5)
     deck = cardsWithDeck._2
