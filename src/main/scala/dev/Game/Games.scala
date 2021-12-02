@@ -19,7 +19,14 @@ class NewGame(gameId: UUID, var players: List[Player], var deck: Deck) {
     if (players.length > 4) {
       Left(MaximumNumberOfPlayersReached)
     } else {
-      val player = Player(List(), List(), List())
+      // todo: Remove, player actor responsibility
+      val player = Player(
+        UUID.randomUUID,
+        "DEFAULT_NAME",
+        List(),
+        List(),
+        List()
+      )
       players :+ player
       Right(player)
     }

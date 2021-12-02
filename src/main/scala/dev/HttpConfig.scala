@@ -24,6 +24,7 @@ import akka.actor
 import akka.pattern.ask
 import akka.util.Timeout
 import akka.compat.Future
+import akka.actor.ActorRef
 
 import java.util.concurrent.TimeUnit
 import scala.concurrent.Await
@@ -32,6 +33,8 @@ import io.circe.Encoder
 import Actors.GamesActor
 import Actors.AllGames
 import Actors.NewGame
+import java.util.UUID
+import dev.Actors.Actors.PlayerActor
 
 object HttpServer extends IOApp {
 
@@ -47,25 +50,52 @@ object HttpServer extends IOApp {
 
     implicit val timeout = Timeout(5, TimeUnit.SECONDS)
 
-    case class JoinGameRequest(gameId: String)
+    object Responses {
+      case class GameResponse(gameId: UUID, playersCount: Int)
+      case class GamesResponse(games: List[GameResponse])
+    }
+
+    object Requests {
+      case class CreatePlayerRequest(name: String)
+      case class JoinGameRequest(gameId: String)
+    }
 
     implicit val ec: scala.concurrent.ExecutionContext =
       scala.concurrent.ExecutionContext.global
 
+    import Requests._
+    import Responses._
+
     HttpRoutes.of[IO] {
+
+      case req @ POST -> Root / "create_player" => {
+        for {
+          name <- req.as[CreatePlayerRequest].map({ _.name })
+          player = Player(
+            UUID.randomUUID(),
+            name,
+            List(),
+            List(),
+            List()
+          )
+          response <- Ok(player)
+        } yield response
+      }
 
       case GET -> Root / "games" => {
         val future = gamesActor ? AllGames
         val result =
           Await.result(future, timeout.duration).asInstanceOf[List[Game2]]
-        Ok(result)
+        Ok(GamesResponse(result.map({ game =>
+          GameResponse(game.gameId, game.players.length)
+        })))
       }
 
       case POST -> Root / "create_game" => {
         val future = gamesActor ? NewGame
         val result =
           Await.result(future, timeout.duration).asInstanceOf[Game2]
-        Ok(result)
+        Ok(GameResponse(result.gameId, 0))
       }
 
       case req @ POST -> Root / "join_game" => {

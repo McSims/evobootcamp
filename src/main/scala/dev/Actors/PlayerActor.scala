@@ -7,6 +7,7 @@ import Game._
 import Deck._
 import Player._
 import Card._
+import java.util.UUID
 
 sealed trait PlayerMessage
 
@@ -18,17 +19,33 @@ class PlayerActor(var player: Player) extends Actor {
 
   def receive = {
     case newCards: NewCardsMessage => {
-      player =
-        Player(player.cards ++ newCards.cards, player.eggs, player.chicks)
+      player = Player(
+        player.id,
+        player.name,
+        player.cards ++ newCards.cards,
+        player.eggs,
+        player.chicks
+      )
       sender() ! player
     }
     case newEgg: NewEggMessage => {
-      player = Player(player.cards, player.eggs :+ newEgg.egg, player.chicks)
+      player = Player(
+        player.id,
+        player.name,
+        player.cards,
+        player.eggs :+ newEgg.egg,
+        player.chicks
+      )
       sender() ! player
     }
     case newChick: NewChickMessage => {
-      player =
-        Player(player.cards, player.eggs, player.chicks :+ newChick.chick)
+      player = Player(
+        player.id,
+        player.name,
+        player.cards,
+        player.eggs,
+        player.chicks :+ newChick.chick
+      )
       sender() ! player
     }
   }

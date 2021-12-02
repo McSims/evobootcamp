@@ -9,6 +9,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import Player._
 import dev.Actors.Actors._
 import Card.PiouPiouCards
+import java.util.UUID
 
 class PlayerSpec()
     extends TestKit(ActorSystem("GameSpec"))
@@ -22,23 +23,24 @@ class PlayerSpec()
   }
 
   "Player actor" must {
-    "accepts cards" in {
+    "accept cards" in {
       actor ! NewCardsMessage(List(PiouPiouCards.chicken))
       assert(result.cards.length == 1)
     }
 
-    "accepts chick" in {
+    "accept chick" in {
       actor ! NewChickMessage(PiouPiouCards.chick)
       assert(result.chicks.length == 1)
     }
 
-    "accepts egg" in {
+    "accept egg" in {
       actor ! NewEggMessage(PiouPiouCards.egg)
       assert(result.eggs.length == 1)
     }
   }
 
-  def player = Player(List(), List(), List())
+  def player =
+    Player(UUID.randomUUID, PlayerName("DEFAULT_NAME"), List(), List(), List())
   def actor = system.actorOf(
     Props(new PlayerActor(player))
   )

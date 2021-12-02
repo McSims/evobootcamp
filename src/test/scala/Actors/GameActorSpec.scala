@@ -9,6 +9,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import Player._
 import Card._
 import Deck._
+import java.util.UUID
 
 class GameActorSpec()
     extends TestKit(ActorSystem("GameSpec"))
@@ -23,7 +24,13 @@ class GameActorSpec()
 
   "An Game actor" must {
     "send back messages unchanged" in {
-      val player = Player(List(), List(), List())
+      val player = Player(
+        UUID.randomUUID,
+        PlayerName("DEFAULT_NAME"),
+        List(),
+        List(),
+        List()
+      )
       val gameActor = system.actorOf(
         Props(
           new GameActor(List(), Deck(PiouPiouCards.allAvailableCards, List()))

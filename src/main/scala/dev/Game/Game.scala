@@ -28,7 +28,14 @@ case class Game2(
     if (players.length > 4) {
       Left(MaximumNumberOfPlayersReached)
     } else {
-      val player = Player(List(), List(), List())
+      // todo: Remove, player actor responsibility
+      val player = Player(
+        UUID.randomUUID,
+        "DEFAULT_NAME",
+        List(),
+        List(),
+        List()
+      )
       players :+ player
       Right((player, Game2(gameId, players :+ player, deck)))
     }
@@ -45,7 +52,10 @@ class Game(numberOfPlayers: Int) {
     deck = cardsWithDeck._2
     val newPlayers = (0 until numberOfPlayers)
       .map((index) =>
+        // todo: Remove, player actor responsibility
         Player(
+          UUID.randomUUID,
+          "DEFAULT_NAME",
           // todo: maybe return option here is not the best solution??? If use validate return... who deals with that?
           cardsWithDeck._1.get(index),
           List(),

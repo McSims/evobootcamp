@@ -4,6 +4,7 @@ import akka.actor._
 import Player._
 import Deck._
 import Game.Game2
+import Game.GameValidation
 import java.util.UUID
 import Card.PiouPiouCards
 
@@ -43,12 +44,13 @@ class GamesActor(var games: List[Game2]) extends Actor {
           someGame.joinGame match {
             case Right(joininigResult) => {
               val filteredGames = games.filter({ game =>
-                game.gameId.toString.equals(gameId)
+                !game.gameId.toString.equals(gameId)
               })
               games = filteredGames :+ joininigResult._2
               sender() ! joininigResult._1
             }
-            case _ => {
+            case Left(validation) => {
+              // how to pass message back to caller? Shall we use Either / Validated here too?
               sender() ! games
             }
           }
