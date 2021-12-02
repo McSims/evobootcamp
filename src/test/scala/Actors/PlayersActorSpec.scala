@@ -35,7 +35,7 @@ class PlayersActorSpec()
 
   "Players actor" must {
     "create new player" in {
-      playersActor ! CreatePlayer
+      playersActor ! CreatePlayer("DEAFAULT_NAME")
       def player: Player = expectMsgType[Player]
       assert(player.id.toString.length > 0)
     }
