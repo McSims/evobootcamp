@@ -16,7 +16,6 @@ case object AllGames extends GamesMessage
 case object NewGame extends GamesMessage
 case class JoinGame(gameId: String, player: Player) extends GamesMessage
 
-// todo: unit test
 class GamesActor(var games: List[Game]) extends Actor {
 
   def receive = {
@@ -32,6 +31,7 @@ class GamesActor(var games: List[Game]) extends Actor {
       games = games :+ game
       sender() ! game
     }
+
     // need to contract response here... sometimes it gives player, other all games
     // question is how actors and validation work together?
     case joinGame: JoinGame => {

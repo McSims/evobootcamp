@@ -12,7 +12,7 @@ import Deck._
 import java.util.UUID
 
 class PlayersActorSpec()
-    extends TestKit(ActorSystem("GameSpec"))
+    extends TestKit(ActorSystem("PlayersSpec"))
     with ImplicitSender
     with AnyWordSpecLike
     with Matchers

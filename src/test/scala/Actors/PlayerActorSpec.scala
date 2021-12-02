@@ -12,7 +12,7 @@ import Card.PiouPiouCards
 import java.util.UUID
 
 class PlayerSpec()
-    extends TestKit(ActorSystem("GameSpec"))
+    extends TestKit(ActorSystem("PlayerSpec"))
     with ImplicitSender
     with AnyWordSpecLike
     with Matchers
