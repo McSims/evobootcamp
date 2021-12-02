@@ -42,6 +42,8 @@ object HttpServer extends IOApp {
 
   val gamesActor =
     system.actorOf(actor.Props(new GamesActor(List())), name = "gamesactor")
+  val playersActor =
+    system.actorOf(actor.Props(new PlayersActor(List())), name = "playersactor")
 
   private val jsonRoutes = {
 
@@ -57,7 +59,7 @@ object HttpServer extends IOApp {
 
     object Requests {
       case class CreatePlayerRequest(name: String)
-      case class JoinGameRequest(gameId: String)
+      case class JoinGameRequest(gameId: String, playerId: String)
     }
 
     import Requests._
@@ -68,13 +70,13 @@ object HttpServer extends IOApp {
       case req @ POST -> Root / "create_player" => {
         for {
           name <- req.as[CreatePlayerRequest].map({ _.name })
-          player = Player(
-            UUID.randomUUID(),
-            name,
-            List(),
-            List(),
-            List()
-          )
+          player <- IO
+            .fromFuture(
+              IO(
+                playersActor ? CreatePlayer(name)
+              )
+            )
+            .map(_.asInstanceOf[Player])
           // here I would like to create new player actor with this player... how to do this?
           response <- Ok(player)
         } yield response
@@ -97,24 +99,26 @@ object HttpServer extends IOApp {
       }
 
       case req @ POST -> Root / "join_game" => {
+
+        def joinGameMessage(gameId: String, player: Player): JoinGame =
+          JoinGame(gameId, player)
+
         // need to discuss how to handle errors for senders?
         // issue that I have too much info from DTO and only want piece of it to response? Another case class?
         for {
-          game <- req.as[JoinGameRequest]
-          // find player by id
+          joinRequest <- req.as[JoinGameRequest]
+          foundPlayer <- IO
+            .fromFuture(
+              IO(
+                playersActor ? FindPlayerById(joinRequest.playerId)
+              )
+            )
+            .map(_.asInstanceOf[Option[Player]])
+            .map({ _.get })
           player <- IO
             .fromFuture(
               IO(
-                gamesActor ? JoinGame(
-                  game.gameId,
-                  Player(
-                    UUID.randomUUID(),
-                    "DEFAULT_NAME",
-                    List(),
-                    List(),
-                    List()
-                  )
-                )
+                gamesActor ? joinGameMessage(joinRequest.gameId, foundPlayer)
               )
             )
             .map(_.asInstanceOf[Player])

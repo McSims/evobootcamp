@@ -7,19 +7,18 @@ import java.util.UUID
 
 sealed trait GameMessage
 
-case object CreatePlayer extends GameMessage
+case class CreatePlayer(name: String) extends GameMessage
 case object AllPlayers extends GameMessage
 case class FindPlayerById(playerId: String) extends GameMessage
 
-// todo: unit test
 class PlayersActor(var players: List[Player]) extends Actor {
 
   def receive = {
-    case CreatePlayer => {
+    case createMessage: CreatePlayer => {
       val player =
         Player(
           UUID.randomUUID,
-          "DEFAULT_NAME",
+          createMessage.name,
           List(),
           List(),
           List()
