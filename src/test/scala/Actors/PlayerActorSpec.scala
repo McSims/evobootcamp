@@ -40,7 +40,7 @@ class PlayerSpec()
   }
 
   def player =
-    Player(UUID.randomUUID, PlayerName("DEFAULT_NAME"), List(), List(), List())
+    Player(UUID.randomUUID, "DEFAULT_NAME", List(), List(), List())
   def actor = system.actorOf(
     Props(new PlayerActor(player))
   )

@@ -1,28 +1,30 @@
 package Actors
 
 import akka.actor._
+
 import Player._
 import Deck._
-import Game.Game2
-import Game.GameValidation
+import Game._
+
 import java.util.UUID
+
 import Card.PiouPiouCards
 
 sealed trait GamesMessage
 
 case object AllGames extends GamesMessage
 case object NewGame extends GamesMessage
-case class JoinGame(gameId: String) extends GamesMessage
+case class JoinGame(gameId: String, player: Player) extends GamesMessage
 
 // todo: unit test
-class GamesActor(var games: List[Game2]) extends Actor {
+class GamesActor(var games: List[Game]) extends Actor {
 
   def receive = {
     case AllGames => {
       sender() ! games
     }
     case NewGame => {
-      val game = Game2(
+      val game = Game(
         UUID.randomUUID(),
         List(),
         Deck(PiouPiouCards.allAvailableCards, List())
@@ -41,7 +43,7 @@ class GamesActor(var games: List[Game2]) extends Actor {
         .headOption
       game match {
         case Some(someGame) => {
-          someGame.joinGame match {
+          someGame.joinGame(joinGame.player) match {
             case Right(joininigResult) => {
               val filteredGames = games.filter({ game =>
                 !game.gameId.toString.equals(gameId)
@@ -51,7 +53,7 @@ class GamesActor(var games: List[Game2]) extends Actor {
             }
             case Left(validation) => {
               // how to pass message back to caller? Shall we use Either / Validated here too?
-              sender() ! games
+              sender() ! validation.errorMessage
             }
           }
         }

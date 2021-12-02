@@ -60,9 +60,6 @@ object HttpServer extends IOApp {
       case class JoinGameRequest(gameId: String)
     }
 
-    implicit val ec: scala.concurrent.ExecutionContext =
-      scala.concurrent.ExecutionContext.global
-
     import Requests._
     import Responses._
 
@@ -78,6 +75,7 @@ object HttpServer extends IOApp {
             List(),
             List()
           )
+          // here I would like to create new player actor with this player... how to do this?
           response <- Ok(player)
         } yield response
       }
@@ -85,7 +83,7 @@ object HttpServer extends IOApp {
       case GET -> Root / "games" => {
         val future = gamesActor ? AllGames
         val result =
-          Await.result(future, timeout.duration).asInstanceOf[List[Game2]]
+          Await.result(future, timeout.duration).asInstanceOf[List[Game]]
         Ok(GamesResponse(result.map({ game =>
           GameResponse(game.gameId, game.players.length)
         })))
@@ -94,7 +92,7 @@ object HttpServer extends IOApp {
       case POST -> Root / "create_game" => {
         val future = gamesActor ? NewGame
         val result =
-          Await.result(future, timeout.duration).asInstanceOf[Game2]
+          Await.result(future, timeout.duration).asInstanceOf[Game]
         Ok(GameResponse(result.gameId, 0))
       }
 
@@ -103,8 +101,22 @@ object HttpServer extends IOApp {
         // issue that I have too much info from DTO and only want piece of it to response? Another case class?
         for {
           game <- req.as[JoinGameRequest]
+          // find player by id
           player <- IO
-            .fromFuture(IO(gamesActor ? JoinGame(game.gameId)))
+            .fromFuture(
+              IO(
+                gamesActor ? JoinGame(
+                  game.gameId,
+                  Player(
+                    UUID.randomUUID(),
+                    "DEFAULT_NAME",
+                    List(),
+                    List(),
+                    List()
+                  )
+                )
+              )
+            )
             .map(_.asInstanceOf[Player])
           response <- Ok(player)
         } yield response

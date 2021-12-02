@@ -1,26 +1,44 @@
 import org.scalatest.flatspec.AnyFlatSpec
 import Game._
+import Deck._
+import Player._
+import java.util.UUID
+import Card.PiouPiouCards
 
 class GameSpec extends AnyFlatSpec {
 
-  val game = new Game(3)
+  var game =
+    new Game(
+      UUID.randomUUID(),
+      List(),
+      Deck(PiouPiouCards.allAvailableCards, List())
+    )
+  val playerName = "Maksims"
+  val player = Player(UUID.randomUUID(), playerName, List(), List(), List())
 
-  "Game" should "deal cards to players" in {
-    assert(game.players.length == 3)
-    assert(game.players(0).cards.length == 5)
-    assert(game.players(1).cards.length == 5)
-    assert(game.players(2).cards.length == 5)
-    assert(game.players(0).eggs.length == 0)
-    assert(game.players(1).eggs.length == 0)
-    assert(game.players(2).eggs.length == 0)
-    assert(game.players(0).chicks.length == 0)
-    assert(game.players(1).chicks.length == 0)
-    assert(game.players(2).chicks.length == 0)
+  "Game" should "accept new players" in {
+    for (i <- 1 to 5) {
+      game.joinGame(player) match {
+        case Left(value) => {
+          fail("Unable to join player")
+        }
+        case Right(value) => {
+          assert(value._2.players.length == i)
+          game = value._2
+          assert(game.players.length == i)
+        }
+      }
+    }
   }
 
-  it should "have clean results" in {
-    assert(game.results(0) == 0)
-    assert(game.results(1) == 0)
-    assert(game.results(2) == 0)
+  it should "bail with error if reached maximum" in {
+    game.joinGame(player) match {
+      case Left(value) => {
+        assert(value.isInstanceOf[GameValidation])
+      }
+      case Right(value) => {
+        fail("Should not accept more than 5 players")
+      }
+    }
   }
 }

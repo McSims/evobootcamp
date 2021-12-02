@@ -9,12 +9,13 @@ sealed trait GameMessage
 
 case object CreatePlayer extends GameMessage
 case object AllPlayers extends GameMessage
+case class FindPlayerById(playerId: String) extends GameMessage
 
-class GameActor(var players: List[Player], deck: Deck) extends Actor {
+// todo: unit test
+class PlayersActor(var players: List[Player]) extends Actor {
 
   def receive = {
     case CreatePlayer => {
-      // todo: remove, Player actor responsibility
       val player =
         Player(
           UUID.randomUUID,
@@ -28,5 +29,13 @@ class GameActor(var players: List[Player], deck: Deck) extends Actor {
     }
 
     case AllPlayers => sender() ! players
+
+    case findPlayer: FindPlayerById => {
+      sender() ! players
+        .filter({ player =>
+          player.id.toString.equals(findPlayer.playerId)
+        })
+        .headOption
+    }
   }
 }
