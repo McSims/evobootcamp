@@ -45,9 +45,6 @@ class PlayersActorSpec()
     }
 
     "find player by id" in {
-      // playersActor ! AllPlayers
-      // val players: List[Player] = expectMsgType[List[Player]]
-      // assert(players.length == 1)
       playersActor ! FindPlayerById(
         players.headOption.map({ _.id.toString }).getOrElse("")
       )

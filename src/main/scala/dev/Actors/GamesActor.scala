@@ -53,7 +53,7 @@ class GamesActor(var games: List[Game]) extends Actor {
             }
             case Left(validation) => {
               // how to pass message back to caller? Shall we use Either / Validated here too?
-              sender() ! validation.errorMessage
+              sender() ! validation.toString
             }
           }
         }

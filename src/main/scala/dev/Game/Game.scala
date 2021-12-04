@@ -9,12 +9,16 @@ import cats.data.Validated
 
 import java.util.UUID
 
-sealed trait GameValidation {
-  def errorMessage: String
+final case class GameValidation(value: String) {
+  override def toString: String = s"$value"
 }
 
-case object MaximumNumberOfPlayersReached extends GameValidation {
-  def errorMessage: String = "Reached maximum number of players."
+class ErrorMessages {}
+
+object ErrorMessages {
+  val MAXIMUM_PLAYERS_REACHED = GameValidation(
+    "Reached maximum number of players."
+  )
 }
 
 case class Game(
@@ -25,7 +29,7 @@ case class Game(
 
   def joinGame(player: Player): Either[GameValidation, (Player, Game)] = {
     if (players.length > 4) {
-      Left(MaximumNumberOfPlayersReached)
+      Left(ErrorMessages.MAXIMUM_PLAYERS_REACHED)
     } else {
       players :+ player
       Right((player, Game(gameId, players :+ player, deck)))
