@@ -37,7 +37,7 @@ class PlayersActorSpec()
     "create new player" in {
       playersActor ! CreatePlayer("DEAFAULT_NAME")
       def player: Player = expectMsgType[Player]
-      assert(player.id.toString.length > 0)
+      assert(player.playerId.toString.length > 0)
     }
 
     "return all avaialbe players" in {
@@ -46,7 +46,7 @@ class PlayersActorSpec()
 
     "find player by id" in {
       playersActor ! FindPlayerById(
-        players.headOption.map({ _.id.toString }).getOrElse("")
+        players.headOption.map({ _.playerId.toString }).getOrElse("")
       )
       val filteredPlayer: Option[Player] = expectMsgType[Option[Player]]
       assert(filteredPlayer.isEmpty == false)

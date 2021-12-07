@@ -14,7 +14,7 @@ class GameSpec extends AnyFlatSpec {
       Deck(PiouPiouCards.allAvailableCards, List())
     )
   val playerName = "Maksims"
-  val player = Player(UUID.randomUUID(), playerName, List(), List(), List())
+  val player = Player(UUID.randomUUID(), playerName)
 
   "Game" should "accept new players" in {
     for (i <- 1 to 5) {

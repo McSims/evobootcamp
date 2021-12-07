@@ -8,6 +8,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 
 import Player._
 import Game._
+import PlayerInGame._
 
 import java.util.UUID
 
@@ -46,12 +47,12 @@ class GamesActorSpec()
 
     "allow player to join the game" in {
       val player =
-        Player(UUID.randomUUID(), "DEFAULT_NAME", List(), List(), List())
+        Player(UUID.randomUUID(), "DEFAULT_NAME")
       val gameId = games.headOption.map({ _.gameId.toString }).getOrElse("")
       gamesActor ! JoinGame(gameId, player)
-      val joinedPlayer: Player =
-        expectMsgType[Player]
-      assert(joinedPlayer.id.equals(player.id))
+      val joinedPlayer: PlayerInGame =
+        expectMsgType[PlayerInGame]
+      assert(joinedPlayer.playerId.equals(player.playerId))
     }
   }
 }

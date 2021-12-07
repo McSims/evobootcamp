@@ -6,7 +6,7 @@ import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 
-import Player._
+import PlayerInGame._
 import dev.Actors.Actors._
 import Card.PiouPiouCards
 import java.util.UUID
@@ -40,9 +40,9 @@ class PlayerSpec()
   }
 
   def player =
-    Player(UUID.randomUUID, "DEFAULT_NAME", List(), List(), List())
+    PlayerInGame(UUID.randomUUID, "DEFAULT_NAME", List(), List(), List())
   def actor = system.actorOf(
     Props(new PlayerActor(player))
   )
-  def result: Player = expectMsgType[Player]
+  def result: PlayerInGame = expectMsgType[PlayerInGame]
 }

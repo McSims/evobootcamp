@@ -1,6 +1,7 @@
 package Game
 
 import Player._
+import PlayerInGame._
 import Deck._
 import Card.PiouPiouCards
 import scala.collection.mutable.HashMap
@@ -27,12 +28,14 @@ case class Game(
     deck: Deck
 ) {
 
-  def joinGame(player: Player): Either[GameValidation, (Player, Game)] = {
+  def joinGame(player: Player): Either[GameValidation, (PlayerInGame, Game)] = {
     if (players.length > 4) {
       Left(ErrorMessages.MAXIMUM_PLAYERS_REACHED)
     } else {
+      val playerInGame =
+        PlayerInGame(player.playerId, player.name, List(), List(), List())
       players :+ player
-      Right((player, Game(gameId, players :+ player, deck)))
+      Right((playerInGame, Game(gameId, players :+ player, deck)))
     }
   }
 

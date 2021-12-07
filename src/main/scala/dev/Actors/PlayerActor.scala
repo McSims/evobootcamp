@@ -1,11 +1,9 @@
-package dev.Actors
-
 package Actors
 
 import akka.actor._
 import Game._
 import Deck._
-import Player._
+import PlayerInGame._
 import Card._
 import java.util.UUID
 
@@ -15,12 +13,11 @@ case class NewCardsMessage(cards: List[PlayCard]) extends PlayerMessage
 case class NewEggMessage(egg: EggCard) extends PlayerMessage
 case class NewChickMessage(chick: ChickCard) extends PlayerMessage
 
-class PlayerActor(var player: Player) extends Actor {
-
+class PlayerActor(var player: PlayerInGame) extends Actor {
   def receive = {
     case newCards: NewCardsMessage => {
-      player = Player(
-        player.id,
+      player = PlayerInGame(
+        player.playerId,
         player.name,
         player.cards ++ newCards.cards,
         player.eggs,
@@ -29,8 +26,8 @@ class PlayerActor(var player: Player) extends Actor {
       sender() ! player
     }
     case newEgg: NewEggMessage => {
-      player = Player(
-        player.id,
+      player = PlayerInGame(
+        player.playerId,
         player.name,
         player.cards,
         player.eggs :+ newEgg.egg,
@@ -39,8 +36,8 @@ class PlayerActor(var player: Player) extends Actor {
       sender() ! player
     }
     case newChick: NewChickMessage => {
-      player = Player(
-        player.id,
+      player = PlayerInGame(
+        player.playerId,
         player.name,
         player.cards,
         player.eggs,

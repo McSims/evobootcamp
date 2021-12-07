@@ -18,10 +18,7 @@ class PlayersActor(var players: List[Player]) extends Actor {
       val player =
         Player(
           UUID.randomUUID,
-          createMessage.name,
-          List(),
-          List(),
-          List()
+          createMessage.name
         )
       players = players :+ player
       sender() ! player
@@ -32,7 +29,7 @@ class PlayersActor(var players: List[Player]) extends Actor {
     case findPlayer: FindPlayerById => {
       sender() ! players
         .filter({ player =>
-          player.id.toString.equals(findPlayer.playerId)
+          player.playerId.toString.equals(findPlayer.playerId)
         })
         .headOption
     }

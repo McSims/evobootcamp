@@ -15,10 +15,6 @@ import java.util.UUID
 //
 
 final case class Player(
-    // todo: rename following game convention -> gameId
-    id: UUID,
-    name: String,
-    cards: List[PlayCard],
-    eggs: List[EggCard],
-    chicks: List[ChickCard]
+    playerId: UUID,
+    name: String
 )

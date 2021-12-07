@@ -17,6 +17,7 @@ import Player._
 import Deck._
 import Card._
 import Game._
+import PlayerInGame._
 
 import Actors._
 
@@ -34,7 +35,6 @@ import Actors.GamesActor
 import Actors.AllGames
 import Actors.NewGame
 import java.util.UUID
-import dev.Actors.Actors.PlayerActor
 
 object HttpServer extends IOApp {
 
@@ -121,7 +121,7 @@ object HttpServer extends IOApp {
                 gamesActor ? joinGameMessage(joinRequest.gameId, foundPlayer)
               )
             )
-            .map(_.asInstanceOf[Player])
+            .map(_.asInstanceOf[PlayerInGame])
           response <- Ok(player)
         } yield response
       }
