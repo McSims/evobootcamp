@@ -1,8 +1,7 @@
-package PlayerInGame
+package dev.PlayerInGame
 
-import Card.PlayCard
-import Card.EggCard
-import Card.ChickCard
+import Card.PiouPiouCards._
+
 import java.util.UUID
 
 final case class PlayerInGame(

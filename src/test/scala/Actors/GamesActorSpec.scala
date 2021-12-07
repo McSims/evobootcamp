@@ -1,4 +1,4 @@
-package Actors
+package dev.Actors
 
 import akka.actor._
 import akka.testkit.{ImplicitSender, TestActors, TestKit}
@@ -8,7 +8,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 
 import Player._
 import Game._
-import PlayerInGame._
+import dev.PlayerInGame._
 
 import java.util.UUID
 

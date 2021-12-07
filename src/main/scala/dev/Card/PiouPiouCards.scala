@@ -3,25 +3,12 @@ package Card
 import Deck._
 import Game._
 
-case class PlayCard(name: CardName, id: CardId, imageUrl: CardImageUrl)
-
-case class EggCard(
-    name: CardName,
-    id: CardId,
-    imageUrl: CardImageUrl
-)
-
-case class ChickCard(
-    name: CardName,
-    id: CardId,
-    imageUrl: CardImageUrl
-)
-
 case class CardName(val name: String) extends AnyVal
 case class CardId(val name: String) extends AnyVal
 case class CardImageUrl(val name: String) extends AnyVal
 
 object PiouPiouCards {
+
   private def eggName = CardName("Egg")
   private def nestName = CardName("Nest")
   private def roosterName = CardName("Rooster")
@@ -43,6 +30,19 @@ object PiouPiouCards {
   private def chickImage = CardImageUrl("ChickImage")
   private def foxImage = CardImageUrl("FoxImage")
 
+  case class PlayCard(name: CardName, id: CardId, imageUrl: CardImageUrl)
+
+  case class EggCard(
+      name: CardName,
+      id: CardId,
+      imageUrl: CardImageUrl
+  )
+
+  case class ChickCard(
+      name: CardName,
+      id: CardId,
+      imageUrl: CardImageUrl
+  )
   def nest = PlayCard(nestName, nestId, nestImage)
   def rooster = PlayCard(roosterName, roosterId, roosterImage)
   def chicken = PlayCard(chickenName, chickenId, chickenImage)
@@ -53,11 +53,16 @@ object PiouPiouCards {
 
   def availableEggs: List[EggCard] = (0 until 18).map(_ => egg).toList
 
+  val foxCount = 6
+  val roostersCount = 15
+  val chickensCount = 15
+  val nestsCount = 11
+
   def allAvailableCards: List[PlayCard] = {
-    val nests = (0 until 7).map(_ => nest).toArray
-    val roosters = (0 until 10).map(_ => rooster).toArray
-    val chickens = (0 until 10).map(_ => chicken).toArray
-    val foxes = (0 until 4).map(_ => fox).toArray
+    val nests = (0 until nestsCount).map(_ => nest).toArray
+    val roosters = (0 until roostersCount).map(_ => rooster).toArray
+    val chickens = (0 until chickensCount).map(_ => chicken).toArray
+    val foxes = (0 until foxCount).map(_ => fox).toArray
     (nests ++ roosters ++ chickens ++ foxes).toList
   }
 }

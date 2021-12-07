@@ -1,15 +1,15 @@
-package Actors
+package dev.Actors
 
 import akka.actor._
 import Player._
 import Deck._
 import java.util.UUID
 
-sealed trait GameMessage
+sealed trait PlayersMessage
 
-case class CreatePlayer(name: String) extends GameMessage
-case object AllPlayers extends GameMessage
-case class FindPlayerById(playerId: String) extends GameMessage
+case class CreatePlayer(name: String) extends PlayersMessage
+case object AllPlayers extends PlayersMessage
+case class FindPlayerById(playerId: String) extends PlayersMessage
 
 class PlayersActor(var players: List[Player]) extends Actor {
 

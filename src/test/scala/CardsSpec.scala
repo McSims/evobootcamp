@@ -4,39 +4,39 @@ import org.scalatest.flatspec.AnyFlatSpec
 import Card.PiouPiouCards
 
 class CardsSpec extends AnyFlatSpec {
-  "Piou Piou game" should "have 31 card" in {
-    assert(PiouPiouCards.allAvailableCards.length == 31)
+  "Piou Piou game" should "have 47 card" in {
+    assert(PiouPiouCards.allAvailableCards.length == 47)
   }
 
-  it should "contain 4 foxes" in {
+  it should s"contain ${PiouPiouCards.foxCount} foxes" in {
     assert(
       PiouPiouCards.allAvailableCards
         .filter(_ == PiouPiouCards.fox)
-        .length == 4
+        .length == PiouPiouCards.foxCount
     )
   }
 
-  it should "contain 10 roosters" in {
+  it should s"contain ${PiouPiouCards.roostersCount} roosters" in {
     assert(
       PiouPiouCards.allAvailableCards
         .filter(_ == PiouPiouCards.rooster)
-        .length == 10
+        .length == PiouPiouCards.roostersCount
     )
   }
 
-  it should "contain 10 chickens" in {
+  it should s"contain ${PiouPiouCards.chickensCount} chickens" in {
     assert(
       PiouPiouCards.allAvailableCards
         .filter(_ == PiouPiouCards.chicken)
-        .length == 10
+        .length == PiouPiouCards.chickensCount
     )
   }
 
-  it should "contain 7 nests" in {
+  it should s"contain ${PiouPiouCards.nestsCount} nests" in {
     assert(
       PiouPiouCards.allAvailableCards
         .filter(_ == PiouPiouCards.nest)
-        .length == 7
+        .length == PiouPiouCards.nestsCount
     )
   }
 

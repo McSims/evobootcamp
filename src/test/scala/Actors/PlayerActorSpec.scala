@@ -1,4 +1,4 @@
-package Actors
+package dev.Actors
 
 import akka.actor._
 import akka.testkit.{ImplicitSender, TestActors, TestKit}
@@ -6,7 +6,7 @@ import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 
-import PlayerInGame._
+import dev.PlayerInGame._
 import dev.Actors.Actors._
 import Card.PiouPiouCards
 import java.util.UUID

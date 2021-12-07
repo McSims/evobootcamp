@@ -1,10 +1,10 @@
-package Actors
+package dev.Actors
 
 import akka.actor._
 import Game._
 import Deck._
-import PlayerInGame._
-import Card._
+import dev.PlayerInGame._
+import Card.PiouPiouCards._
 import java.util.UUID
 
 sealed trait PlayerMessage

@@ -15,7 +15,7 @@ class DeckSpec extends AnyFlatSpec {
   )
 
   "A deck" should "deal cards" in {
-    assert(fullDeck.cards.length == 31)
+    assert(fullDeck.cards.length == PiouPiouCards.allAvailableCards.length)
     val dealtCards = fullDeck.dealCards(3, 5)
     assert(dealtCards._1.get.length == 3)
     assert(dealtCards._1.get(0).length == 5)

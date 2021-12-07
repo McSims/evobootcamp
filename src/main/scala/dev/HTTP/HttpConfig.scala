@@ -11,15 +11,14 @@ import org.http4s.implicits._
 import org.http4s.server.blaze.BlazeServerBuilder
 
 import scala.concurrent.ExecutionContext
-import Actors.GamesActor
 
 import Player._
 import Deck._
 import Card._
 import Game._
-import PlayerInGame._
+import dev.PlayerInGame._
 
-import Actors._
+import dev.Actors._
 
 import akka.actor
 import akka.pattern.ask
@@ -31,9 +30,6 @@ import java.util.concurrent.TimeUnit
 import scala.concurrent.Await
 import io.circe.Encoder
 
-import Actors.GamesActor
-import Actors.AllGames
-import Actors.NewGame
 import java.util.UUID
 
 object HttpServer extends IOApp {

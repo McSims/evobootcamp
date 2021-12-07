@@ -1,4 +1,4 @@
-package Actors
+package dev.Actors
 
 import akka.actor._
 
@@ -41,6 +41,7 @@ class GamesActor(var games: List[Game]) extends Actor {
           game.gameId.toString.equals(gameId)
         })
         .headOption
+
       game match {
         case Some(someGame) => {
           someGame.joinGame(joinGame.player) match {

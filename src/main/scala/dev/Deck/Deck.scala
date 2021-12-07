@@ -4,9 +4,8 @@ import scala.util.Random
 import java.{util => ju}
 import scala.annotation.tailrec
 
-import Card.PlayCard
+import Card.PiouPiouCards._
 
-// todo: started with trait for deck but couldnt finish implementing it. As need to return instance itself.
 case class Deck(cards: List[PlayCard], trashCards: List[PlayCard]) {
 
   def dealCards(
