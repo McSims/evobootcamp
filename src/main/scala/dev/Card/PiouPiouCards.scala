@@ -43,6 +43,7 @@ object PiouPiouCards {
       id: CardId,
       imageUrl: CardImageUrl
   )
+
   def nest = PlayCard(nestName, nestId, nestImage)
   def rooster = PlayCard(roosterName, roosterId, roosterImage)
   def chicken = PlayCard(chickenName, chickenId, chickenImage)

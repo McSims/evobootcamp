@@ -7,7 +7,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 
 import dev.PlayerInGame._
-import dev.Actors.Actors._
+import dev.Actors._
 import Card.PiouPiouCards
 import java.util.UUID
 
