@@ -13,9 +13,9 @@ import org.http4s.server.blaze.BlazeServerBuilder
 import scala.concurrent.ExecutionContext
 
 import Player._
-import Deck._
+import dev.Deck._
 import Card._
-import Game._
+import dev.Game._
 import dev.PlayerInGame._
 
 import dev.Actors._

@@ -3,7 +3,7 @@ package Player
 import Deck._
 import Game._
 
-import Card.PiouPiouCards._
+import dev.Card.PiouPiouCards._
 
 import java.util.UUID
 

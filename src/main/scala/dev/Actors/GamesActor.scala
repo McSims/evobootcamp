@@ -3,12 +3,12 @@ package dev.Actors
 import akka.actor._
 
 import Player._
-import Deck._
-import Game._
+import dev.Deck._
+import dev.Game._
 
 import java.util.UUID
 
-import Card.PiouPiouCards
+import dev.Card.PiouPiouCards
 
 sealed trait GamesMessage
 
@@ -28,6 +28,15 @@ class GamesActor(var games: List[Game]) extends Actor {
         List(),
         Deck(PiouPiouCards.allAvailableCards, List())
       )
+
+      // Create game actor and store it in here is what I think should be done... but...
+      // how to get actor back?
+
+      // val ref = context.system.actorOf(
+      //   Props(classOf[GameActor], game),
+      //   game.gameId.toString
+      // )
+
       games = games :+ game
       sender() ! game
     }

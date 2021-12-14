@@ -1,7 +1,4 @@
-package Card
-
-import Deck._
-import Game._
+package dev.Card
 
 case class CardName(val name: String) extends AnyVal
 case class CardId(val name: String) extends AnyVal

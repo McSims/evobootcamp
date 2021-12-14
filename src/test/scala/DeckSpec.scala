@@ -1,6 +1,6 @@
 import org.scalatest.flatspec.AnyFlatSpec
-import Deck.Deck
-import Card.PiouPiouCards
+import dev.Deck.Deck
+import dev.Card.PiouPiouCards
 
 class DeckSpec extends AnyFlatSpec {
 
@@ -38,7 +38,7 @@ class DeckSpec extends AnyFlatSpec {
   }
 
   it should "exchange card" in {
-    val result = shortDeck.exchange(PiouPiouCards.nest)
+    val result = shortDeck.exchangeCard(PiouPiouCards.nest)
     assert(result._1 == PiouPiouCards.rooster)
     assert(result._2.trashCards.length == 1)
     assert(result._2.cards.length == 2)
@@ -49,13 +49,13 @@ class DeckSpec extends AnyFlatSpec {
   }
 
   it should "shuffle trash cards when no cards for exchange" in {
-    var result = shortDeck.exchange(PiouPiouCards.nest)
-    result = result._2.exchange(PiouPiouCards.nest)
-    result = result._2.exchange(PiouPiouCards.nest)
+    var result = shortDeck.exchangeCard(PiouPiouCards.nest)
+    result = result._2.exchangeCard(PiouPiouCards.nest)
+    result = result._2.exchangeCard(PiouPiouCards.nest)
     assert(result._1 == PiouPiouCards.chicken)
     assert(result._2.trashCards.length == 3)
     assert(result._2.cards.isEmpty)
-    result = result._2.exchange(PiouPiouCards.nest)
+    result = result._2.exchangeCard(PiouPiouCards.nest)
     assert(result._1 == PiouPiouCards.nest)
     assert(result._2.trashCards.isEmpty)
     assert(result._2.cards.length == 3)

@@ -1,16 +1,22 @@
-package Deck
+package dev.Deck
 
 import scala.util.Random
 import java.{util => ju}
 import scala.annotation.tailrec
 
-import Card.PiouPiouCards._
+import dev.Card.PiouPiouCards
+import dev.Card.PiouPiouCards._
 
-case class Deck(cards: List[PlayCard], trashCards: List[PlayCard]) {
+// todo: review all implementation and remove unnesasary things
+case class Deck(
+    cards: List[PlayCard],
+    trashCards: List[PlayCard] = List.empty
+) {
 
+  // todo: looks redundand with typed actors approach
   def dealCards(
       numberOfPlayers: Int,
-      numberOfCards: Int
+      numberOfCards: Int = 5
   ): (Option[List[List[PlayCard]]], Deck) = {
     // Check if we have enough cards for players
     val isEnoughCardsForDeal = numberOfCards * numberOfPlayers > cards.length
@@ -27,8 +33,7 @@ case class Deck(cards: List[PlayCard], trashCards: List[PlayCard]) {
     }
   }
 
-  def exchange(card: PlayCard): (PlayCard, Deck) = {
-    // todo: Maybe we need to distinguish playcard from additional cards (egg & chick). By the rules of the game we are not able to exchange them.
+  def exchangeCard(card: PlayCard): (PlayCard, Deck) = {
     val newTrash = trashCards :+ card
     if (cards.isEmpty) {
       val shuffledTrash = shuffle(newTrash)
@@ -42,10 +47,74 @@ case class Deck(cards: List[PlayCard], trashCards: List[PlayCard]) {
     }
   }
 
+  def exchangeCards(cards: List[PlayCard]): (List[PlayCard], Deck) = exchange(
+    cards
+  )
+
+  @tailrec
+  private def exchange(
+      oldCards: List[PlayCard],
+      newCards: List[PlayCard] = List.empty,
+      deck: Deck = this
+  ): (List[PlayCard], Deck) = {
+    if (!oldCards.isEmpty) {
+      val card = oldCards.head
+      val exchanged = exchangeCard(card)
+      exchange(oldCards.tail, newCards :+ exchanged._1, exchanged._2)
+    } else {
+      (newCards, deck)
+    }
+  }
+
+  def exchangeCardsToEgg(
+      cards: List[PlayCard]
+  ): (Option[EggCard], Option[List[PlayCard]], Deck) = {
+    if (cards.length == 3) {
+      if (
+        cardsContainCard(cards, PiouPiouCards.nest) &&
+        cardsContainCard(cards, PiouPiouCards.chicken) &&
+        cardsContainCard(cards, PiouPiouCards.rooster)
+      ) {
+        val exchanged = exchange(cards, List(), this)
+        (Option(PiouPiouCards.egg), Option(exchanged._1), exchanged._2)
+      } else {
+        (Option.empty, Option.empty, this)
+      }
+    } else {
+      (Option.empty, Option.empty, this)
+    }
+  }
+
+  def exchangeEggToChick(
+      egg: EggCard,
+      cards: List[PlayCard]
+  ): (Option[ChickCard], Option[List[PlayCard]], Deck) = {
+    if (cards.length == 2) {
+      if (
+        cards(0) == PiouPiouCards.chicken &&
+        cards(1) == PiouPiouCards.chicken
+      ) {
+        val exchanged = exchange(cards, List(), this)
+        (Option(PiouPiouCards.chick), Option(exchanged._1), exchanged._2)
+      } else {
+        (Option.empty, Option.empty, this)
+      }
+    } else {
+      (Option.empty, Option.empty, this)
+    }
+  }
+
+  private def cardsContainCard(cards: List[PlayCard], card: PlayCard): Boolean =
+    cards.contains(card)
+
   // todo: it seems private functionality not needed to be exposed. How do we test this?
   def shuffle(cards: List[PlayCard]): List[PlayCard] = Random.shuffle(cards)
 
   def drop(cardsToDrop: List[PlayCard]): Deck =
     Deck(cards, trashCards ::: cardsToDrop)
+
+  // todo: unit test this
+  def deal(numberOfCards: Int): (List[PlayCard], Deck) =
+    (cards.take(numberOfCards), Deck(cards, trashCards))
 
 }

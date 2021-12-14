@@ -1,17 +1,15 @@
-package Game
+package dev.Game
 
 import Player._
 import dev.PlayerInGame._
-import Deck._
+import dev.Deck._
 import scala.collection.mutable.HashMap
 import java.util.UUID
 import cats.data.Validated
 
-import java.util.UUID
-import Card._
-import Card.PiouPiouCards._
+import dev.Card._
+import dev.Card.PiouPiouCards._
 import scala.annotation.tailrec
-import Card._
 
 final case class GameValidation(value: String) {
   override def toString: String = s"$value"
@@ -125,7 +123,7 @@ case class Game(
   ): (List[PlayCard], Deck) = {
     if (!oldCards.isEmpty) {
       val card = oldCards.head
-      val exchanged = deck.exchange(card)
+      val exchanged = deck.exchangeCard(card)
       exchange(oldCards.tail, newCards :+ exchanged._1, exchanged._2)
     } else {
       (newCards, deck)

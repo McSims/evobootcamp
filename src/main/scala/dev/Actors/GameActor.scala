@@ -2,8 +2,8 @@ package dev.Actors
 
 import akka.actor._
 
-import Game._
-import Card.PiouPiouCards._
+import dev.Game._
+import dev.Card.PiouPiouCards._
 
 import java.util.UUID
 
@@ -13,7 +13,7 @@ case class Exchange(cards: List[PlayCard]) extends ExchangeAction
 case class ExchangeToEgg(cards: List[PlayCard]) extends ExchangeAction
 case class ExchangeToChick(cards: List[PlayCard]) extends ExchangeAction
 
-class GameActor(var game: ActorRef) extends Actor {
+class GameActor(var game: Game) extends Actor {
 
   def receive = {
     case Exchange(cards)        => {}

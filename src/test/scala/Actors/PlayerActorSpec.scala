@@ -8,7 +8,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 
 import dev.PlayerInGame._
 import dev.Actors._
-import Card.PiouPiouCards
+import dev.Card.PiouPiouCards
 import java.util.UUID
 
 class PlayerSpec()

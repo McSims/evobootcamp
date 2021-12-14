@@ -1,6 +1,6 @@
 package dev.PlayerInGame
 
-import Card.PiouPiouCards._
+import dev.Card.PiouPiouCards._
 
 import java.util.UUID
 

@@ -1,9 +1,9 @@
 import org.scalatest.flatspec.AnyFlatSpec
-import Game._
-import Deck._
+import dev.Game._
+import dev.Deck._
 import Player._
 import java.util.UUID
-import Card.PiouPiouCards
+import dev.Card.PiouPiouCards
 
 class GameSpec extends AnyFlatSpec {
 

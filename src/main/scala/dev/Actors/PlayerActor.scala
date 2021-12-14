@@ -4,7 +4,7 @@ import akka.actor._
 import Game._
 import Deck._
 import dev.PlayerInGame._
-import Card.PiouPiouCards._
+import dev.Card.PiouPiouCards._
 import java.util.UUID
 
 sealed trait PlayerMessage
