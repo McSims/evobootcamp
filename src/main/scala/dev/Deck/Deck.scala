@@ -8,16 +8,10 @@ import dev.Card.PiouPiouCards
 import dev.Card.PiouPiouCards._
 
 // todo: review all implementation and remove unnesasary things
-case class Deck(
-    cards: List[PlayCard],
-    trashCards: List[PlayCard] = List.empty
-) {
+case class Deck(cards: List[PlayCard], trashCards: List[PlayCard] = List.empty) {
 
   // todo: looks redundand with typed actors approach
-  def dealCards(
-      numberOfPlayers: Int,
-      numberOfCards: Int = 5
-  ): (Option[List[List[PlayCard]]], Deck) = {
+  def dealCards(numberOfPlayers: Int, numberOfCards: Int = 5): (Option[List[List[PlayCard]]], Deck) = {
     // Check if we have enough cards for players
     val isEnoughCardsForDeal = numberOfCards * numberOfPlayers > cards.length
     // todo: extract game rules from the deck... Deck should be reusable for any game.
@@ -47,16 +41,10 @@ case class Deck(
     }
   }
 
-  def exchangeCards(cards: List[PlayCard]): (List[PlayCard], Deck) = exchange(
-    cards
-  )
+  def exchangeCards(cards: List[PlayCard]): (List[PlayCard], Deck) = exchange(cards)
 
   @tailrec
-  private def exchange(
-      oldCards: List[PlayCard],
-      newCards: List[PlayCard] = List.empty,
-      deck: Deck = this
-  ): (List[PlayCard], Deck) = {
+  private def exchange(oldCards: List[PlayCard], newCards: List[PlayCard] = List.empty, deck: Deck = this): (List[PlayCard], Deck) = {
     if (!oldCards.isEmpty) {
       val card = oldCards.head
       val exchanged = exchangeCard(card)
@@ -66,9 +54,7 @@ case class Deck(
     }
   }
 
-  def exchangeCardsToEgg(
-      cards: List[PlayCard]
-  ): (Option[EggCard], Option[List[PlayCard]], Deck) = {
+  def exchangeCardsToEgg(cards: List[PlayCard]): (Option[EggCard], Option[List[PlayCard]], Deck) = {
     if (cards.length == 3) {
       if (
         cardsContainCard(cards, PiouPiouCards.nest) &&
@@ -85,10 +71,7 @@ case class Deck(
     }
   }
 
-  def exchangeEggToChick(
-      egg: EggCard,
-      cards: List[PlayCard]
-  ): (Option[ChickCard], Option[List[PlayCard]], Deck) = {
+  def exchangeEggToChick(cards: List[PlayCard]): (Option[ChickCard], Option[List[PlayCard]], Deck) = {
     if (cards.length == 2) {
       if (
         cards(0) == PiouPiouCards.chicken &&
@@ -104,17 +87,14 @@ case class Deck(
     }
   }
 
-  private def cardsContainCard(cards: List[PlayCard], card: PlayCard): Boolean =
-    cards.contains(card)
+  private def cardsContainCard(cards: List[PlayCard], card: PlayCard): Boolean = cards.contains(card)
 
   // todo: it seems private functionality not needed to be exposed. How do we test this?
   def shuffle(cards: List[PlayCard]): List[PlayCard] = Random.shuffle(cards)
 
-  def drop(cardsToDrop: List[PlayCard]): Deck =
-    Deck(cards, trashCards ::: cardsToDrop)
+  def drop(cardsToDrop: List[PlayCard]): Deck = Deck(cards, trashCards ::: cardsToDrop)
 
   // todo: unit test this
-  def deal(numberOfCards: Int): (List[PlayCard], Deck) =
-    (cards.take(numberOfCards), Deck(cards, trashCards))
+  def deal(numberOfCards: Int): (List[PlayCard], Deck) = (cards.take(numberOfCards), Deck(cards, trashCards))
 
 }
