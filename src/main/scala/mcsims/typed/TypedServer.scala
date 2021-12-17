@@ -71,7 +71,7 @@ object GamePlay {
         }
         defendMessage.outputRef ! GameAttackDeffended(defendMessage.attackerId, defendMessage.defenderId)
         context.self ! GamePlayNextTurn
-        apply(turns, Option(Attack(defendMessage.attackerId, defendMessage.defenderId)), server)
+        apply(turns, None, server)
 
       case looseMessage: GamePlayLooseAttack =>
         if (!isValidAttack(attack, looseMessage.defenderId, looseMessage.attackerId)) {
