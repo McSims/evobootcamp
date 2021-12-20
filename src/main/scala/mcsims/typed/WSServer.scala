@@ -1,85 +1,54 @@
 package mcsims.typed
 
-import java.util.UUID
+import mcsims.typed.Server._
 
-import cats.effect.{ExitCode, IO, IOApp}
+import akka.actor.typed.{ActorSystem, SpawnProtocol}
 
-import fs2.{Pipe, Stream}
-import fs2.concurrent.{Queue, Topic}
+import akka.stream.Materializer
 
-import io.circe.parser._
-import io.circe.syntax._
-import org.http4s._
-import org.http4s.dsl.io._
-import org.http4s.implicits._
-import org.http4s.server.blaze.BlazeServerBuilder
-import org.http4s.server.websocket.WebSocketBuilder
-import org.http4s.websocket.WebSocketFrame
+import akka.stream.scaladsl.Flow
+import akka.stream.scaladsl.Source
+import akka.stream.scaladsl.Sink
 
-import scala.concurrent.ExecutionContext
+import akka.http.scaladsl.Http
 
-import mcsims.typed.Messages._
+import akka.http.scaladsl.model.{HttpRequest, HttpResponse, Uri}
+import akka.http.scaladsl.model.HttpMethods._
+import akka.http.scaladsl.model.ws.{UpgradeToWebSocket, Message, TextMessage, BinaryMessage}
 
-object WSServer extends IOApp {
+import akka.http.scaladsl.server.Directives._
 
-  def pioupiou(topic: Topic[IO, WebSocketFrame]): HttpRoutes[IO] = {
-    HttpRoutes.of[IO] { case req @ GET -> Root / "pioupiou" =>
-      def clientPipe(id: UUID): Pipe[IO, WebSocketFrame, WebSocketFrame] = {
-        _.collect {
-          case WebSocketFrame.Text(message, _) => {
-            val json = decode[FromClient](message) match {
-              case Right(value) => IO(SampleResponse("Message from", "client").asJson.toString)
-              case Left(error)  => IO(ErrorMessage(error.toString).asJson.toString)
-            }
-            for {
-              message <- json
-              response = WebSocketFrame.Text(message)
-            } yield response
-          }
-        }.evalMap(text => text)
+import scala.concurrent.Future
+
+object WSServer extends App {
+
+  implicit val system = ActorSystem(SpawnProtocol(), "PiouPiouSystem")
+  implicit val materializer: Materializer = Materializer(system.classicSystem)
+
+  val server = Http(system).bind(interface = "localhost", port = 9001)
+
+  val greeterWebSocketService = Flow[Message]
+    .mapConcat {
+      case tm: TextMessage => TextMessage(Source.single("Hello ") ++ tm.textStream) :: Nil
+      case bm: BinaryMessage =>
+        bm.dataStream.runWith(Sink.ignore)
+        Nil
+    }
+
+  val requestHandler: HttpRequest => HttpResponse = { case req @ HttpRequest(GET, Uri.Path("/pioupiou"), _, _, _) =>
+    req.header[UpgradeToWebSocket] match {
+      case Some(upgrade) => {
+        HttpResponse(200)
+        upgrade.handleMessages(greeterWebSocketService)
       }
-
-      def gamePipe(id: UUID): Pipe[IO, WebSocketFrame, WebSocketFrame] = {
-        _.collect { case WebSocketFrame.Text(message, _) =>
-          val json = decode[SampleResponse](message) match {
-            case Right(value) => IO(SampleResponse("Message from", "server").asJson.toString)
-            case Left(error)  => IO(ErrorMessage(error.toString).asJson.toString)
-          }
-          for {
-            message <- json
-            response = WebSocketFrame.Text(message)
-          } yield response
-
-        }.evalMap(text => text)
-      }
-
-      for {
-        queue <- Queue.unbounded[IO, WebSocketFrame]
-        id = UUID.randomUUID()
-        combinedStream = Stream(
-          queue.dequeue.through(clientPipe(id)),
-          topic.subscribe(100).through(gamePipe(id))
-        ).parJoinUnbounded
-        response <- WebSocketBuilder[IO]
-          .build(receive = queue.enqueue, send = combinedStream)
-      } yield response
+      case None =>
+        HttpResponse(400, entity = "Unknown request!")
     }
   }
 
-  private def webSocketApp(topic: Topic[IO, WebSocketFrame]) = pioupiou(topic).orNotFound
-
-  override def run(args: List[String]): IO[ExitCode] = {
-    for {
-      topic <- Topic[IO, WebSocketFrame](WebSocketFrame.Text(SampleResponse("Hello", "World").asJson.toString))
-      exitCode <- {
-        BlazeServerBuilder[IO](ExecutionContext.global)
-          .bindHttp(port = 9002, host = "localhost")
-          .withHttpApp(webSocketApp(topic))
-          .serve
-          .compile
-          .drain
-          .as(ExitCode.Success)
-      }
-    } yield exitCode
-  }
+  val bind: Future[Http.ServerBinding] = server
+    .to(Sink.foreach { connection =>
+      connection.handleWithSyncHandler(requestHandler)
+    })
+    .run()
 }

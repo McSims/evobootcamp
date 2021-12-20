@@ -20,15 +20,14 @@ val circeVersion = "0.13.0"
 libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core" % catsVersion,
   "org.typelevel" %% "cats-effect" % catsEffectVersion,
-  "org.http4s" %% "http4s-dsl" % http4sVersion,
-  "org.http4s" %% "http4s-blaze-server" % http4sVersion,
-  "org.http4s" %% "http4s-blaze-client" % http4sVersion,
-  "org.http4s" %% "http4s-circe" % http4sVersion,
-  "org.http4s" %% "http4s-jdk-http-client" % "0.3.6",
   "org.scalatest" %% "scalatest" % scalaTestVersion % "test",
   "org.scalatest" %% "scalatest-flatspec" % scalaTestVersion % "test",
+//
   "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion,
+  "com.typesafe.akka" %% "akka-stream-typed" % akkaVersion,
+  "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
+//
   "io.circe" %% "circe-core" % circeVersion,
   "io.circe" %% "circe-generic" % circeVersion,
   "io.circe" %% "circe-generic-extras" % circeVersion,

@@ -7,12 +7,18 @@ object Messages {
 
   sealed trait ClientMessages
 
+  case object ServerInputComplete extends ClientMessages
+  final case class ServerInputFail(ex: Throwable) extends ClientMessages
+
   final case class FromClient(command: String) extends ClientMessages
 
   implicit val clientMessageDecoder: Decoder[FromClient] = deriveDecoder
   implicit val clientMessageEncoder: Encoder[FromClient] = deriveEncoder
 
   sealed trait ServerMessages
+
+  case object ServerOutputComplete extends ServerMessages
+  final case class ServerOutputFail(ex: Throwable) extends ServerMessages
 
   final case class SampleResponse(title: String, message: String) extends ServerMessages
   final case class ErrorMessage(message: String) extends ServerMessages

@@ -296,16 +296,24 @@ object LobbyService {
   */
 object Server {
 
+  import cats.syntax.all._
+  import cats.effect.IO
+  import io.circe.parser._
+  import io.circe.syntax._
+
   import java.util.UUID
   import dev.Card.PiouPiouCards._
 
   import mcsims.typed.Lobby._
+  import mcsims.typed.Messages._
 
   type ServerRef = ActorRef[ServerMessage]
 
   sealed trait ServerMessage
   sealed trait Input extends ServerMessage
   sealed trait Output extends ServerMessage
+
+  final case object HelloInputMessage extends Input
 
   // todo: looks better to wrap into PlayerInGame...
   final case class ServerPlayerCardsUpdated(playerId: UUID, name: String, cards: List[PlayCard], eggs: List[EggCard], chicks: List[ChickCard]) extends Input
@@ -314,16 +322,17 @@ object Server {
 
   final case class ServerAttack(playerId: UUID, attackerId: UUID) extends Input
 
-  def apply(outputRef: ActorRef[Output]): Behavior[ServerMessage] = {
+  final case class HelloOutputMessage(title: String, message: String) extends Output
+
+  def apply: Behavior[ServerMessage] = {
     setup { context =>
       startServer(
-        context.spawnAnonymous(Lobby(server = context.self)),
-        outputRef
+        context.spawnAnonymous(Lobby(server = context.self))
       )
     }
   }
 
-  def startServer(lobby: LobbyRef, outputRef: ActorRef[Output]): Behavior[ServerMessage] = receiveMessage {
+  def startServer(lobby: LobbyRef): Behavior[ServerMessage] = receiveMessage {
     case cardsUpdateMessage: ServerPlayerCardsUpdated =>
       // outputRef ! -> send message as JSON
       same
@@ -335,6 +344,9 @@ object Server {
       same
     case attack: ServerAttack =>
       // outputRef ! -> send message as JSON
+      same
+
+    case HelloInputMessage =>
       same
   }
 }
