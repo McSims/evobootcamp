@@ -11,6 +11,8 @@ object Player {
 
   import mcsims.typed.Server._
 
+  import mcsims.typed.Messages._
+
   type PlayerRef = ActorRef[PlayerMessage]
 
   sealed trait PlayerMessage

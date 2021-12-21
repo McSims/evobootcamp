@@ -15,6 +15,7 @@
 // todo: publish attack event to server
 // todo: deck ! exchange fox card to new
 // todo: deck ! exchange two roosters card to new
+// todo: handle all messages here
 
 package mcsims.typed
 
@@ -32,6 +33,7 @@ object GamePlay {
   import dev.Card.PiouPiouCards._
 
   import mcsims.typed.Server._
+  import mcsims.typed.Messages._
   import mcsims.typed.GamePlayService._
   import mcsims.typed.Player._
   import mcsims.typed.Game._
@@ -260,7 +262,6 @@ object Lobby {
 
   def apply(games: Map[UUID, GameRef] = Map.empty, server: ServerRef): Behavior[LobbyMessage] = receive { (context, message) =>
     message match {
-
       case LobbyCreateGameMessage =>
         val newGameId = UUID.randomUUID
         val deckRef = context.spawnAnonymous(Deck(deckItself.Deck(PiouPiouCards.allAvailableCards)))
@@ -309,44 +310,21 @@ object Server {
 
   type ServerRef = ActorRef[ServerMessage]
 
-  sealed trait ServerMessage
-  sealed trait Input extends ServerMessage
-  sealed trait Output extends ServerMessage
-
-  final case object HelloInputMessage extends Input
-
-  // todo: looks better to wrap into PlayerInGame...
-  final case class ServerPlayerCardsUpdated(playerId: UUID, name: String, cards: List[PlayCard], eggs: List[EggCard], chicks: List[ChickCard]) extends Input
-  final case class ServerPlayerWon(playerId: UUID) extends Input
-  final case class ServerNextTurn(playerId: UUID) extends Input
-
-  final case class ServerAttack(playerId: UUID, attackerId: UUID) extends Input
-
-  final case class HelloOutputMessage(title: String, message: String) extends Output
-
-  def apply: Behavior[ServerMessage] = {
+  def apply(outputRef: ActorRef[ServerMessage]): Behavior[ServerMessage] =
     setup { context =>
-      startServer(
-        context.spawnAnonymous(Lobby(server = context.self))
-      )
+      {
+        startServer(
+          context.spawnAnonymous(Lobby(server = context.self)),
+          outputRef
+        )
+      }
     }
-  }
 
-  def startServer(lobby: LobbyRef): Behavior[ServerMessage] = receiveMessage {
-    case cardsUpdateMessage: ServerPlayerCardsUpdated =>
-      // outputRef ! -> send message as JSON
-      same
-    case playerWon: ServerPlayerWon =>
-      // outputRef ! -> send message as JSON
-      same
-    case nextTurn: ServerNextTurn =>
-      // outputRef ! -> send message as JSON
-      same
-    case attack: ServerAttack =>
-      // outputRef ! -> send message as JSON
-      same
-
-    case HelloInputMessage =>
-      same
+  def startServer(lobby: LobbyRef, outputRef: ServerRef): Behavior[ServerMessage] = receive { (context, message) =>
+    message match {
+      case m: HelloInputMessage =>
+        outputRef ! HelloOutputMessage(s"Server actor:, ${m.message}")
+        same
+    }
   }
 }
