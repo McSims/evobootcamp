@@ -57,7 +57,7 @@ object WSServer extends App {
         }
       )
       .map(m ⇒ TextMessage.Strict(m))
-      .toMat(Sink.asPublisher(false))(Keep.both)
+      .toMat(Sink.asPublisher(true))(Keep.both)
       .run()
 
   val gameServer = system.systemActorOf(Server(actorRef), "PiouPiouServer")
