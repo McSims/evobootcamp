@@ -32,6 +32,7 @@ import akka.stream.FanInShape
 import akka.stream.FanOutShape
 import akka.stream.scaladsl.Keep
 import org.reactivestreams.Publisher
+import akka.stream.scaladsl.BroadcastHub
 
 object WSServer extends App {
 
@@ -48,7 +49,7 @@ object WSServer extends App {
       OverflowStrategy.fail
     )
 
-  val (actorRef: ActorRef[ServerMessage], publisher: Publisher[TextMessage.Strict]) =
+  val (actorRef, source) =
     outputSource
       .map(output =>
         output match {
@@ -57,7 +58,7 @@ object WSServer extends App {
         }
       )
       .map(m ⇒ TextMessage.Strict(m))
-      .toMat(Sink.asPublisher(true))(Keep.both)
+      .toMat(BroadcastHub.sink)(Keep.both)
       .run()
 
   val gameServer = system.systemActorOf(Server(actorRef), "PiouPiouServer")
@@ -71,7 +72,7 @@ object WSServer extends App {
 
   val requestHandler: HttpRequest => HttpResponse = { case req @ HttpRequest(GET, Uri.Path("/pioupiou"), _, _, _) =>
     req.header[UpgradeToWebSocket] match {
-      case Some(upgrade) => { upgrade.handleMessagesWithSinkSource(incoming, Source.fromPublisher(publisher)) }
+      case Some(upgrade) => { upgrade.handleMessagesWithSinkSource(incoming, source) }
       case None          => HttpResponse(400, entity = "Unknown request!")
     }
   }
