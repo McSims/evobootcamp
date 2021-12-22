@@ -34,6 +34,7 @@ import akka.stream.FanOutShape
 import akka.stream.scaladsl.Keep
 import org.reactivestreams.Publisher
 import akka.stream.scaladsl.BroadcastHub
+import java.util.UUID
 
 object WSServer extends App {
 
@@ -69,9 +70,14 @@ object WSServer extends App {
     .collect { case TextMessage.Strict(m) ⇒ m }
     .map({ string =>
       decode[ClientRequest](string) match {
-        case Right(value) =>
-          value.requestType match {
+        case Right(clientMessage) =>
+          clientMessage.requestType match {
             case "SHOW_GAMES" => ClientServerAllGames
+            case "JOIN_GAME" =>
+              clientMessage.payload match {
+                case Some(gamePayload) => ClientServerJoin(gamePayload.gameId, gamePayload.nick)
+                case None              => ClientServerParsingError("Unknown payload.")
+              }
           }
 
         case Left(error) => ClientServerParsingError(error.toString)

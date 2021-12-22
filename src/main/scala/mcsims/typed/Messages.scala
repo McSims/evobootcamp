@@ -1,6 +1,7 @@
 package mcsims.typed
 
 import dev.Card.PiouPiouCards._
+import java.util.UUID
 
 import io.circe.{Decoder, Encoder}
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
@@ -11,15 +12,20 @@ object Messages {
   // todo: Leave only messages that are parsed to JSON here... The rest should go to respective actor.
   sealed trait ClientMessages
 
-  final case class ClientRequest(requestType: String) extends ClientMessages
+  final case class ClientRequest(requestType: String, payload: Option[GamePayload]) extends ClientMessages
 
   implicit val clientMessageDecoder: Decoder[ClientRequest] = deriveDecoder
   implicit val clientMessageEncoder: Encoder[ClientRequest] = deriveEncoder
 
+  final case class GamePayload(gameId: String, nick: String)
+
+  implicit val gamePayloadDecoder: Decoder[GamePayload] = deriveDecoder
+  implicit val gamePayloadEncoder: Encoder[GamePayload] = deriveEncoder
+
   sealed trait ServerMessage
 
   final case object ClientServerAllGames extends ServerMessage
-  final case class ClientServerJoin(nick: String) extends ServerMessage
+  final case class ClientServerJoin(gameId: String, nick: String) extends ServerMessage
   final case class ClientServerParsingError(error: String) extends ServerMessage
 
   final case class ServerClientGames(games: List[String]) extends ServerMessage

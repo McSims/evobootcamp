@@ -285,7 +285,7 @@ object Lobby {
       case joinMessage: LobbyJoinGameMessage =>
         val game = getGame(games, UUID.fromString(joinMessage.gameId))
         game ! GameJoinMessage(joinMessage.nick)
-        // todo: send response with updated list of available games
+        server ! HelloInputMessage("Successfully joined!")
         apply(games, server)
 
       case LobbyAllGamesMessage =>
@@ -341,10 +341,6 @@ object Server {
 
   def startServer(lobby: LobbyRef, serverRef: ServerRef): Behavior[ServerMessage] = receive { (context, message) =>
     message match {
-      case joinMessage: ClientServerJoin =>
-        // lobby ! LobbyJoinGameMessage("", joinMessage.nick)
-        serverRef ! HelloOutputMessage(s"Server actor: join message received: ${joinMessage.nick}")
-        same
       case errorMessage: ClientServerParsingError =>
         serverRef ! HelloOutputMessage(s"Server actor: error occured - ${errorMessage.error}")
         same
@@ -356,6 +352,9 @@ object Server {
         same
       case allGamesMessage: ServerClientGames =>
         serverRef ! ServerClientGames(allGamesMessage.games)
+        same
+      case clientJoinGame: ClientServerJoin =>
+        lobby ! LobbyJoinGameMessage(clientJoinGame.gameId, clientJoinGame.nick)
         same
     }
   }
