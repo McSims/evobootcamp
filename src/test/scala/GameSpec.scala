@@ -3,7 +3,8 @@ import dev.Game._
 import dev.Deck._
 import Player._
 import java.util.UUID
-import dev.Card.PiouPiouCards
+import mcsims.typed.Cards._
+import mcsims.typed.Cards
 
 class GameSpec extends AnyFlatSpec {
 
@@ -11,7 +12,7 @@ class GameSpec extends AnyFlatSpec {
     new Game(
       UUID.randomUUID(),
       List(),
-      Deck(PiouPiouCards.allAvailableCards, List())
+      Deck(Cards.allAvailableCards, List())
     )
   val playerName = "Maksims"
   val player = Player(UUID.randomUUID(), playerName)
@@ -48,13 +49,13 @@ class GameSpec extends AnyFlatSpec {
       assert(player.cards.length == 5)
     })
     assert(
-      gameWithCards.deck.cards.length == PiouPiouCards.allAvailableCards.length - (5 * 5)
+      gameWithCards.deck.cards.length == Cards.allAvailableCards.length - (5 * 5)
     )
   }
 
   it should "exchange players cards" in {
     val cardsToExchange =
-      List(PiouPiouCards.fox, PiouPiouCards.rooster, PiouPiouCards.nest)
+      List(Cards.fox, Cards.rooster, Cards.nest)
     val currentDeckCardsLenght = game.deck.cards.length
     val gameWithCards = game.exchangeCards(cardsToExchange)
     assert(gameWithCards._2.trashCards == cardsToExchange)
@@ -66,7 +67,7 @@ class GameSpec extends AnyFlatSpec {
   it should "exchange cards to egg" in {
     val currentDeckTrashCardsLenght = game.deck.trashCards.length
     val cardsToExchange =
-      List(PiouPiouCards.chicken, PiouPiouCards.rooster, PiouPiouCards.nest)
+      List(Cards.chicken, Cards.rooster, Cards.nest)
     val exchanged = game.exchangeCardsToEgg(cardsToExchange)
     assert(!exchanged._1.isEmpty)
     assert(!exchanged._2.isEmpty)
@@ -79,7 +80,7 @@ class GameSpec extends AnyFlatSpec {
   it should "not exchange egg to wrong combination" in {
     val currentDeckTrashCardsLenght = game.deck.trashCards.length
     val cardsToExchange =
-      List(PiouPiouCards.chicken, PiouPiouCards.chicken, PiouPiouCards.chicken)
+      List(Cards.chicken, Cards.chicken, Cards.chicken)
     val exchanged = game.exchangeCardsToEgg(cardsToExchange)
     assert(exchanged._1.isEmpty)
     assert(exchanged._2.isEmpty)
@@ -91,8 +92,8 @@ class GameSpec extends AnyFlatSpec {
   it should "exchange chickens and egg to chick" in {
     val currentDeckTrashCardsLenght = game.deck.trashCards.length
     val cardsToExchange =
-      List(PiouPiouCards.chicken, PiouPiouCards.chicken)
-    val exchanged = game.exchangeEggToChick(PiouPiouCards.egg, cardsToExchange)
+      List(Cards.chicken, Cards.chicken)
+    val exchanged = game.exchangeEggToChick(Cards.egg, cardsToExchange)
     assert(!exchanged._1.isEmpty)
     assert(!exchanged._2.isEmpty)
     assert(exchanged._2.get.length == cardsToExchange.length)
@@ -104,8 +105,8 @@ class GameSpec extends AnyFlatSpec {
   it should "not exchange chick to wrong combination" in {
     val currentDeckTrashCardsLenght = game.deck.trashCards.length
     val cardsToExchange =
-      List(PiouPiouCards.nest, PiouPiouCards.chicken)
-    val exchanged = game.exchangeEggToChick(PiouPiouCards.egg, cardsToExchange)
+      List(Cards.nest, Cards.chicken)
+    val exchanged = game.exchangeEggToChick(Cards.egg, cardsToExchange)
     assert(exchanged._1.isEmpty)
     assert(exchanged._2.isEmpty)
     assert(

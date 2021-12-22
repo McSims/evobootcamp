@@ -8,15 +8,11 @@ import org.scalatest.wordspec.AnyWordSpecLike
 
 import dev.PlayerInGame._
 import dev.Actors._
-import dev.Card.PiouPiouCards
+import mcsims.typed.Cards._
+import mcsims.typed.Cards
 import java.util.UUID
 
-class PlayerSpec()
-    extends TestKit(ActorSystem("PlayerSpec"))
-    with ImplicitSender
-    with AnyWordSpecLike
-    with Matchers
-    with BeforeAndAfterAll {
+class PlayerSpec() extends TestKit(ActorSystem("PlayerSpec")) with ImplicitSender with AnyWordSpecLike with Matchers with BeforeAndAfterAll {
 
   override def afterAll(): Unit = {
     TestKit.shutdownActorSystem(system)
@@ -24,17 +20,17 @@ class PlayerSpec()
 
   "Player actor" must {
     "accept cards" in {
-      actor ! NewCardsMessage(List(PiouPiouCards.chicken))
+      actor ! NewCardsMessage(List(Cards.chicken))
       assert(result.cards.length == 1)
     }
 
     "accept chick" in {
-      actor ! NewChickMessage(PiouPiouCards.chick)
+      actor ! NewChickMessage(Cards.chick)
       assert(result.chicks.length == 1)
     }
 
     "accept egg" in {
-      actor ! NewEggMessage(PiouPiouCards.egg)
+      actor ! NewEggMessage(Cards.egg)
       assert(result.eggs.length == 1)
     }
   }

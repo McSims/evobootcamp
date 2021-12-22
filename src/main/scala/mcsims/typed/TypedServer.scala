@@ -24,7 +24,7 @@ import akka.actor.typed.{ActorRef, Behavior}
 
 import scala.collection.immutable
 
-/** Turn object operates infinite queue of players.
+/** GamePlay object operates infinite queue of players.
   */
 object GamePlay {
 

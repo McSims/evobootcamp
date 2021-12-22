@@ -1,48 +1,49 @@
 package dev
 
 import org.scalatest.flatspec.AnyFlatSpec
-import dev.Card.PiouPiouCards
+import mcsims.typed.Cards._
+import mcsims.typed.Cards
 
 class CardsSpec extends AnyFlatSpec {
   "Piou Piou game" should "have 47 card" in {
-    assert(PiouPiouCards.allAvailableCards.length == 47)
+    assert(Cards.allAvailableCards.length == 47)
   }
 
-  it should s"contain ${PiouPiouCards.foxCount} foxes" in {
+  it should s"contain ${Cards.foxCount} foxes" in {
     assert(
-      PiouPiouCards.allAvailableCards
-        .filter(_ == PiouPiouCards.fox)
-        .length == PiouPiouCards.foxCount
+      Cards.allAvailableCards
+        .filter(_ == Cards.fox)
+        .length == Cards.foxCount
     )
   }
 
-  it should s"contain ${PiouPiouCards.roostersCount} roosters" in {
+  it should s"contain ${Cards.roostersCount} roosters" in {
     assert(
-      PiouPiouCards.allAvailableCards
-        .filter(_ == PiouPiouCards.rooster)
-        .length == PiouPiouCards.roostersCount
+      Cards.allAvailableCards
+        .filter(_ == Cards.rooster)
+        .length == Cards.roostersCount
     )
   }
 
-  it should s"contain ${PiouPiouCards.chickensCount} chickens" in {
+  it should s"contain ${Cards.chickensCount} chickens" in {
     assert(
-      PiouPiouCards.allAvailableCards
-        .filter(_ == PiouPiouCards.chicken)
-        .length == PiouPiouCards.chickensCount
+      Cards.allAvailableCards
+        .filter(_ == Cards.chicken)
+        .length == Cards.chickensCount
     )
   }
 
-  it should s"contain ${PiouPiouCards.nestsCount} nests" in {
+  it should s"contain ${Cards.nestsCount} nests" in {
     assert(
-      PiouPiouCards.allAvailableCards
-        .filter(_ == PiouPiouCards.nest)
-        .length == PiouPiouCards.nestsCount
+      Cards.allAvailableCards
+        .filter(_ == Cards.nest)
+        .length == Cards.nestsCount
     )
   }
 
   it should "contain 18 eggs" in {
     assert(
-      PiouPiouCards.availableEggs.length == 18
+      Cards.availableEggs.length == 18
     )
   }
 }

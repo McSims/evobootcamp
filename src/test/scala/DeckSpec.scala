@@ -1,21 +1,22 @@
 import org.scalatest.flatspec.AnyFlatSpec
 import dev.Deck.Deck
-import dev.Card.PiouPiouCards
+import mcsims.typed.Cards._
+import mcsims.typed.Cards
 
 class DeckSpec extends AnyFlatSpec {
 
   def fullDeck: Deck = {
-    val cards = PiouPiouCards.allAvailableCards
+    val cards = Cards.allAvailableCards
     Deck(cards, List())
   }
 
   def shortDeck = Deck(
-    List(PiouPiouCards.rooster, PiouPiouCards.fox, PiouPiouCards.chicken),
+    List(Cards.rooster, Cards.fox, Cards.chicken),
     List()
   )
 
   "A deck" should "deal cards" in {
-    assert(fullDeck.cards.length == PiouPiouCards.allAvailableCards.length)
+    assert(fullDeck.cards.length == Cards.allAvailableCards.length)
     val dealtCards = fullDeck.dealCards(3, 5)
     assert(dealtCards._1.get.length == 3)
     assert(dealtCards._1.get(0).length == 5)
@@ -38,8 +39,8 @@ class DeckSpec extends AnyFlatSpec {
   }
 
   it should "exchange card" in {
-    val result = shortDeck.exchangeCard(PiouPiouCards.nest)
-    assert(result._1 == PiouPiouCards.rooster)
+    val result = shortDeck.exchangeCard(Cards.nest)
+    assert(result._1 == Cards.rooster)
     assert(result._2.trashCards.length == 1)
     assert(result._2.cards.length == 2)
   }
@@ -49,21 +50,21 @@ class DeckSpec extends AnyFlatSpec {
   }
 
   it should "shuffle trash cards when no cards for exchange" in {
-    var result = shortDeck.exchangeCard(PiouPiouCards.nest)
-    result = result._2.exchangeCard(PiouPiouCards.nest)
-    result = result._2.exchangeCard(PiouPiouCards.nest)
-    assert(result._1 == PiouPiouCards.chicken)
+    var result = shortDeck.exchangeCard(Cards.nest)
+    result = result._2.exchangeCard(Cards.nest)
+    result = result._2.exchangeCard(Cards.nest)
+    assert(result._1 == Cards.chicken)
     assert(result._2.trashCards.length == 3)
     assert(result._2.cards.isEmpty)
-    result = result._2.exchangeCard(PiouPiouCards.nest)
-    assert(result._1 == PiouPiouCards.nest)
+    result = result._2.exchangeCard(Cards.nest)
+    assert(result._1 == Cards.nest)
     assert(result._2.trashCards.isEmpty)
     assert(result._2.cards.length == 3)
-    result._2.cards.foreach((card) => assert(card == PiouPiouCards.nest))
+    result._2.cards.foreach((card) => assert(card == Cards.nest))
   }
 
   it should "accept cards to trash" in {
-    val dropList = List(PiouPiouCards.rooster, PiouPiouCards.rooster)
+    val dropList = List(Cards.rooster, Cards.rooster)
     var result = shortDeck.drop(dropList)
     assert(result.trashCards == dropList)
     assert(result.cards == shortDeck.cards)
