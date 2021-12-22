@@ -7,16 +7,11 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 
 import Player._
-import Card._
-import Deck._
+import dev.Card._
+import dev.Deck._
 import java.util.UUID
 
-class PlayersActorSpec()
-    extends TestKit(ActorSystem("PlayersSpec"))
-    with ImplicitSender
-    with AnyWordSpecLike
-    with Matchers
-    with BeforeAndAfterAll {
+class PlayersActorSpec() extends TestKit(ActorSystem("PlayersSpec")) with ImplicitSender with AnyWordSpecLike with Matchers with BeforeAndAfterAll {
 
   override def afterAll(): Unit = {
     TestKit.shutdownActorSystem(system)
