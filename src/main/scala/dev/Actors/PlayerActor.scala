@@ -1,8 +1,8 @@
 package dev.Actors
 
 import akka.actor._
-import Game._
-import Deck._
+import dev.Game._
+import dev.Deck._
 import dev.PlayerInGame._
 import dev.Card.PiouPiouCards._
 import java.util.UUID

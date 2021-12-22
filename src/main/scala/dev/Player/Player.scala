@@ -1,7 +1,7 @@
 package Player
 
-import Deck._
-import Game._
+import dev.Deck._
+import dev.Game._
 
 import dev.Card.PiouPiouCards._
 

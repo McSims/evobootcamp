@@ -2,7 +2,7 @@ package dev.Actors
 
 import akka.actor._
 import Player._
-import Deck._
+import dev.Deck._
 import java.util.UUID
 
 sealed trait PlayersMessage
