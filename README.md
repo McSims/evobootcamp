@@ -25,3 +25,34 @@ Game actions:
 **NB!** One cannot lay an egg or produce a chick immediately after having picked out a card!
 </br>
 </br>
+
+## Technical 
+
+Run project with
+
+```
+sbt run pioupiou
+```
+
+WS server will be available to connect on `localhost:9001/pioupiou`
+
+### Client message examples 
+</br>
+
+Available games:
+```
+{
+    "requestType": "SHOW_GAMES"
+}
+```
+
+Join game:
+```
+{
+  "requestType": "JOIN_GAME",
+  "payload": {
+    "gameId": "208c1eb9-983f-4e46-8a79-5566c207c408",
+    "nick": "McSims"
+  }
+}
+```

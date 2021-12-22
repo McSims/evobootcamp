@@ -24,6 +24,7 @@ import akka.stream.OverflowStrategy
 
 import io.circe.parser._
 import io.circe.syntax._
+
 import akka.NotUsed
 import akka.Done
 import akka.actor.typed.ActorRef
@@ -55,6 +56,7 @@ object WSServer extends App {
         output match {
           // todo: handle all messages here
           case HelloOutputMessage(message) => HelloOutputMessage(message).asJson.toString
+          case ServerClientGames(games)    => ServerClientGames(games).asJson.toString
         }
       )
       .map(m ⇒ TextMessage.Strict(m))
@@ -65,9 +67,19 @@ object WSServer extends App {
 
   val incoming: Sink[Message, NotUsed] = Flow[Message]
     .collect { case TextMessage.Strict(m) ⇒ m }
+    .map({ string =>
+      decode[ClientRequest](string) match {
+        case Right(value) =>
+          value.requestType match {
+            case "SHOW_GAMES" => ClientServerAllGames
+          }
+
+        case Left(error) => ClientServerParsingError(error.toString)
+      }
+    })
     // .map -> client input json -> server known message
-    .to(Sink.foreach { s ⇒
-      gameServer ! HelloInputMessage(s)
+    .to(Sink.foreach { message ⇒
+      gameServer ! message
     })
 
   val requestHandler: HttpRequest => HttpResponse = { case req @ HttpRequest(GET, Uri.Path("/pioupiou"), _, _, _) =>

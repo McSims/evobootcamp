@@ -1,8 +1,9 @@
 package mcsims.typed
 
+import dev.Card.PiouPiouCards._
+
 import io.circe.{Decoder, Encoder}
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
-import akka.actor.typed.ActorRef
 
 object Messages {
 
@@ -10,18 +11,22 @@ object Messages {
   // todo: Leave only messages that are parsed to JSON here... The rest should go to respective actor.
   sealed trait ClientMessages
 
-  final case class FromClient(command: String) extends ClientMessages
+  final case class ClientRequest(requestType: String) extends ClientMessages
 
-  implicit val clientMessageDecoder: Decoder[FromClient] = deriveDecoder
-  implicit val clientMessageEncoder: Encoder[FromClient] = deriveEncoder
+  implicit val clientMessageDecoder: Decoder[ClientRequest] = deriveDecoder
+  implicit val clientMessageEncoder: Encoder[ClientRequest] = deriveEncoder
 
   sealed trait ServerMessage
 
-  import java.util.UUID
-  import dev.Card.PiouPiouCards._
+  final case object ClientServerAllGames extends ServerMessage
+  final case class ClientServerJoin(nick: String) extends ServerMessage
+  final case class ClientServerParsingError(error: String) extends ServerMessage
 
-  import mcsims.typed.Lobby._
-  import mcsims.typed.Messages._
+  final case class ServerClientGames(games: List[String]) extends ServerMessage
+  implicit val serverGamesDecoder: Decoder[ServerClientGames] = deriveDecoder
+  implicit val serverGamesEncoder: Encoder[ServerClientGames] = deriveEncoder
+
+  import java.util.UUID
 
   // todo: looks better to wrap into PlayerInGame...
   final case class ServerPlayerCardsUpdated(playerId: UUID, name: String, cards: List[PlayCard], eggs: List[EggCard], chicks: List[ChickCard]) extends ServerMessage

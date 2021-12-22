@@ -21,14 +21,14 @@ package mcsims.typed
 
 import akka.actor.typed.scaladsl.Behaviors._
 import akka.actor.typed.{ActorRef, Behavior}
-import java.util.UUID
-import dev.Actors.CreatePlayer
-import dev.Card.PiouPiouCards
+
 import scala.collection.immutable
 
 /** Turn object operates infinite queue of players.
   */
 object GamePlay {
+
+  import java.util.UUID
 
   import dev.Card.PiouPiouCards._
 
@@ -88,6 +88,8 @@ object GamePlay {
 
 // todo: unit test this
 object GamePlayService {
+  import java.util.UUID
+
   import mcsims.typed.GamePlay._
 
   def nextTurn(turns: List[UUID]): (UUID, List[UUID]) = {
@@ -113,6 +115,7 @@ object GamePlayService {
 object Game {
 
   import java.util.UUID
+  import dev.Card.PiouPiouCards
   import dev.Card.PiouPiouCards._
 
   import mcsims.typed.Server._
@@ -227,6 +230,8 @@ object Game {
 
 object GameService {
 
+  import java.util.UUID
+
   import mcsims.typed.Game._
   import mcsims.typed.Player._
 
@@ -243,6 +248,11 @@ object GameService {
   */
 object Lobby {
 
+  import java.util.UUID
+
+  import dev.Card.PiouPiouCards
+  import dev.Card.PiouPiouCards._
+
   import dev.{Deck => deckItself}
 
   import mcsims.typed.Server._
@@ -250,6 +260,7 @@ object Lobby {
   import mcsims.typed.Game._
   import mcsims.typed.LobbyService._
   import mcsims.typed.Deck._
+  import mcsims.typed.Messages._
 
   type LobbyRef = ActorRef[LobbyMessage]
 
@@ -258,6 +269,7 @@ object Lobby {
   sealed trait Output extends LobbyMessage
 
   final object LobbyCreateGameMessage extends Input
+  final object LobbyAllGamesMessage extends Input
   final case class LobbyJoinGameMessage(gameId: String, nick: String) extends Input
 
   def apply(games: Map[UUID, GameRef] = Map.empty, server: ServerRef): Behavior[LobbyMessage] = receive { (context, message) =>
@@ -268,7 +280,6 @@ object Lobby {
         val turnRef = context.spawnAnonymous(GamePlay(List.empty, server = server))
         val game = Game(newGameId, deck = deckRef, gamePlay = turnRef, lobby = context.self, server = server)
         val gameRef = context.spawnAnonymous(game)
-        // todo: send response with updated list of available games
         apply(games + (newGameId -> gameRef), server)
 
       case joinMessage: LobbyJoinGameMessage =>
@@ -277,11 +288,16 @@ object Lobby {
         // todo: send response with updated list of available games
         apply(games, server)
 
+      case LobbyAllGamesMessage =>
+        server ! ServerClientGames(games.keySet.map(_.toString).toList)
+        same
     }
   }
 }
 
 object LobbyService {
+
+  import java.util.UUID
 
   import mcsims.typed.Game._
 
@@ -313,17 +329,33 @@ object Server {
   def apply(outputRef: ActorRef[ServerMessage]): Behavior[ServerMessage] =
     setup { context =>
       {
-        startServer(
-          context.spawnAnonymous(Lobby(server = context.self)),
+        val lobby = context.spawnAnonymous(Lobby(server = context.self))
+        val server = startServer(
+          lobby,
           outputRef
         )
+        lobby ! LobbyCreateGameMessage
+        server
       }
     }
 
-  def startServer(lobby: LobbyRef, outputRef: ServerRef): Behavior[ServerMessage] = receive { (context, message) =>
+  def startServer(lobby: LobbyRef, serverRef: ServerRef): Behavior[ServerMessage] = receive { (context, message) =>
     message match {
-      case m: HelloInputMessage =>
-        outputRef ! HelloOutputMessage(s"Server actor:, ${m.message}")
+      case joinMessage: ClientServerJoin =>
+        // lobby ! LobbyJoinGameMessage("", joinMessage.nick)
+        serverRef ! HelloOutputMessage(s"Server actor: join message received: ${joinMessage.nick}")
+        same
+      case errorMessage: ClientServerParsingError =>
+        serverRef ! HelloOutputMessage(s"Server actor: error occured - ${errorMessage.error}")
+        same
+      case helloMessage: HelloInputMessage =>
+        serverRef ! HelloOutputMessage(s"Server actor:, ${helloMessage.message}")
+        same
+      case ClientServerAllGames =>
+        lobby ! LobbyAllGamesMessage
+        same
+      case allGamesMessage: ServerClientGames =>
+        serverRef ! ServerClientGames(allGamesMessage.games)
         same
     }
   }
