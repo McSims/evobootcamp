@@ -8,7 +8,8 @@ import dev.Game._
 
 import java.util.UUID
 
-import dev.Card.PiouPiouCards
+import mcsims.typed.Cards
+import mcsims.typed.Cards._
 
 sealed trait GamesMessage
 
@@ -26,7 +27,7 @@ class GamesActor(var games: List[Game]) extends Actor {
       val game = Game(
         UUID.randomUUID(),
         List(),
-        Deck(PiouPiouCards.allAvailableCards, List())
+        Deck(Cards.allAvailableCards, List())
       )
 
       // Create game actor and store it in here is what I think should be done... but...

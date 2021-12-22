@@ -1,12 +1,42 @@
 package mcsims.typed
 
-import dev.Card.PiouPiouCards._
+import mcsims.typed.Cards._
 import java.util.UUID
 
 import io.circe.{Decoder, Encoder}
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
 
 object Messages {
+
+  object IncommingMessages {
+
+    import io.circe.{Decoder, Encoder, HCursor, Json}
+    import io.circe.Decoder.Result
+
+    case class IncommingMessage(messageType: String, payload: Option[Any])
+
+    case class JoinGamePayload(gameId: String, nick: String)
+    case class GameActionPayload(playerId: String, gameId: String)
+
+    implicit val incommingMessageDecoder: Decoder[IncommingMessage] = new Decoder[IncommingMessage] {
+      override def apply(hCursor: HCursor): Result[IncommingMessage] =
+        for {
+          messageType <- hCursor.downField("messageType").as[String]
+          payload <- messageType match {
+            case "SHOW_GAMES" => hCursor.downField("payload").as[Option[String]]
+            case "JOIN_GAME"  => hCursor.downField("payload").as[JoinGamePayload]
+          }
+        } yield {
+          IncommingMessage(messageType, Some(payload))
+        }
+    }
+
+    implicit val gamePayloadDecoder: Decoder[JoinGamePayload] = deriveDecoder
+    implicit val gamePayloadEncoder: Encoder[JoinGamePayload] = deriveEncoder
+
+    implicit val otherPayloadDecoder: Decoder[GameActionPayload] = deriveDecoder
+    implicit val otherPayloadEncoder: Encoder[GameActionPayload] = deriveEncoder
+  }
 
   // todo: Rewiew as not currently used...
   // todo: Leave only messages that are parsed to JSON here... The rest should go to respective actor.

@@ -30,7 +30,7 @@ object GamePlay {
 
   import java.util.UUID
 
-  import dev.Card.PiouPiouCards._
+  import mcsims.typed.Cards._
 
   import mcsims.typed.Server._
   import mcsims.typed.Messages._
@@ -115,8 +115,9 @@ object GamePlayService {
 object Game {
 
   import java.util.UUID
-  import dev.Card.PiouPiouCards
-  import dev.Card.PiouPiouCards._
+
+  import mcsims.typed.Cards
+  import mcsims.typed.Cards._
 
   import mcsims.typed.Server._
   import mcsims.typed.Lobby._
@@ -219,7 +220,7 @@ object Game {
           val defender = getPlayer(players, attackLostMessage.attackerId)
           defender ! PlayerLooseEggMessage
           val attacker = getPlayer(players, attackLostMessage.defenderId)
-          attacker ! PlayerNewEggMessage(PiouPiouCards.egg)
+          attacker ! PlayerNewEggMessage(Cards.egg)
           // todo: deck ! exchange fox card to new
           same
 
@@ -240,122 +241,4 @@ object GameService {
       case Some(player) => player
       case None         => throw new RuntimeException
     }
-}
-
-/** Lobby is where all games are stored and players choose one to join.
-  *
-  * Lobby can communicate back to `Server` via its `Input` trait.
-  */
-object Lobby {
-
-  import java.util.UUID
-
-  import dev.Card.PiouPiouCards
-  import dev.Card.PiouPiouCards._
-
-  import dev.{Deck => deckItself}
-
-  import mcsims.typed.Server._
-  import mcsims.typed.Player._
-  import mcsims.typed.Game._
-  import mcsims.typed.LobbyService._
-  import mcsims.typed.Deck._
-  import mcsims.typed.Messages._
-
-  type LobbyRef = ActorRef[LobbyMessage]
-
-  sealed trait LobbyMessage
-  sealed trait Input extends LobbyMessage
-  sealed trait Output extends LobbyMessage
-
-  final object LobbyCreateGameMessage extends Input
-  final object LobbyAllGamesMessage extends Input
-  final case class LobbyJoinGameMessage(gameId: String, nick: String) extends Input
-
-  def apply(games: Map[UUID, GameRef] = Map.empty, server: ServerRef): Behavior[LobbyMessage] = receive { (context, message) =>
-    message match {
-      case LobbyCreateGameMessage =>
-        val newGameId = UUID.randomUUID
-        val deckRef = context.spawnAnonymous(Deck(deckItself.Deck(PiouPiouCards.allAvailableCards)))
-        val turnRef = context.spawnAnonymous(GamePlay(List.empty, server = server))
-        val game = Game(newGameId, deck = deckRef, gamePlay = turnRef, lobby = context.self, server = server)
-        val gameRef = context.spawnAnonymous(game)
-        apply(games + (newGameId -> gameRef), server)
-
-      case joinMessage: LobbyJoinGameMessage =>
-        val game = getGame(games, UUID.fromString(joinMessage.gameId))
-        game ! GameJoinMessage(joinMessage.nick)
-        server ! HelloInputMessage("Successfully joined!")
-        apply(games, server)
-
-      case LobbyAllGamesMessage =>
-        server ! ServerClientGames(games.keySet.map(_.toString).toList)
-        same
-    }
-  }
-}
-
-object LobbyService {
-
-  import java.util.UUID
-
-  import mcsims.typed.Game._
-
-  def getGame(games: Map[UUID, GameRef], uuid: UUID): GameRef =
-    games.get(uuid) match {
-      case Some(game) => game
-      case None       => throw new RuntimeException
-    }
-}
-
-// todo: It seems that Server must hold reference to game in order to directly communicate with the game and avoid using Lobby as proxy @George?
-/** Server is main communicator with outer world.
-  */
-object Server {
-
-  import cats.syntax.all._
-  import cats.effect.IO
-  import io.circe.parser._
-  import io.circe.syntax._
-
-  import java.util.UUID
-  import dev.Card.PiouPiouCards._
-
-  import mcsims.typed.Lobby._
-  import mcsims.typed.Messages._
-
-  type ServerRef = ActorRef[ServerMessage]
-
-  def apply(outputRef: ActorRef[ServerMessage]): Behavior[ServerMessage] =
-    setup { context =>
-      {
-        val lobby = context.spawnAnonymous(Lobby(server = context.self))
-        val server = startServer(
-          lobby,
-          outputRef
-        )
-        lobby ! LobbyCreateGameMessage
-        server
-      }
-    }
-
-  def startServer(lobby: LobbyRef, serverRef: ServerRef): Behavior[ServerMessage] = receive { (context, message) =>
-    message match {
-      case errorMessage: ClientServerParsingError =>
-        serverRef ! HelloOutputMessage(s"Server actor: error occured - ${errorMessage.error}")
-        same
-      case helloMessage: HelloInputMessage =>
-        serverRef ! HelloOutputMessage(s"Server actor:, ${helloMessage.message}")
-        same
-      case ClientServerAllGames =>
-        lobby ! LobbyAllGamesMessage
-        same
-      case allGamesMessage: ServerClientGames =>
-        serverRef ! ServerClientGames(allGamesMessage.games)
-        same
-      case clientJoinGame: ClientServerJoin =>
-        lobby ! LobbyJoinGameMessage(clientJoinGame.gameId, clientJoinGame.nick)
-        same
-    }
-  }
 }

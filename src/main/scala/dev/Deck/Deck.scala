@@ -4,8 +4,8 @@ import scala.util.Random
 import java.{util => ju}
 import scala.annotation.tailrec
 
-import dev.Card.PiouPiouCards
-import dev.Card.PiouPiouCards._
+import mcsims.typed.Cards
+import mcsims.typed.Cards._
 
 // todo: review all implementation and remove unnesasary things
 case class Deck(cards: List[PlayCard], trashCards: List[PlayCard] = List.empty) {
@@ -57,12 +57,12 @@ case class Deck(cards: List[PlayCard], trashCards: List[PlayCard] = List.empty) 
   def exchangeCardsToEgg(cards: List[PlayCard]): (Option[EggCard], Option[List[PlayCard]], Deck) = {
     if (cards.length == 3) {
       if (
-        cardsContainCard(cards, PiouPiouCards.nest) &&
-        cardsContainCard(cards, PiouPiouCards.chicken) &&
-        cardsContainCard(cards, PiouPiouCards.rooster)
+        cardsContainCard(cards, Cards.nest) &&
+        cardsContainCard(cards, Cards.chicken) &&
+        cardsContainCard(cards, Cards.rooster)
       ) {
         val exchanged = exchange(cards, List(), this)
-        (Option(PiouPiouCards.egg), Option(exchanged._1), exchanged._2)
+        (Option(Cards.egg), Option(exchanged._1), exchanged._2)
       } else {
         (Option.empty, Option.empty, this)
       }
@@ -74,11 +74,11 @@ case class Deck(cards: List[PlayCard], trashCards: List[PlayCard] = List.empty) 
   def exchangeEggToChick(cards: List[PlayCard]): (Option[ChickCard], Option[List[PlayCard]], Deck) = {
     if (cards.length == 2) {
       if (
-        cards(0) == PiouPiouCards.chicken &&
-        cards(1) == PiouPiouCards.chicken
+        cards(0) == Cards.chicken &&
+        cards(1) == Cards.chicken
       ) {
         val exchanged = exchange(cards, List(), this)
-        (Option(PiouPiouCards.chick), Option(exchanged._1), exchanged._2)
+        (Option(Cards.chick), Option(exchanged._1), exchanged._2)
       } else {
         (Option.empty, Option.empty, this)
       }

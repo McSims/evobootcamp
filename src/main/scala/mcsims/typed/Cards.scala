@@ -1,10 +1,9 @@
-package dev.Card
+package mcsims.typed
 
-case class CardName(val name: String) extends AnyVal
-case class CardId(val name: String) extends AnyVal
-case class CardImageUrl(val name: String) extends AnyVal
-
-object PiouPiouCards {
+object Cards {
+  case class CardName(val name: String) extends AnyVal
+  case class CardId(val name: String) extends AnyVal
+  case class CardImageUrl(val name: String) extends AnyVal
 
   private def eggName = CardName("Egg")
   private def nestName = CardName("Nest")
@@ -28,18 +27,8 @@ object PiouPiouCards {
   private def foxImage = CardImageUrl("FoxImage")
 
   case class PlayCard(name: CardName, id: CardId, imageUrl: CardImageUrl)
-
-  case class EggCard(
-      name: CardName,
-      id: CardId,
-      imageUrl: CardImageUrl
-  )
-
-  case class ChickCard(
-      name: CardName,
-      id: CardId,
-      imageUrl: CardImageUrl
-  )
+  case class EggCard(name: CardName, id: CardId, imageUrl: CardImageUrl)
+  case class ChickCard(name: CardName, id: CardId, imageUrl: CardImageUrl)
 
   def nest = PlayCard(nestName, nestId, nestImage)
   def rooster = PlayCard(roosterName, roosterId, roosterImage)

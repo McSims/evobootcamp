@@ -3,8 +3,6 @@ package Player
 import dev.Deck._
 import dev.Game._
 
-import dev.Card.PiouPiouCards._
-
 import java.util.UUID
 
 // Question: Why AnyVal case classes result in wierd structure?

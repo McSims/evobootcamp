@@ -1,7 +1,7 @@
 package dev
 
 import org.scalatest.flatspec.AnyFlatSpec
-import Card.PiouPiouCards
+import dev.Card.PiouPiouCards
 
 class CardsSpec extends AnyFlatSpec {
   "Piou Piou game" should "have 47 card" in {

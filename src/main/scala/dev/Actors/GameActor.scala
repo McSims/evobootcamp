@@ -3,7 +3,7 @@ package dev.Actors
 import akka.actor._
 
 import dev.Game._
-import dev.Card.PiouPiouCards._
+import mcsims.typed.Cards._
 
 import java.util.UUID
 

@@ -6,7 +6,7 @@ import java.util.UUID
 
 object Player {
 
-  import dev.Card.PiouPiouCards._
+  import mcsims.typed.Cards._
   import java.util.UUID
 
   import mcsims.typed.Server._

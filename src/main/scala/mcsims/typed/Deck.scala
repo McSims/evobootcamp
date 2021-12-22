@@ -11,8 +11,8 @@ object Deck {
   import java.util.UUID
 
   import dev.Deck._
-  import dev.Card.PiouPiouCards._
 
+  import mcsims.typed.Cards._
   import mcsims.typed.Player._
   import mcsims.typed.Game._
 
