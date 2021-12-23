@@ -2,6 +2,7 @@ package mcsims.typed
 
 import mcsims.typed.Server._
 import mcsims.typed.Messages._
+import mcsims.typed.Messages.IncommingMessages._
 
 import akka.actor.typed.{ActorSystem, SpawnProtocol}
 
@@ -69,14 +70,17 @@ object WSServer extends App {
   val incoming: Sink[Message, NotUsed] = Flow[Message]
     .collect { case TextMessage.Strict(m) ⇒ m }
     .map({ string =>
-      decode[ClientRequest](string) match {
+      decode[IncommingMessage](string) match {
         case Right(clientMessage) =>
-          clientMessage.requestType match {
+          clientMessage.messageType match {
             case "SHOW_GAMES" => ClientServerAllGames
             case "JOIN_GAME" =>
               clientMessage.payload match {
-                case Some(gamePayload) => ClientServerJoin(gamePayload.gameId, gamePayload.nick)
-                case None              => ClientServerParsingError("Unknown payload.")
+                case Some(payload) =>
+                  payload match {
+                    case JoinGamePayload(gameId, nick) => ClientServerJoin(gameId, nick)
+                    case None                          => ClientServerParsingError("Unknown payload.")
+                  }
               }
           }
 
