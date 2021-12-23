@@ -56,3 +56,26 @@ Join game:
   }
 }
 ```
+
+# TODOS
+
+```
+// todos: new RuntimeException
+// todo: looks better to wrap into PlayerInGame...
+// todo: unit test this
+// todo: looks redundand with typed actors approach
+// todo: it seems private functionality not needed to be exposed. How do we test this?
+// todo: rework a bit func so it returns optional tuple if everything goes well
+// todo: send final message to close actor system?
+// todo: review all implementation and remove unnesasary things
+// todo: send response with updated list of available games. how to achieve this if you operate with list of actor ref?
+// todo: It seems that Server must hold reference to game in order to directly communicate with the game and avoid using Lobby as proxy @George?
+// todo: bail out if game is in progress or finished
+// todo: rename turn -> gameplay
+// todo: tail throws...
+// todo: unite two playerRef messages into one
+// todo: publish attack event to server
+// todo: deck ! exchange fox card to new
+// todo: deck ! exchange two roosters card to new
+// todo: handle all messages here
+```

@@ -3,15 +3,6 @@ package mcsims.typed
 import akka.actor.typed.scaladsl.Behaviors._
 import akka.actor.typed.{ActorRef, Behavior}
 
-// import cats.syntax.all._
-// import cats.effect.IO
-
-// import io.circe.parser._
-// import io.circe.syntax._
-
-// import java.util.UUID
-// import mcsims.typed.Cards._
-
 import mcsims.typed.Lobby._
 import mcsims.typed.Messages._
 

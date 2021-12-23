@@ -1,5 +1,5 @@
 import org.scalatest.flatspec.AnyFlatSpec
-import dev.Deck.Deck
+import mcsims.typed.Deck._
 import mcsims.typed.Cards._
 import mcsims.typed.Cards
 

@@ -1,78 +1,78 @@
-package dev.Actors
+// package dev.Actors
 
-import akka.actor._
+// import akka.actor._
 
-import Player._
-import dev.Deck._
-import dev.Game._
+// import Player._
+// import mcsims.typed.Deck._
+// import dev.Game._
 
-import java.util.UUID
+// import java.util.UUID
 
-import mcsims.typed.Cards
-import mcsims.typed.Cards._
+// import mcsims.typed.Cards
+// import mcsims.typed.Cards._
 
-sealed trait GamesMessage
+// sealed trait GamesMessage
 
-case object AllGames extends GamesMessage
-case object NewGame extends GamesMessage
-case class JoinGame(gameId: String, player: Player) extends GamesMessage
+// case object AllGames extends GamesMessage
+// case object NewGame extends GamesMessage
+// case class JoinGame(gameId: String, player: Player) extends GamesMessage
 
-class GamesActor(var games: List[Game]) extends Actor {
+// class GamesActor(var games: List[Game]) extends Actor {
 
-  def receive = {
-    case AllGames => {
-      sender() ! games
-    }
-    case NewGame => {
-      val game = Game(
-        UUID.randomUUID(),
-        List(),
-        Deck(Cards.allAvailableCards, List())
-      )
+//   def receive = {
+//     case AllGames => {
+//       sender() ! games
+//     }
+//     case NewGame => {
+//       val game = Game(
+//         UUID.randomUUID(),
+//         List(),
+//         Deck(Cards.allAvailableCards, List())
+//       )
 
-      // Create game actor and store it in here is what I think should be done... but...
-      // how to get actor back?
+//       // Create game actor and store it in here is what I think should be done... but...
+//       // how to get actor back?
 
-      // val ref = context.system.actorOf(
-      //   Props(classOf[GameActor], game),
-      //   game.gameId.toString
-      // )
+//       // val ref = context.system.actorOf(
+//       //   Props(classOf[GameActor], game),
+//       //   game.gameId.toString
+//       // )
 
-      games = games :+ game
-      sender() ! game
-    }
+//       games = games :+ game
+//       sender() ! game
+//     }
 
-    // need to contract response here... sometimes it gives player, other all games
-    // question is how actors and validation work together?
-    case joinGame: JoinGame => {
-      val gameId = joinGame.gameId
-      val game = games
-        .filter({ game =>
-          game.gameId.toString.equals(gameId)
-        })
-        .headOption
+//     // need to contract response here... sometimes it gives player, other all games
+//     // question is how actors and validation work together?
+//     case joinGame: JoinGame => {
+//       val gameId = joinGame.gameId
+//       val game = games
+//         .filter({ game =>
+//           game.gameId.toString.equals(gameId)
+//         })
+//         .headOption
 
-      game match {
-        case Some(someGame) => {
-          someGame.joinGame(joinGame.player) match {
-            case Right(joininigResult) => {
-              val filteredGames = games.filter({ game =>
-                !game.gameId.toString.equals(gameId)
-              })
-              games = filteredGames :+ joininigResult._2
-              sender() ! joininigResult._1
-            }
-            case Left(validation) => {
-              // how to pass message back to caller? Shall we use Either / Validated here too?
-              sender() ! validation.toString
-            }
-          }
-        }
-        case None => {
-          sender() ! games
-        }
-      }
+//       game match {
+//         case Some(someGame) => {
+//           someGame.joinGame(joinGame.player) match {
+//             case Right(joininigResult) => {
+//               val filteredGames = games.filter({ game =>
+//                 !game.gameId.toString.equals(gameId)
+//               })
+//               games = filteredGames :+ joininigResult._2
+//               sender() ! joininigResult._1
+//             }
+//             case Left(validation) => {
+//               // how to pass message back to caller? Shall we use Either / Validated here too?
+//               sender() ! validation.toString
+//             }
+//           }
+//         }
+//         case None => {
+//           sender() ! games
+//         }
+//       }
 
-    }
-  }
-}
+//     }
+//   }
+// }

@@ -6,14 +6,14 @@ import javax.smartcardio.Card
 import akka.actor.typed.scaladsl.Behaviors._
 import akka.actor.typed.{ActorRef, Behavior}
 
-import dev.{Deck => deckItself}
+import mcsims.typed.Deck._
 
 import mcsims.typed.Cards
 import mcsims.typed.Server._
 import mcsims.typed.Player._
 import mcsims.typed.Game._
 import mcsims.typed.LobbyService._
-import mcsims.typed.Deck._
+import mcsims.typed.DeckActor._
 import mcsims.typed.Messages._
 
 /** Lobby is where all games are stored and players choose one to join.
@@ -34,7 +34,7 @@ object Lobby {
     message match {
       case LobbyCreateGameMessage =>
         val newGameId = UUID.randomUUID
-        val deckRef = context.spawnAnonymous(Deck(deckItself.Deck(Cards.allAvailableCards)))
+        val deckRef = context.spawnAnonymous(DeckActor(Deck(Cards.allAvailableCards)))
         val turnRef = context.spawnAnonymous(GamePlay(List.empty, server = server))
         val game = Game(newGameId, deck = deckRef, gamePlay = turnRef, lobby = context.self, server = server)
         val gameRef = context.spawnAnonymous(game)

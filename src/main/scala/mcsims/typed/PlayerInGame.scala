@@ -1,4 +1,4 @@
-package dev.PlayerInGame
+package mcsims.typed
 
 import mcsims.typed.Cards._
 
