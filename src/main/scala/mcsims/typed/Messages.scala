@@ -1,16 +1,17 @@
 package mcsims.typed
 
-import mcsims.typed.Cards._
 import java.util.UUID
 
 import io.circe.{Decoder, Encoder}
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
 
+import mcsims.typed.Cards._
+
 object Messages {
 
   object IncommingMessages {
 
-    import io.circe.{Decoder, Encoder, HCursor, Json}
+    import io.circe.{Decoder, HCursor}
     import io.circe.Decoder.Result
 
     case class IncommingMessage(messageType: String, payload: Option[Any])
@@ -36,6 +37,28 @@ object Messages {
 
     implicit val otherPayloadDecoder: Decoder[GameActionPayload] = deriveDecoder
     implicit val otherPayloadEncoder: Encoder[GameActionPayload] = deriveEncoder
+  }
+
+  object OutgoingMessages {
+    import io.circe.{Encoder, Decoder, Json}
+    import io.circe.generic.semiauto.{deriveEncoder, deriveDecoder}
+    import io.circe.parser._
+    import io.circe.syntax._
+
+    case class OutgoingMessage(messageType: String, payload: Option[OutgoingPayload] = Option.empty)
+
+    implicit val outgoingMessageEncoder: Encoder[OutgoingMessage] = deriveEncoder
+
+    sealed trait OutgoingPayload
+
+    implicit val payloadEncoder: Encoder[OutgoingPayload] = (payload: OutgoingPayload) =>
+      payload match {
+        case nextTurnPayload: PayloadNextTurn => nextTurnPayload.asJson
+      }
+
+    case class PayloadNextTurn(playerId: String) extends OutgoingPayload
+
+    implicit val nextTurnPayloadEncoder: Encoder[PayloadNextTurn] = deriveEncoder
   }
 
   // todo: Rewiew as not currently used...
