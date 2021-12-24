@@ -78,4 +78,6 @@ Join game:
 // todo: deck ! exchange fox card to new
 // todo: deck ! exchange two roosters card to new
 // todo: handle all messages here
+// todo: Try catch and bail with error message
+// todo: add game state
 ```

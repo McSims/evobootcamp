@@ -1,10 +1,16 @@
 package mcsims.typed
 
+import java.util.UUID
+
 import akka.actor.typed.scaladsl.Behaviors._
 import akka.actor.typed.{ActorRef, Behavior}
 
 import mcsims.typed.Lobby._
 import mcsims.typed.Messages._
+import mcsims.typed.Cards._
+
+import io.circe.{Decoder, Encoder}
+import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
 
 // todo: It seems that Server must hold reference to game in order to directly communicate with the game and avoid using Lobby as proxy @George?
 /** Server is main communicator with outer world.
@@ -12,6 +18,27 @@ import mcsims.typed.Messages._
 object Server {
 
   type ServerRef = ActorRef[ServerMessage]
+
+  sealed trait ServerMessage
+
+  final case object ServerInputAllGames extends ServerMessage
+  final case class ServerInputJoinGame(gameId: String, nick: String) extends ServerMessage
+  final case class ServerInputParsingError(error: String) extends ServerMessage
+
+  // todo: looks better to wrap into PlayerInGame...
+  final case class ServerPlayerCardsUpdated(playerId: UUID, name: String, cards: List[PlayCard], eggs: List[EggCard], chicks: List[ChickCard]) extends ServerMessage
+  final case class ServerPlayerWon(playerId: UUID) extends ServerMessage
+
+  final case class ServerInputNextTurn(playerId: UUID) extends ServerMessage
+  final case class ServerInputMessage(message: String) extends ServerMessage
+
+  final case class ServerOutputMessage(message: String) extends ServerMessage
+  final case class ServerOutputError(errorMessage: String) extends ServerMessage
+  final case class ServerOutputGames(games: List[GameWithPlayers]) extends ServerMessage
+  final case class ServerOutputGameJoined(playerId: UUID) extends ServerMessage
+
+  case object ServerComplete extends ServerMessage
+  final case class ServerFail(ex: Throwable) extends ServerMessage
 
   def apply(outputRef: ActorRef[ServerMessage]): Behavior[ServerMessage] =
     setup { context =>
@@ -28,20 +55,26 @@ object Server {
 
   def startServer(lobby: LobbyRef, serverRef: ServerRef): Behavior[ServerMessage] = receive { (context, message) =>
     message match {
-      case errorMessage: ClientServerParsingError =>
-        serverRef ! HelloOutputMessage(s"Server actor: error occured - ${errorMessage.error}")
+      case errorMessage: ServerInputParsingError =>
+        serverRef ! ServerOutputError(errorMessage.error)
         same
-      case helloMessage: HelloInputMessage =>
-        serverRef ! HelloOutputMessage(s"Server actor:, ${helloMessage.message}")
+      case infoMessage: ServerInputMessage =>
+        serverRef ! ServerOutputMessage(infoMessage.message)
         same
-      case ClientServerAllGames =>
+      case ServerInputAllGames =>
         lobby ! LobbyAllGamesMessage
         same
-      case allGamesMessage: ServerClientGames =>
-        serverRef ! ServerClientGames(allGamesMessage.games)
+      case allGamesMessage: ServerOutputGames =>
+        serverRef ! ServerOutputGames(allGamesMessage.games)
         same
-      case clientJoinGame: ClientServerJoin =>
-        lobby ! LobbyJoinGameMessage(clientJoinGame.gameId, clientJoinGame.nick)
+      case joinGame: ServerInputJoinGame =>
+        lobby ! LobbyJoinGameMessage(joinGame.gameId, joinGame.nick)
+        same
+      case joinedMessage: ServerOutputGameJoined =>
+        serverRef ! joinedMessage
+        same
+      case nextTurn: ServerInputNextTurn =>
+        serverRef ! nextTurn
         same
     }
   }

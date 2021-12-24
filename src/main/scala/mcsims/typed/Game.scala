@@ -55,13 +55,11 @@ object Game {
           gamePlay ! GamePlayAddPlayer(newPlayerId)
           val playerRef = context.spawnAnonymous(Player(newPlayerId, joinMessage.nick, server = server))
           val newPlayers = players + (newPlayerId -> playerRef)
-          if (players.keySet.toList.length == 5) {
+          if (newPlayers.keySet.toList.length == 2) {
             context.self ! GameStartMessage(gameId = gameId)
-            apply(gameId, stage, newPlayers, deck, gamePlay, lobby, server)
-          } else {
             lobby ! LobbyCreateGameMessage
-            apply(gameId, stage, newPlayers, deck, gamePlay, lobby, server)
           }
+          apply(gameId, stage, newPlayers, deck, gamePlay, lobby, server)
 
         case newGameMessage: GameStartMessage =>
           players.keySet.foreach(playerId => deck ! DeckDealCards(playerId, outputRef = context.self))

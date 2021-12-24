@@ -26,28 +26,36 @@ object Lobby {
   sealed trait Input extends LobbyMessage
   sealed trait Output extends LobbyMessage
 
+  // todo: add game state...
+  final case class GameWithPlayers(uuid: String, players: Int)
+
   final object LobbyCreateGameMessage extends Input
   final object LobbyAllGamesMessage extends Input
   final case class LobbyJoinGameMessage(gameId: String, nick: String) extends Input
 
-  def apply(games: Map[UUID, GameRef] = Map.empty, server: ServerRef): Behavior[LobbyMessage] = receive { (context, message) =>
+  def apply(games: Map[UUID, GameRef] = Map.empty, palyersInGame: Map[UUID, Int] = Map.empty, server: ServerRef): Behavior[LobbyMessage] = receive { (context, message) =>
     message match {
       case LobbyCreateGameMessage =>
-        val newGameId = UUID.randomUUID
+        val uuid = UUID.randomUUID
         val deckRef = context.spawnAnonymous(DeckActor(Deck(Cards.allAvailableCards)))
         val turnRef = context.spawnAnonymous(GamePlay(List.empty, server = server))
-        val game = Game(newGameId, deck = deckRef, gamePlay = turnRef, lobby = context.self, server = server)
+        val game = Game(uuid, deck = deckRef, gamePlay = turnRef, lobby = context.self, server = server)
         val gameRef = context.spawnAnonymous(game)
-        apply(games + (newGameId -> gameRef), server)
+        apply(games + (uuid -> gameRef), palyersInGame + (uuid -> 0), server)
 
       case joinMessage: LobbyJoinGameMessage =>
-        val game = getGame(games, UUID.fromString(joinMessage.gameId))
+        val uuid = UUID.fromString(joinMessage.gameId)
+        val playersInGame = getNumberOfPlayersInGame(palyersInGame, uuid)
+        val game = getGame(games, uuid)
         game ! GameJoinMessage(joinMessage.nick)
-        server ! HelloInputMessage("Successfully joined!")
-        apply(games, server)
+        server ! ServerOutputGameJoined(uuid)
+        apply(games, palyersInGame + (uuid -> (playersInGame + 1)), server)
 
       case LobbyAllGamesMessage =>
-        server ! ServerClientGames(games.keySet.map(_.toString).toList)
+        val gamesWithPlayers = games.keySet
+          .map({ uuid => GameWithPlayers(uuid.toString, getNumberOfPlayersInGame(palyersInGame, uuid)) })
+          .toList
+        server ! ServerOutputGames(gamesWithPlayers)
         same
     }
   }

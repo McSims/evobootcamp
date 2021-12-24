@@ -39,6 +39,8 @@ import java.util.UUID
 
 object WSServer extends App {
 
+  import mcsims.typed.Messages.OutgoingMessages._
+
   implicit val system = ActorSystem(SpawnProtocol(), "PiouPiouSystem")
   implicit val materializer: Materializer = Materializer(system.classicSystem)
 
@@ -46,8 +48,8 @@ object WSServer extends App {
 
   val outputSource =
     ActorSource.actorRef[ServerMessage](
-      completionMatcher = { case ServerOutputComplete => () },
-      failureMatcher = { case ServerOutputFail(ex) => ex },
+      completionMatcher = { case ServerComplete => () },
+      failureMatcher = { case ServerFail(ex) => ex },
       bufferSize = 1024,
       OverflowStrategy.fail
     )
@@ -56,9 +58,11 @@ object WSServer extends App {
     outputSource
       .map(output =>
         output match {
-          // todo: handle all messages here
-          case HelloOutputMessage(message) => HelloOutputMessage(message).asJson.toString
-          case ServerClientGames(games)    => ServerClientGames(games).asJson.toString
+          case ServerOutputMessage(message)     => OutgoingMessage("INFO", Some(PayloadInfo(message))).asJson.toString
+          case ServerOutputError(errorMessage)  => OutgoingMessage("ERROR", Some(PayloadError(errorMessage))).asJson.toString
+          case ServerOutputGames(games)         => OutgoingMessage("ALL_GAMES", Some(PayloadAllGames(games))).asJson.toString
+          case ServerInputNextTurn(playerId)    => OutgoingMessage("NEXT_TURN", Some(PayloadNextTurn(playerId.toString))).asJson.toString
+          case ServerOutputGameJoined(playerId) => OutgoingMessage("GAME_JOINED", Some(PayloadGameJoined(playerId.toString))).asJson.toString
         }
       )
       .map(m ⇒ TextMessage.Strict(m))
@@ -73,21 +77,21 @@ object WSServer extends App {
       decode[IncommingMessage](string) match {
         case Right(clientMessage) =>
           clientMessage.messageType match {
-            case "SHOW_GAMES" => ClientServerAllGames
+            case "SHOW_GAMES" => ServerInputAllGames
             case "JOIN_GAME" =>
               clientMessage.payload match {
                 case Some(payload) =>
                   payload match {
-                    case JoinGamePayload(gameId, nick) => ClientServerJoin(gameId, nick)
-                    case None                          => ClientServerParsingError("Unknown payload.")
+                    case JoinGamePayload(gameId, nick) => ServerInputJoinGame(gameId, nick)
+                    // case GameActionPayload(playerId, gameId) =>
+                    case None => ServerInputParsingError("Unknown payload.")
                   }
               }
           }
 
-        case Left(error) => ClientServerParsingError(error.toString)
+        case Left(error) => ServerInputParsingError(error.toString)
       }
     })
-    // .map -> client input json -> server known message
     .to(Sink.foreach { message ⇒
       gameServer ! message
     })

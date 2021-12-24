@@ -35,7 +35,7 @@ object GamePlay {
     message match {
       case GamePlayNextTurn =>
         val (uuid, newTurns) = nextTurn(turns)
-        server ! ServerNextTurn(uuid)
+        server ! ServerInputNextTurn(uuid)
         apply(turns, server = server)
 
       case newPlayer: GamePlayAddPlayer =>
