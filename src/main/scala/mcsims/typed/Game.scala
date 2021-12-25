@@ -14,6 +14,7 @@ import mcsims.typed.Player._
 import mcsims.typed.GamePlay._
 import mcsims.typed.DeckActor._
 import mcsims.typed.GameService._
+import mcsims.typed.PlayerInGame._
 
 /** Game object helds current game state.
   *
@@ -53,7 +54,8 @@ object Game {
         case joinMessage: GameJoinMessage =>
           val newPlayerId = UUID.randomUUID
           gamePlay ! GamePlayAddPlayer(newPlayerId)
-          val playerRef = context.spawnAnonymous(Player(newPlayerId, joinMessage.nick, server = server))
+          val playerInGame = PlayerInGame(newPlayerId, joinMessage.nick)
+          val playerRef = context.spawnAnonymous(Player(playerInGame, server = server))
           val newPlayers = players + (newPlayerId -> playerRef)
           if (newPlayers.keySet.toList.length == 2) {
             context.self ! GameStartMessage(gameId = gameId)

@@ -7,6 +7,10 @@ import io.circe.parser._
 import io.circe.syntax._
 
 import mcsims.typed.Lobby
+import mcsims.typed.Cards
+import mcsims.typed.PlayerInGame._
+
+import java.util.UUID
 
 class MessagesSpec extends AnyFlatSpec {
 
@@ -29,7 +33,39 @@ class MessagesSpec extends AnyFlatSpec {
     """{"messageType": "ERROR", "payload":{"errorMessage": "Error occured!"}}""",
     """{"messageType": "NEXT_TURN", "payload":{"playerId": "playerId"}}""",
     """{"messageType": "ALL_GAMES", "payload":{"games": [{"uuid":"gameId","players":0}]}}""",
-    """{"messageType": "GAME_JOINED", "payload":{"playerId": "playerId"}}"""
+    """{"messageType": "GAME_JOINED", "payload":{"playerId": "playerId"}}""",
+    """
+    {
+      "messageType": "PLAYER_CARDS",
+      "payload": {
+        "playerState": {
+          "playerId": "029c4bd3-afdf-4d21-9fe9-406f4583ef6c",
+          "name": "McSims",
+          "cards": [
+            {
+              "name": "Rooster",
+              "id": "3",
+              "imageUrl": "RoosterImage"
+            }
+          ],
+          "eggs": [
+            {
+              "name": "Egg",
+              "id": "1",
+              "imageUrl": "EggImage"
+            }
+          ],
+          "chicks": [
+            {
+              "name": "Chick",
+              "id": "5",
+              "imageUrl": "ChickImage"
+            }
+          ]
+        }
+      }
+    }
+    """
   )
 
   val outgoingMessages = List(
@@ -37,7 +73,11 @@ class MessagesSpec extends AnyFlatSpec {
     OutgoingMessage("ERROR", Option(PayloadError("Error occured!"))),
     OutgoingMessage("NEXT_TURN", Option(PayloadNextTurn("playerId"))),
     OutgoingMessage("ALL_GAMES", Option(PayloadAllGames(List(Lobby.GameWithPlayers("gameId", 0))))),
-    OutgoingMessage("GAME_JOINED", Option(PayloadGameJoined("playerId")))
+    OutgoingMessage("GAME_JOINED", Option(PayloadGameJoined("playerId"))),
+    OutgoingMessage(
+      "PLAYER_CARDS",
+      Option(PayloadPlayerCardsUpdate(PlayerInGame(UUID.fromString("029c4bd3-afdf-4d21-9fe9-406f4583ef6c"), "McSims", List(Cards.rooster), List(Cards.egg), List(Cards.chick))))
+    )
   )
 
   it should "parse outgoing messages" in {
@@ -48,5 +88,4 @@ class MessagesSpec extends AnyFlatSpec {
         fail(s"Message: ${parsed} is not: ${expected}")
     })
   }
-
 }

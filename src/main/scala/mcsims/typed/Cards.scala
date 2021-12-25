@@ -1,5 +1,9 @@
 package mcsims.typed
 
+import io.circe.Encoder
+import io.circe.generic.extras.semiauto._
+import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
+
 object Cards {
   case class CardName(val name: String) extends AnyVal
   case class CardId(val name: String) extends AnyVal
@@ -52,4 +56,12 @@ object Cards {
     val foxes = (0 until foxCount).map(_ => fox).toArray
     (nests ++ roosters ++ chickens ++ foxes).toList
   }
+
+  implicit val playCardEncoder: Encoder[PlayCard] = deriveEncoder
+  implicit val eggEncoder: Encoder[EggCard] = deriveEncoder
+  implicit val chickEncoder: Encoder[ChickCard] = deriveEncoder
+
+  implicit val cardNameEncoder: Encoder[CardName] = deriveUnwrappedEncoder
+  implicit val cardIdEncoder: Encoder[CardId] = deriveUnwrappedEncoder
+  implicit val cardImageEncoder: Encoder[CardImageUrl] = deriveUnwrappedEncoder
 }

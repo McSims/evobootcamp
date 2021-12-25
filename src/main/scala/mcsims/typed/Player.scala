@@ -1,17 +1,16 @@
 package mcsims.typed
 
-import akka.actor.typed.scaladsl.Behaviors._
-import akka.actor.typed.{ActorRef, Behavior}
 import java.util.UUID
 
+import akka.actor.typed.scaladsl.Behaviors._
+import akka.actor.typed.{ActorRef, Behavior}
+
+import mcsims.typed.Cards._
+import mcsims.typed.Server._
+import mcsims.typed.Messages._
+import mcsims.typed.PlayerInGame._
+
 object Player {
-
-  import mcsims.typed.Cards._
-  import java.util.UUID
-
-  import mcsims.typed.Server._
-
-  import mcsims.typed.Messages._
 
   type PlayerRef = ActorRef[PlayerMessage]
 
@@ -24,30 +23,31 @@ object Player {
 
   case object PlayerLooseEggMessage extends Input
 
-  def apply(playerId: UUID, name: String, cards: List[PlayCard] = List.empty, eggs: List[EggCard] = List.empty, chicks: List[ChickCard] = List.empty, server: ServerRef): Behavior[PlayerMessage] = {
+  def apply(playerState: PlayerInGame, server: ServerRef): Behavior[PlayerMessage] = {
     receive { (ctx, message) =>
       message match {
 
         case newCardsMessage: PlayerNewCardsMessage =>
-          val newCards = cards ++ newCardsMessage.cards
-          server ! ServerPlayerCardsUpdated(playerId, name, newCards, eggs, chicks)
-          apply(playerId, name, newCards, eggs, chicks, server)
+          val newPlayer = playerState.copy(cards = playerState.cards ++ newCardsMessage.cards)
+          server ! ServerInputPlayerCardsUpdated(newPlayer)
+          apply(newPlayer, server)
 
         case newEggMessage: PlayerNewEggMessage =>
-          val newEggs = eggs :+ newEggMessage.egg
-          server ! ServerPlayerCardsUpdated(playerId, name, cards, newEggs, chicks)
-          apply(playerId, name, cards, newEggs, chicks, server)
+          val newPlayer = playerState.copy(eggs = playerState.eggs :+ newEggMessage.egg)
+          server ! ServerInputPlayerCardsUpdated(newPlayer)
+          apply(newPlayer, server)
 
         case newChickMessage: PlayerNewChickMessage =>
-          val newChicks = chicks :+ newChickMessage.chick
-          server ! ServerPlayerCardsUpdated(playerId, name, cards, eggs, newChicks)
-          apply(playerId, name, cards, eggs, newChicks, server)
+          val newPlayer = playerState.copy(chicks = playerState.chicks :+ newChickMessage.chick)
+          server ! ServerInputPlayerCardsUpdated(newPlayer)
+          apply(newPlayer, server)
 
         case PlayerLooseEggMessage =>
           // todo: tail throws...
-          val newEggs = eggs.tail
-          server ! ServerPlayerCardsUpdated(playerId, name, cards, newEggs, chicks)
-          apply(playerId, name, cards, newEggs, chicks, server)
+          val newEggs = playerState.eggs.tail
+          val newPlayer = playerState.copy(eggs = newEggs)
+          server ! ServerInputPlayerCardsUpdated(newPlayer)
+          apply(newPlayer, server)
 
       }
     }

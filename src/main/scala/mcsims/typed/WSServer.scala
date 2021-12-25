@@ -11,28 +11,28 @@ import akka.stream.scaladsl.Flow
 import akka.stream.scaladsl.Source
 import akka.stream.scaladsl.Sink
 
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse, Uri}
 import akka.http.scaladsl.model.HttpMethods._
 import akka.http.scaladsl.model.ws.{UpgradeToWebSocket, Message, TextMessage, BinaryMessage}
 
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.server.Directives._
-
 import scala.concurrent.Future
-import akka.stream.typed.scaladsl.ActorSink
-import akka.stream.typed.scaladsl.ActorSource
+
 import akka.stream.OverflowStrategy
+import akka.stream.scaladsl.Keep
+
+import akka.actor.typed.ActorRef
+import akka.actor.typed.delivery.internal.ProducerControllerImpl
+
+import akka.stream.typed.scaladsl.{ActorSink, ActorSource}
 
 import io.circe.parser._
 import io.circe.syntax._
 
 import akka.NotUsed
 import akka.Done
-import akka.actor.typed.ActorRef
-import akka.actor.typed.delivery.internal.ProducerControllerImpl
-import akka.stream.FanInShape
-import akka.stream.FanOutShape
-import akka.stream.scaladsl.Keep
+
 import org.reactivestreams.Publisher
 import akka.stream.scaladsl.BroadcastHub
 import java.util.UUID
@@ -58,11 +58,13 @@ object WSServer extends App {
     outputSource
       .map(output =>
         output match {
-          case ServerOutputMessage(message)     => OutgoingMessage("INFO", Some(PayloadInfo(message))).asJson.toString
-          case ServerOutputError(errorMessage)  => OutgoingMessage("ERROR", Some(PayloadError(errorMessage))).asJson.toString
-          case ServerOutputGames(games)         => OutgoingMessage("ALL_GAMES", Some(PayloadAllGames(games))).asJson.toString
-          case ServerInputNextTurn(playerId)    => OutgoingMessage("NEXT_TURN", Some(PayloadNextTurn(playerId.toString))).asJson.toString
-          case ServerOutputGameJoined(playerId) => OutgoingMessage("GAME_JOINED", Some(PayloadGameJoined(playerId.toString))).asJson.toString
+          case ServerOutputMessage(message)          => OutgoingMessage("INFO", Some(PayloadInfo(message))).asJson.toString
+          case ServerOutputError(errorMessage)       => OutgoingMessage("ERROR", Some(PayloadError(errorMessage))).asJson.toString
+          case ServerOutputGames(games)              => OutgoingMessage("ALL_GAMES", Some(PayloadAllGames(games))).asJson.toString
+          case ServerOutputGameJoined(playerId)      => OutgoingMessage("GAME_JOINED", Some(PayloadGameJoined(playerId.toString))).asJson.toString
+          case ServerInputPlayerCardsUpdated(player) => OutgoingMessage("PLAYER_CARDS", Some(PayloadPlayerCardsUpdate(player))).asJson.toString
+          // todo: should only have output here... Fix traits.
+          case ServerInputNextTurn(playerId) => OutgoingMessage("NEXT_TURN", Some(PayloadNextTurn(playerId.toString))).asJson.toString
         }
       )
       .map(m ⇒ TextMessage.Strict(m))

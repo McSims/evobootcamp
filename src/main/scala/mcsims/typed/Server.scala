@@ -6,8 +6,9 @@ import akka.actor.typed.scaladsl.Behaviors._
 import akka.actor.typed.{ActorRef, Behavior}
 
 import mcsims.typed.Lobby._
-import mcsims.typed.Messages._
 import mcsims.typed.Cards._
+import mcsims.typed.Messages._
+import mcsims.typed.PlayerInGame._
 
 import io.circe.{Decoder, Encoder}
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
@@ -19,16 +20,17 @@ object Server {
 
   type ServerRef = ActorRef[ServerMessage]
 
+  // unreviewed
+  final case class ServerPlayerWon(playerId: UUID) extends ServerMessage
+
+  // reviewed
   sealed trait ServerMessage
 
   final case object ServerInputAllGames extends ServerMessage
   final case class ServerInputJoinGame(gameId: String, nick: String) extends ServerMessage
   final case class ServerInputParsingError(error: String) extends ServerMessage
 
-  // todo: looks better to wrap into PlayerInGame...
-  final case class ServerPlayerCardsUpdated(playerId: UUID, name: String, cards: List[PlayCard], eggs: List[EggCard], chicks: List[ChickCard]) extends ServerMessage
-  final case class ServerPlayerWon(playerId: UUID) extends ServerMessage
-
+  final case class ServerInputPlayerCardsUpdated(payerState: PlayerInGame) extends ServerMessage
   final case class ServerInputNextTurn(playerId: UUID) extends ServerMessage
   final case class ServerInputMessage(message: String) extends ServerMessage
 
