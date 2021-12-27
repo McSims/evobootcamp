@@ -32,7 +32,7 @@ class MessagesSpec extends AnyFlatSpec {
     """{"messageType": "INFO", "payload":{"message": "Alert message!"}}""",
     """{"messageType": "ERROR", "payload":{"errorMessage": "Error occured!"}}""",
     """{"messageType": "NEXT_TURN", "payload":{"playerId": "playerId"}}""",
-    """{"messageType": "ALL_GAMES", "payload":{"games": [{"uuid":"gameId","players":0}]}}""",
+    """{"messageType": "ALL_GAMES", "payload":{"games": [{"uuid":"gameId", "name": "gameName", "players":0, "stage": "FINISHED"}]}}""",
     """{"messageType": "GAME_JOINED", "payload":{"playerId": "playerId"}}""",
     """
     {
@@ -72,7 +72,7 @@ class MessagesSpec extends AnyFlatSpec {
     OutgoingMessage("INFO", Option(PayloadInfo("Alert message!"))),
     OutgoingMessage("ERROR", Option(PayloadError("Error occured!"))),
     OutgoingMessage("NEXT_TURN", Option(PayloadNextTurn("playerId"))),
-    OutgoingMessage("ALL_GAMES", Option(PayloadAllGames(List(Lobby.GameWithPlayers("gameId", 0))))),
+    OutgoingMessage("ALL_GAMES", Option(PayloadAllGames(List(Lobby.GameInfo("gameId", "gameName", 0, "FINISHED"))))),
     OutgoingMessage("GAME_JOINED", Option(PayloadGameJoined("playerId"))),
     OutgoingMessage(
       "PLAYER_CARDS",

@@ -26,36 +26,40 @@ object Lobby {
   sealed trait Input extends LobbyMessage
   sealed trait Output extends LobbyMessage
 
-  // todo: add game state...
-  final case class GameWithPlayers(uuid: String, players: Int)
+  final case class GameInfo(uuid: String, name: String, players: Int, stage: String = REGISTRATION_OPEN)
 
   final object LobbyCreateGameMessage extends Input
   final object LobbyAllGamesMessage extends Input
+  final case class LobbyGamesStateChangedMessage(gameId: UUID, stage: String) extends Input
   final case class LobbyJoinGameMessage(gameId: String, nick: String) extends Input
 
-  def apply(games: Map[UUID, GameRef] = Map.empty, palyersInGame: Map[UUID, Int] = Map.empty, server: ServerRef): Behavior[LobbyMessage] = receive { (context, message) =>
+  def apply(games: Map[UUID, GameRef] = Map.empty, gamesInfo: Map[UUID, GameInfo] = Map.empty, randomGameNames: List[String] = randomGameNames, server: ServerRef): Behavior[LobbyMessage] = receive { (context, message) =>
     message match {
       case LobbyCreateGameMessage =>
         val uuid = UUID.randomUUID
         val deckRef = context.spawnAnonymous(DeckActor(Deck(Cards.allAvailableCards)))
         val turnRef = context.spawnAnonymous(GamePlay(List.empty, server = server))
-        val game = Game(uuid, deck = deckRef, gamePlay = turnRef, lobby = context.self, server = server)
+        val gameNames = getRandomNameFrom(randomGameNames)
+        val game = Game(uuid, gameNames._1, deck = deckRef, gamePlay = turnRef, lobby = context.self, server = server)
         val gameRef = context.spawnAnonymous(game)
-        apply(games + (uuid -> gameRef), palyersInGame + (uuid -> 0), server)
+        val gameInfo = GameInfo(uuid.toString, gameNames._1, 0)
+        apply(games + (uuid -> gameRef), gamesInfo + (uuid -> gameInfo), gameNames._2, server)
 
       case joinMessage: LobbyJoinGameMessage =>
         val uuid = UUID.fromString(joinMessage.gameId)
-        val playersInGame = getNumberOfPlayersInGame(palyersInGame, uuid)
+        val gameInfo = getGameInfo(gamesInfo, uuid)
         val game = getGame(games, uuid)
         game ! GameJoinMessage(joinMessage.nick)
         server ! ServerOutputGameJoined(uuid)
-        apply(games, palyersInGame + (uuid -> (playersInGame + 1)), server)
+        context.self ! LobbyAllGamesMessage
+        apply(games, gamesInfo + (uuid -> (gameInfo.copy(players = gameInfo.players + 1))), randomGameNames, server)
+
+      case gameStateChanged: LobbyGamesStateChangedMessage =>
+        val gameInfo = getGameInfo(gamesInfo, gameStateChanged.gameId)
+        apply(games, gamesInfo + (gameStateChanged.gameId -> (gameInfo.copy(stage = gameStateChanged.stage))), randomGameNames, server)
 
       case LobbyAllGamesMessage =>
-        val gamesWithPlayers = games.keySet
-          .map({ uuid => GameWithPlayers(uuid.toString, getNumberOfPlayersInGame(palyersInGame, uuid)) })
-          .toList
-        server ! ServerOutputGames(gamesWithPlayers)
+        server ! ServerOutputGames(gamesInfo.values.toList)
         same
     }
   }

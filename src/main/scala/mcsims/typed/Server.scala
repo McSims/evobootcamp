@@ -36,7 +36,7 @@ object Server {
 
   final case class ServerOutputMessage(message: String) extends ServerMessage
   final case class ServerOutputError(errorMessage: String) extends ServerMessage
-  final case class ServerOutputGames(games: List[GameWithPlayers]) extends ServerMessage
+  final case class ServerOutputGames(games: List[GameInfo]) extends ServerMessage
   final case class ServerOutputGameJoined(playerId: UUID) extends ServerMessage
 
   case object ServerComplete extends ServerMessage
@@ -77,6 +77,9 @@ object Server {
         same
       case nextTurn: ServerInputNextTurn =>
         serverRef ! nextTurn
+        same
+      case cardsUpdated: ServerInputPlayerCardsUpdated =>
+        serverRef ! cardsUpdated
         same
     }
   }

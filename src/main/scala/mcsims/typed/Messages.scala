@@ -58,7 +58,7 @@ object Messages {
     case class PayloadNextTurn(playerId: String) extends OutgoingPayload
     case class PayloadError(errorMessage: String) extends OutgoingPayload
     case class PayloadInfo(message: String) extends OutgoingPayload
-    case class PayloadAllGames(games: List[GameWithPlayers]) extends OutgoingPayload
+    case class PayloadAllGames(games: List[GameInfo]) extends OutgoingPayload
     case class PayloadGameJoined(playerId: String) extends OutgoingPayload
     case class PayloadPlayerCardsUpdate(playerState: PlayerInGame) extends OutgoingPayload
 
@@ -67,7 +67,7 @@ object Messages {
     implicit val errorPayloadEncoder: Encoder[PayloadError] = deriveEncoder
     implicit val infoPayloadEncoder: Encoder[PayloadInfo] = deriveEncoder
     implicit val gamesPayloadEncoder: Encoder[PayloadAllGames] = deriveEncoder
-    implicit val gameWithPlayerEncoder: Encoder[GameWithPlayers] = deriveEncoder
+    implicit val gameWithPlayerEncoder: Encoder[GameInfo] = deriveEncoder
     implicit val gameJoinedEncoder: Encoder[PayloadGameJoined] = deriveEncoder
     implicit val playerCardsUpdateEncoder: Encoder[PayloadPlayerCardsUpdate] = deriveEncoder
   }

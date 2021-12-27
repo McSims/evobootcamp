@@ -46,7 +46,7 @@ object Game {
   val IN_PROGRESS = "IN_PROGRESS"
   val FINISHED = "FINISHED"
 
-  def apply(gameId: UUID, stage: String = REGISTRATION_OPEN, players: Map[UUID, PlayerRef] = Map.empty, deck: DeckRef, gamePlay: GamePlayRef, lobby: LobbyRef, server: ServerRef): Behavior[GameMessage] = {
+  def apply(gameId: UUID, name: String, stage: String = REGISTRATION_OPEN, players: Map[UUID, PlayerRef] = Map.empty, deck: DeckRef, gamePlay: GamePlayRef, lobby: LobbyRef, server: ServerRef): Behavior[GameMessage] = {
     receive { (context, message) =>
       message match {
 
@@ -61,30 +61,34 @@ object Game {
             context.self ! GameStartMessage(gameId = gameId)
             lobby ! LobbyCreateGameMessage
           }
-          apply(gameId, stage, newPlayers, deck, gamePlay, lobby, server)
+          apply(gameId, name, stage, newPlayers, deck, gamePlay, lobby, server)
 
-        case newGameMessage: GameStartMessage =>
+        case startGameMessage: GameStartMessage =>
           players.keySet.foreach(playerId => deck ! DeckDealCards(playerId, outputRef = context.self))
           gamePlay ! GamePlayNextTurn
-          apply(gameId, IN_PROGRESS, players, deck, gamePlay, lobby, server)
+          lobby ! LobbyGamesStateChangedMessage(startGameMessage.gameId, IN_PROGRESS)
+          lobby ! LobbyAllGamesMessage
+          apply(gameId, name, IN_PROGRESS, players, deck, gamePlay, lobby, server)
 
         case closeGameMessage: GameFinishMessage =>
           // todo: send final message to close actor system?
-          apply(gameId, FINISHED, players, deck, gamePlay, lobby, server)
+          lobby ! LobbyGamesStateChangedMessage(closeGameMessage.gameId, FINISHED)
+          lobby ! LobbyAllGamesMessage
+          apply(gameId, name, FINISHED, players, deck, gamePlay, lobby, server)
 
         case attackMessage: GameAttack =>
           val defender = getPlayer(players, attackMessage.defender)
           gamePlay ! GamePlayAttack(attackMessage.attacker, attackMessage.defender)
-          apply(gameId, stage, players, deck, gamePlay, lobby, server)
+          apply(gameId, name, stage, players, deck, gamePlay, lobby, server)
 
         case defendAttackMessage: GameDeffendAttack =>
           gamePlay ! GamePlayDeffendAttack(defendAttackMessage.attacker, defendAttackMessage.defender, context.self)
-          apply(gameId, stage, players, deck, gamePlay, lobby, server)
+          apply(gameId, name, stage, players, deck, gamePlay, lobby, server)
 
         case looseAttackMessage: GameLooseAttack =>
           val defender = getPlayer(players, looseAttackMessage.defender)
           gamePlay ! GamePlayLooseAttack(looseAttackMessage.attacker, looseAttackMessage.defender, context.self)
-          apply(gameId, stage, players, deck, gamePlay, lobby, server)
+          apply(gameId, name, stage, players, deck, gamePlay, lobby, server)
 
         case newCards: GameDealCards =>
           val player = getPlayer(players, newCards.player)
