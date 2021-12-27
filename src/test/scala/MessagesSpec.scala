@@ -16,7 +16,7 @@ class MessagesSpec extends AnyFlatSpec {
 
   val incommingMessages = List(
     """{"messageType": "SHOW_GAMES"}""".stripMargin,
-    """{"messageType":"JOIN_GAME","payload":{"nick":"mcsims","gameId":"gid"}}""".stripMargin
+    """{"messageType":"JOIN_GAME","payload":{"nick":"mcsims","gameId":"gid","playerId":"playerId"}}""".stripMargin
   )
 
   "Circe" should "parse incoming messages" in {
@@ -33,7 +33,7 @@ class MessagesSpec extends AnyFlatSpec {
     """{"messageType": "ERROR", "payload":{"errorMessage": "Error occured!"}}""",
     """{"messageType": "NEXT_TURN", "payload":{"playerId": "playerId"}}""",
     """{"messageType": "ALL_GAMES", "payload":{"games": [{"uuid":"gameId", "name": "gameName", "players":0, "stage": "FINISHED"}]}}""",
-    """{"messageType": "GAME_JOINED", "payload":{"playerId": "playerId"}}""",
+    """{"messageType": "GAME_JOINED", "payload":{"playerId": "playerId", "gameId": "gameId"}}""",
     """
     {
       "messageType": "PLAYER_CARDS",
@@ -73,7 +73,7 @@ class MessagesSpec extends AnyFlatSpec {
     OutgoingMessage("ERROR", Option(PayloadError("Error occured!"))),
     OutgoingMessage("NEXT_TURN", Option(PayloadNextTurn("playerId"))),
     OutgoingMessage("ALL_GAMES", Option(PayloadAllGames(List(Lobby.GameInfo("gameId", "gameName", 0, "FINISHED"))))),
-    OutgoingMessage("GAME_JOINED", Option(PayloadGameJoined("playerId"))),
+    OutgoingMessage("GAME_JOINED", Option(PayloadGameJoined("playerId", "gameId"))),
     OutgoingMessage(
       "PLAYER_CARDS",
       Option(PayloadPlayerCardsUpdate(PlayerInGame(UUID.fromString("029c4bd3-afdf-4d21-9fe9-406f4583ef6c"), "McSims", List(Cards.rooster), List(Cards.egg), List(Cards.chick))))

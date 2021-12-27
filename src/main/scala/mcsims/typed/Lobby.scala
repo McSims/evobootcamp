@@ -31,7 +31,7 @@ object Lobby {
   final object LobbyCreateGameMessage extends Input
   final object LobbyAllGamesMessage extends Input
   final case class LobbyGamesStateChangedMessage(gameId: UUID, stage: String) extends Input
-  final case class LobbyJoinGameMessage(gameId: String, nick: String) extends Input
+  final case class LobbyJoinGameMessage(gameId: String, playerId: String, nick: String) extends Input
 
   def apply(games: Map[UUID, GameRef] = Map.empty, gamesInfo: Map[UUID, GameInfo] = Map.empty, randomGameNames: List[String] = randomGameNames, server: ServerRef): Behavior[LobbyMessage] = receive { (context, message) =>
     message match {
@@ -49,8 +49,7 @@ object Lobby {
         val uuid = UUID.fromString(joinMessage.gameId)
         val gameInfo = getGameInfo(gamesInfo, uuid)
         val game = getGame(games, uuid)
-        game ! GameJoinMessage(joinMessage.nick)
-        server ! ServerOutputGameJoined(uuid)
+        game ! GameJoinMessage(joinMessage.playerId, joinMessage.nick)
         context.self ! LobbyAllGamesMessage
         apply(games, gamesInfo + (uuid -> (gameInfo.copy(players = gameInfo.players + 1))), randomGameNames, server)
 

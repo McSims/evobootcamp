@@ -58,13 +58,14 @@ object WSServer extends App {
     outputSource
       .map(output =>
         output match {
-          case ServerOutputMessage(message)          => OutgoingMessage("INFO", Some(PayloadInfo(message))).asJson.toString
-          case ServerOutputError(errorMessage)       => OutgoingMessage("ERROR", Some(PayloadError(errorMessage))).asJson.toString
-          case ServerOutputGames(games)              => OutgoingMessage("ALL_GAMES", Some(PayloadAllGames(games))).asJson.toString
-          case ServerOutputGameJoined(playerId)      => OutgoingMessage("GAME_JOINED", Some(PayloadGameJoined(playerId.toString))).asJson.toString
-          case ServerInputPlayerCardsUpdated(player) => OutgoingMessage("PLAYER_CARDS", Some(PayloadPlayerCardsUpdate(player))).asJson.toString
+          case ServerOutputMessage(message)             => OutgoingMessage("INFO", Some(PayloadInfo(message))).asJson.toString
+          case ServerOutputError(errorMessage)          => OutgoingMessage("ERROR", Some(PayloadError(errorMessage))).asJson.toString
+          case ServerOutputGames(games)                 => OutgoingMessage("ALL_GAMES", Some(PayloadAllGames(games))).asJson.toString
+          case ServerOutputGameJoined(playerId, gameId) => OutgoingMessage("GAME_JOINED", Some(PayloadGameJoined(playerId.toString, gameId.toString))).asJson.toString
+          case ServerInputPlayerCardsUpdated(player)    => OutgoingMessage("PLAYER_CARDS", Some(PayloadPlayerCardsUpdate(player))).asJson.toString
           // todo: should only have output here... Fix traits.
-          case ServerInputNextTurn(playerId) => OutgoingMessage("NEXT_TURN", Some(PayloadNextTurn(playerId.toString))).asJson.toString
+          case ServerInputNextTurn(playerId)        => OutgoingMessage("NEXT_TURN", Some(PayloadNextTurn(playerId.toString))).asJson.toString
+          case ServerInputGameStateChanged(players) => OutgoingMessage("GAME_STAGE_CHANGED", Some(PayloadGameUpdate(players))).asJson.toString
         }
       )
       .map(m ⇒ TextMessage.Strict(m))
@@ -84,7 +85,7 @@ object WSServer extends App {
               clientMessage.payload match {
                 case Some(payload) =>
                   payload match {
-                    case JoinGamePayload(gameId, nick) => ServerInputJoinGame(gameId, nick)
+                    case JoinGamePayload(gameId, playerId, nick) => ServerInputJoinGame(gameId, playerId, nick)
                     // case GameActionPayload(playerId, gameId) =>
                     case None => ServerInputParsingError("Unknown payload.")
                   }

@@ -27,7 +27,7 @@ object Game {
   sealed trait GameMessage
   sealed trait Input extends GameMessage
 
-  final case class GameJoinMessage(nick: String) extends Input
+  final case class GameJoinMessage(playerId: String, nick: String) extends Input
   final case class GameStartMessage(gameId: UUID) extends Input
   final case class GameFinishMessage(gameId: UUID) extends Input
 
@@ -52,13 +52,14 @@ object Game {
 
         // todo: bail out if game is in progress or finished
         case joinMessage: GameJoinMessage =>
-          val newPlayerId = UUID.randomUUID
+          val newPlayerId = UUID.fromString(joinMessage.playerId)
           gamePlay ! GamePlayAddPlayer(newPlayerId)
+          server ! ServerOutputGameJoined(newPlayerId, gameId)
           val playerInGame = PlayerInGame(newPlayerId, joinMessage.nick)
           val playerRef = context.spawnAnonymous(Player(playerInGame, server = server))
           val newPlayers = players + (newPlayerId -> playerRef)
           if (newPlayers.keySet.toList.length == 2) {
-            context.self ! GameStartMessage(gameId = gameId)
+            context.self ! GameStartMessage(gameId)
             lobby ! LobbyCreateGameMessage
           }
           apply(gameId, name, stage, newPlayers, deck, gamePlay, lobby, server)
@@ -68,6 +69,7 @@ object Game {
           gamePlay ! GamePlayNextTurn
           lobby ! LobbyGamesStateChangedMessage(startGameMessage.gameId, IN_PROGRESS)
           lobby ! LobbyAllGamesMessage
+          server ! ServerInputGameStateChanged(players.keySet.toList)
           apply(gameId, name, IN_PROGRESS, players, deck, gamePlay, lobby, server)
 
         case closeGameMessage: GameFinishMessage =>

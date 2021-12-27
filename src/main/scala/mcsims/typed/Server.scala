@@ -27,17 +27,19 @@ object Server {
   sealed trait ServerMessage
 
   final case object ServerInputAllGames extends ServerMessage
-  final case class ServerInputJoinGame(gameId: String, nick: String) extends ServerMessage
+  final case class ServerInputJoinGame(gameId: String, playerId: String, nick: String) extends ServerMessage
   final case class ServerInputParsingError(error: String) extends ServerMessage
 
   final case class ServerInputPlayerCardsUpdated(payerState: PlayerInGame) extends ServerMessage
   final case class ServerInputNextTurn(playerId: UUID) extends ServerMessage
   final case class ServerInputMessage(message: String) extends ServerMessage
+  // todo: add struct like GameInfo...
+  final case class ServerInputGameStateChanged(players: List[UUID]) extends ServerMessage
 
   final case class ServerOutputMessage(message: String) extends ServerMessage
   final case class ServerOutputError(errorMessage: String) extends ServerMessage
   final case class ServerOutputGames(games: List[GameInfo]) extends ServerMessage
-  final case class ServerOutputGameJoined(playerId: UUID) extends ServerMessage
+  final case class ServerOutputGameJoined(playerId: UUID, gameId: UUID) extends ServerMessage
 
   case object ServerComplete extends ServerMessage
   final case class ServerFail(ex: Throwable) extends ServerMessage
@@ -70,7 +72,7 @@ object Server {
         serverRef ! ServerOutputGames(allGamesMessage.games)
         same
       case joinGame: ServerInputJoinGame =>
-        lobby ! LobbyJoinGameMessage(joinGame.gameId, joinGame.nick)
+        lobby ! LobbyJoinGameMessage(joinGame.gameId, joinGame.playerId, joinGame.nick)
         same
       case joinedMessage: ServerOutputGameJoined =>
         serverRef ! joinedMessage
@@ -80,6 +82,9 @@ object Server {
         same
       case cardsUpdated: ServerInputPlayerCardsUpdated =>
         serverRef ! cardsUpdated
+        same
+      case gameStageUpdate: ServerInputGameStateChanged =>
+        serverRef ! gameStageUpdate
         same
     }
   }

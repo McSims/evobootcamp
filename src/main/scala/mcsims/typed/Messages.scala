@@ -12,7 +12,7 @@ object Messages {
 
     case class IncommingMessage(messageType: String, payload: Option[Any])
 
-    case class JoinGamePayload(gameId: String, nick: String)
+    case class JoinGamePayload(gameId: String, playerId: String, nick: String)
     case class GameActionPayload(playerId: String, gameId: String)
 
     implicit val incommingMessageDecoder: Decoder[IncommingMessage] = new Decoder[IncommingMessage] {
@@ -53,14 +53,16 @@ object Messages {
         case gamesPayload: PayloadAllGames                => gamesPayload.asJson
         case joinedGamePayload: PayloadGameJoined         => joinedGamePayload.asJson
         case playerCardsPayload: PayloadPlayerCardsUpdate => playerCardsPayload.asJson
+        case gameStageUpdate: PayloadGameUpdate           => gameStageUpdate.asJson
       }
 
     case class PayloadNextTurn(playerId: String) extends OutgoingPayload
     case class PayloadError(errorMessage: String) extends OutgoingPayload
     case class PayloadInfo(message: String) extends OutgoingPayload
     case class PayloadAllGames(games: List[GameInfo]) extends OutgoingPayload
-    case class PayloadGameJoined(playerId: String) extends OutgoingPayload
+    case class PayloadGameJoined(playerId: String, gameId: String) extends OutgoingPayload
     case class PayloadPlayerCardsUpdate(playerState: PlayerInGame) extends OutgoingPayload
+    case class PayloadGameUpdate(players: List[UUID]) extends OutgoingPayload
 
     implicit val outgoingMessageEncoder: Encoder[OutgoingMessage] = deriveEncoder
     implicit val nextTurnPayloadEncoder: Encoder[PayloadNextTurn] = deriveEncoder
@@ -70,6 +72,7 @@ object Messages {
     implicit val gameWithPlayerEncoder: Encoder[GameInfo] = deriveEncoder
     implicit val gameJoinedEncoder: Encoder[PayloadGameJoined] = deriveEncoder
     implicit val playerCardsUpdateEncoder: Encoder[PayloadPlayerCardsUpdate] = deriveEncoder
+    implicit val gameUpdateEncoder: Encoder[PayloadGameUpdate] = deriveEncoder
   }
 
 }
