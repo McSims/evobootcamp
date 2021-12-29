@@ -80,4 +80,5 @@ Join game:
 // todo: handle all messages here
 // todo: Try catch and bail with error message
 // todo: add game state
+// todo: delay game start message for a second. to see 2 players joined on FE.
 ```

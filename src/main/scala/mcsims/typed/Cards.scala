@@ -12,7 +12,7 @@ object Cards {
   private def eggName = CardName("Egg")
   private def nestName = CardName("Nest")
   private def roosterName = CardName("Rooster")
-  private def chickenName = CardName("Chicken")
+  private def chickenName = CardName("Hen")
   private def chickName = CardName("Chick")
   private def foxName = CardName("Fox")
 

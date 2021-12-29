@@ -7,7 +7,7 @@ import akka.actor.typed.scaladsl.Behaviors._
 import akka.actor.typed.{ActorRef, Behavior}
 
 import mcsims.typed.Deck._
-
+import mcsims.typed.Deck.DeckService._
 import mcsims.typed.Cards
 import mcsims.typed.Server._
 import mcsims.typed.Player._
@@ -37,7 +37,7 @@ object Lobby {
     message match {
       case LobbyCreateGameMessage =>
         val uuid = UUID.randomUUID
-        val deckRef = context.spawnAnonymous(DeckActor(Deck(Cards.allAvailableCards)))
+        val deckRef = context.spawnAnonymous(DeckActor(Deck(shuffle(Cards.allAvailableCards))))
         val turnRef = context.spawnAnonymous(GamePlay(List.empty, server = server))
         val gameNames = getRandomNameFrom(randomGameNames)
         val game = Game(uuid, gameNames._1, deck = deckRef, gamePlay = turnRef, lobby = context.self, server = server)

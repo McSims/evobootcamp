@@ -7,6 +7,8 @@ import scala.annotation.tailrec
 import mcsims.typed.Cards
 import mcsims.typed.Cards._
 
+import mcsims.typed.Deck.DeckService._
+
 // todo: review all implementation and remove unnesasary things
 case class Deck(cards: List[PlayCard], trashCards: List[PlayCard] = List.empty) {
 
@@ -87,14 +89,18 @@ case class Deck(cards: List[PlayCard], trashCards: List[PlayCard] = List.empty) 
     }
   }
 
-  private def cardsContainCard(cards: List[PlayCard], card: PlayCard): Boolean = cards.contains(card)
-
-  // todo: it seems private functionality not needed to be exposed. How do we test this?
-  def shuffle(cards: List[PlayCard]): List[PlayCard] = Random.shuffle(cards)
-
   def drop(cardsToDrop: List[PlayCard]): Deck = Deck(cards, trashCards ::: cardsToDrop)
 
   // todo: unit test this
   def deal(numberOfCards: Int): (List[PlayCard], Deck) = (cards.take(numberOfCards), Deck(cards, trashCards))
+
+}
+
+// todo: unit test this
+object DeckService {
+
+  def cardsContainCard(cards: List[PlayCard], card: PlayCard): Boolean = cards.contains(card)
+
+  def shuffle(cards: List[PlayCard]): List[PlayCard] = Random.shuffle(cards)
 
 }
