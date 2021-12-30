@@ -35,6 +35,7 @@ object Server {
   final case class ServerInputMessage(message: String) extends ServerMessage
   // todo: add struct like GameInfo...
   final case class ServerInputGameStateChanged(players: List[UUID]) extends ServerMessage
+  final case class ServerInputActionExchange(playerId: UUID, gameId: UUID, cards: List[PlayCard]) extends ServerMessage
 
   final case class ServerOutputMessage(message: String) extends ServerMessage
   final case class ServerOutputError(errorMessage: String) extends ServerMessage
@@ -59,12 +60,8 @@ object Server {
 
   def startServer(lobby: LobbyRef, serverRef: ServerRef): Behavior[ServerMessage] = receive { (context, message) =>
     message match {
-      case errorMessage: ServerInputParsingError =>
-        serverRef ! ServerOutputError(errorMessage.error)
-        same
-      case infoMessage: ServerInputMessage =>
-        serverRef ! ServerOutputMessage(infoMessage.message)
-        same
+
+      // Incomming
       case ServerInputAllGames =>
         lobby ! LobbyAllGamesMessage
         same
@@ -73,6 +70,17 @@ object Server {
         same
       case joinGame: ServerInputJoinGame =>
         lobby ! LobbyJoinGameMessage(joinGame.gameId, joinGame.playerId, joinGame.nick)
+        same
+      case gameAction: ServerInputActionExchange =>
+        lobby ! LobbyActionExchange(gameAction.playerId, gameAction.gameId, gameAction.cards)
+        same
+
+      // Outgoing
+      case errorMessage: ServerInputParsingError =>
+        serverRef ! ServerOutputError(errorMessage.error)
+        same
+      case infoMessage: ServerInputMessage =>
+        serverRef ! ServerOutputMessage(infoMessage.message)
         same
       case joinedMessage: ServerOutputGameJoined =>
         serverRef ! joinedMessage

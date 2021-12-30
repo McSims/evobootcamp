@@ -8,7 +8,7 @@ import akka.actor.typed.{ActorRef, Behavior}
 
 import mcsims.typed.Deck._
 import mcsims.typed.Deck.DeckService._
-import mcsims.typed.Cards
+import mcsims.typed.Cards._
 import mcsims.typed.Server._
 import mcsims.typed.Player._
 import mcsims.typed.Game._
@@ -32,6 +32,7 @@ object Lobby {
   final object LobbyAllGamesMessage extends Input
   final case class LobbyGamesStateChangedMessage(gameId: UUID, stage: String) extends Input
   final case class LobbyJoinGameMessage(gameId: String, playerId: String, nick: String) extends Input
+  final case class LobbyActionExchange(playerId: UUID, gameId: UUID, cards: List[PlayCard]) extends Input
 
   def apply(games: Map[UUID, GameRef] = Map.empty, gamesInfo: Map[UUID, GameInfo] = Map.empty, randomGameNames: List[String] = randomGameNames, server: ServerRef): Behavior[LobbyMessage] = receive { (context, message) =>
     message match {
@@ -59,6 +60,11 @@ object Lobby {
 
       case LobbyAllGamesMessage =>
         server ! ServerOutputGames(gamesInfo.values.toList)
+        same
+
+      case actionExchange: LobbyActionExchange =>
+        val game = getGame(games, actionExchange.gameId)
+        game ! GameActionExchangeCards(actionExchange.playerId, actionExchange.cards)
         same
     }
   }

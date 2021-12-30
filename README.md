@@ -57,6 +57,20 @@ Join game:
 }
 ```
 
+To make actions on your turn send following messages:
+
+To exchange cards:
+```
+{
+  "messageType": "ACTION_EXCHANGE",
+  "payload": {
+    "gameId": "045a9180-5459-4d45-8981-886076f37557",
+    "playerId": "1c8019e8-44da-473a-9794-ba3b02a868d0",
+    "cards": [{"name": "Rooster","id": "3"}]
+  }
+}
+```
+
 # TODOS
 
 ```

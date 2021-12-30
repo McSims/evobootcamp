@@ -35,6 +35,8 @@ object Game {
   case class GameProduceEgg(player: UUID, cards: List[PlayCard], egg: EggCard) extends Input
   case class GameProduceChick(player: UUID, cards: List[PlayCard], chick: ChickCard) extends Input
 
+  final case class GameActionExchangeCards(player: UUID, cards: List[PlayCard]) extends Input
+
   final case class GameAttack(attacker: UUID, defender: UUID) extends Input
   final case class GameDeffendAttack(attacker: UUID, defender: UUID) extends Input
   final case class GameLooseAttack(attacker: UUID, defender: UUID) extends Input
@@ -125,6 +127,9 @@ object Game {
           // todo: deck ! exchange fox card to new
           same
 
+        case exchangeCards: GameActionExchangeCards =>
+          deck ! DeckExchangeCards(exchangeCards.player, exchangeCards.cards, context.self)
+          same
       }
     }
   }

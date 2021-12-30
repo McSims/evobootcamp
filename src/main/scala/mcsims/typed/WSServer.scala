@@ -86,12 +86,35 @@ object WSServer extends App {
                 case Some(payload) =>
                   payload match {
                     case JoinGamePayload(gameId, playerId, nick) => ServerInputJoinGame(gameId, playerId, nick)
-                    // case GameActionPayload(playerId, gameId) =>
+                    case None                                    => ServerInputParsingError("Unknown payload.")
+                  }
+                case None => ServerInputParsingError("Unknown payload.")
+              }
+            case "ACTION_EXCHANGE" =>
+              clientMessage.payload match {
+                case Some(payload) =>
+                  payload match {
+                    case ActionExchangeCardsPayload(gameId, playerId, cards) => {
+                      val pId = UUID.fromString(playerId)
+                      val gId = UUID.fromString(gameId)
+                      ServerInputActionExchange(
+                        gId,
+                        pId,
+                        cards.map({ card =>
+                          Cards.PlayCard(
+                            Cards.CardName(card.name),
+                            Cards.CardId(
+                              card.id
+                            )
+                          )
+                        })
+                      )
+                    }
                     case None => ServerInputParsingError("Unknown payload.")
                   }
+                case None => ServerInputParsingError("Unknown payload.")
               }
           }
-
         case Left(error) => ServerInputParsingError(error.toString)
       }
     })

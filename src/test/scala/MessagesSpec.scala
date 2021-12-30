@@ -16,7 +16,8 @@ class MessagesSpec extends AnyFlatSpec {
 
   val incommingMessages = List(
     """{"messageType": "SHOW_GAMES"}""".stripMargin,
-    """{"messageType":"JOIN_GAME","payload":{"nick":"mcsims","gameId":"gid","playerId":"playerId"}}""".stripMargin
+    """{"messageType":"JOIN_GAME","payload":{"nick":"mcsims","gameId":"gid","playerId":"playerId"}}""".stripMargin,
+    """{"messageType":"ACTION_EXCHANGE","payload":{"gameId":"gid","playerId":"playerId","cards":[{"name": "Rooster","id": "3"}]}}""".stripMargin
   )
 
   "Circe" should "parse incoming messages" in {
@@ -44,22 +45,19 @@ class MessagesSpec extends AnyFlatSpec {
           "cards": [
             {
               "name": "Rooster",
-              "id": "3",
-              "imageUrl": "RoosterImage"
+              "id": "3"
             }
           ],
           "eggs": [
             {
               "name": "Egg",
-              "id": "1",
-              "imageUrl": "EggImage"
+              "id": "1"
             }
           ],
           "chicks": [
             {
               "name": "Chick",
-              "id": "5",
-              "imageUrl": "ChickImage"
+              "id": "5"
             }
           ]
         }

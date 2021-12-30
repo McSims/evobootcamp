@@ -3,11 +3,11 @@ package mcsims.typed
 import io.circe.Encoder
 import io.circe.generic.extras.semiauto._
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
+import akka.http.scaladsl.coding.Decoder
 
 object Cards {
   case class CardName(val name: String) extends AnyVal
   case class CardId(val name: String) extends AnyVal
-  case class CardImageUrl(val name: String) extends AnyVal
 
   private def eggName = CardName("Egg")
   private def nestName = CardName("Nest")
@@ -23,24 +23,17 @@ object Cards {
   private def chickId = CardId("5")
   private def foxId = CardId("6")
 
-  private def eggImage = CardImageUrl("EggImage")
-  private def nestImage = CardImageUrl("NestImage")
-  private def roosterImage = CardImageUrl("RoosterImage")
-  private def chickenImage = CardImageUrl("ChickenImage")
-  private def chickImage = CardImageUrl("ChickImage")
-  private def foxImage = CardImageUrl("FoxImage")
+  case class PlayCard(name: CardName, id: CardId)
+  case class EggCard(name: CardName, id: CardId)
+  case class ChickCard(name: CardName, id: CardId)
 
-  case class PlayCard(name: CardName, id: CardId, imageUrl: CardImageUrl)
-  case class EggCard(name: CardName, id: CardId, imageUrl: CardImageUrl)
-  case class ChickCard(name: CardName, id: CardId, imageUrl: CardImageUrl)
+  def nest = PlayCard(nestName, nestId)
+  def rooster = PlayCard(roosterName, roosterId)
+  def chicken = PlayCard(chickenName, chickenId)
+  def fox = PlayCard(foxName, foxId)
 
-  def nest = PlayCard(nestName, nestId, nestImage)
-  def rooster = PlayCard(roosterName, roosterId, roosterImage)
-  def chicken = PlayCard(chickenName, chickenId, chickenImage)
-  def fox = PlayCard(foxName, foxId, foxImage)
-
-  def egg = EggCard(eggName, eggId, eggImage)
-  def chick = ChickCard(chickName, chickId, chickImage)
+  def egg = EggCard(eggName, eggId)
+  def chick = ChickCard(chickName, chickId)
 
   def availableEggs: List[EggCard] = (0 until 18).map(_ => egg).toList
 
@@ -63,5 +56,4 @@ object Cards {
 
   implicit val cardNameEncoder: Encoder[CardName] = deriveUnwrappedEncoder
   implicit val cardIdEncoder: Encoder[CardId] = deriveUnwrappedEncoder
-  implicit val cardImageEncoder: Encoder[CardImageUrl] = deriveUnwrappedEncoder
 }

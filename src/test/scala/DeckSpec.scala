@@ -1,5 +1,6 @@
 import org.scalatest.flatspec.AnyFlatSpec
 import mcsims.typed.Deck._
+import mcsims.typed.Deck.DeckService._
 import mcsims.typed.Cards._
 import mcsims.typed.Cards
 
@@ -46,7 +47,7 @@ class DeckSpec extends AnyFlatSpec {
   }
 
   it should "shuffle trash cards" in {
-    assert(shortDeck.shuffle(fullDeck.cards) != fullDeck.cards)
+    assert(shuffle(fullDeck.cards) != fullDeck.cards)
   }
 
   it should "shuffle trash cards when no cards for exchange" in {

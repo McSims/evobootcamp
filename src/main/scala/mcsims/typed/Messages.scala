@@ -2,26 +2,27 @@ package mcsims.typed
 
 import java.util.UUID
 
-import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
-
 object Messages {
 
   object IncommingMessages {
     import io.circe.{Decoder, HCursor}
     import io.circe.Decoder.Result
+    import io.circe.generic.semiauto.{deriveDecoder}
 
     case class IncommingMessage(messageType: String, payload: Option[Any])
 
     case class JoinGamePayload(gameId: String, playerId: String, nick: String)
-    case class GameActionPayload(playerId: String, gameId: String)
+    case class CardRepresentation(name: String, id: String)
+    case class ActionExchangeCardsPayload(playerId: String, gameId: String, cards: List[CardRepresentation])
 
     implicit val incommingMessageDecoder: Decoder[IncommingMessage] = new Decoder[IncommingMessage] {
       override def apply(hCursor: HCursor): Result[IncommingMessage] =
         for {
           messageType <- hCursor.downField("messageType").as[String]
           payload <- messageType match {
-            case "SHOW_GAMES" => hCursor.downField("payload").as[Option[String]]
-            case "JOIN_GAME"  => hCursor.downField("payload").as[JoinGamePayload]
+            case "SHOW_GAMES"      => hCursor.downField("payload").as[Option[String]]
+            case "JOIN_GAME"       => hCursor.downField("payload").as[JoinGamePayload]
+            case "ACTION_EXCHANGE" => hCursor.downField("payload").as[ActionExchangeCardsPayload]
           }
         } yield {
           IncommingMessage(messageType, Some(payload))
@@ -29,7 +30,8 @@ object Messages {
     }
 
     implicit val joinGamePayloadDecoder: Decoder[JoinGamePayload] = deriveDecoder
-    implicit val actionPayloadDecoder: Decoder[GameActionPayload] = deriveDecoder
+    implicit val actionPayloadDecoder: Decoder[ActionExchangeCardsPayload] = deriveDecoder
+    implicit val cardRepresentationDecoder: Decoder[CardRepresentation] = deriveDecoder
   }
 
   object OutgoingMessages {
