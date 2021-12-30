@@ -36,7 +36,7 @@ object GamePlay {
       case GamePlayNextTurn =>
         val (uuid, newTurns) = nextTurn(turns)
         server ! ServerInputNextTurn(uuid)
-        apply(turns, server = server)
+        apply(newTurns, server = server)
 
       case newPlayer: GamePlayAddPlayer =>
         val newTurns = addPlayer(turns, newPlayer.playerId)

@@ -131,6 +131,7 @@ object Game {
           val player = getPlayer(players, exchangeCards.player)
           player ! PlayerRemoveCardsMessage(exchangeCards.cards)
           deck ! DeckExchangeCards(exchangeCards.player, exchangeCards.cards, context.self)
+          gamePlay ! GamePlayNextTurn
           same
       }
     }
