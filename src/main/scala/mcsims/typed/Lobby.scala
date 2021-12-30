@@ -7,7 +7,7 @@ import akka.actor.typed.scaladsl.Behaviors._
 import akka.actor.typed.{ActorRef, Behavior}
 
 import mcsims.typed.Deck._
-import mcsims.typed.Deck.DeckService._
+import mcsims.typed.DeckService._
 import mcsims.typed.Cards._
 import mcsims.typed.Server._
 import mcsims.typed.Player._

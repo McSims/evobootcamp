@@ -9,6 +9,7 @@ import mcsims.typed.Cards._
 import mcsims.typed.Server._
 import mcsims.typed.Messages._
 import mcsims.typed.PlayerInGame._
+import mcsims.typed.PlayerService._
 
 object Player {
 
@@ -16,6 +17,8 @@ object Player {
 
   sealed trait PlayerMessage
   sealed trait Input extends PlayerMessage
+
+  case class PlayerRemoveCardsMessage(cards: List[PlayCard]) extends Input
 
   case class PlayerNewCardsMessage(cards: List[PlayCard]) extends Input
   case class PlayerNewEggMessage(egg: EggCard) extends Input
@@ -49,6 +52,10 @@ object Player {
           server ! ServerInputPlayerCardsUpdated(newPlayer)
           apply(newPlayer, server)
 
+        case removeCardsMessage: PlayerRemoveCardsMessage =>
+          val newCards = removeCards(playerState.cards, removeCardsMessage.cards)
+          val newPlayer = playerState.copy(cards = newCards)
+          apply(newPlayer, server)
       }
     }
   }

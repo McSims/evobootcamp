@@ -31,12 +31,12 @@ object DeckActor {
         case newCardsMessage: DeckDealCards =>
           val (cards, newDeck) = deck.deal(newCardsMessage.numberOfCards)
           newCardsMessage.outputRef ! GameDealCards(newCardsMessage.player, cards)
-          apply(deck)
+          apply(newDeck)
 
         case cardsExchangeMessage: DeckExchangeCards =>
           val (cards, newDeck) = deck.exchangeCards(cardsExchangeMessage.cards)
           cardsExchangeMessage.outputRef ! GameDealCards(cardsExchangeMessage.player, cards)
-          apply(deck)
+          apply(newDeck)
 
         case newEggMessage: DeckProduceEgg =>
           val (egg, newCards, newDeck) =
@@ -51,7 +51,7 @@ object DeckActor {
               }
             case None => new RuntimeException
           }
-          apply(deck)
+          apply(newDeck)
 
         case newChickMessage: DeckProduceChick =>
           val (chick, newCards, newDeck) = deck.exchangeEggToChick(newChickMessage.cards)
@@ -65,7 +65,7 @@ object DeckActor {
               }
             case None => new RuntimeException
           }
-          apply(deck)
+          apply(newDeck)
       }
     }
   }

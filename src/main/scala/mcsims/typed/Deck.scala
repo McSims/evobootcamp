@@ -1,33 +1,14 @@
 package mcsims.typed.Deck
 
-import scala.util.Random
 import java.{util => ju}
 import scala.annotation.tailrec
 
 import mcsims.typed.Cards
 import mcsims.typed.Cards._
-
-import mcsims.typed.Deck.DeckService._
+import mcsims.typed.DeckService._
 
 // todo: review all implementation and remove unnesasary things
 case class Deck(cards: List[PlayCard], trashCards: List[PlayCard] = List.empty) {
-
-  // todo: looks redundand with typed actors approach
-  def dealCards(numberOfPlayers: Int, numberOfCards: Int = 5): (Option[List[List[PlayCard]]], Deck) = {
-    // Check if we have enough cards for players
-    val isEnoughCardsForDeal = numberOfCards * numberOfPlayers > cards.length
-    // todo: extract game rules from the deck... Deck should be reusable for any game.
-    val isNotWithinPlayersLimit = (2 until 6).contains(numberOfPlayers) == false
-    if (isEnoughCardsForDeal || isNotWithinPlayersLimit) {
-      (Option.empty, this)
-    } else {
-      val slices =
-        cards.sliding(numberOfCards, numberOfCards).toList.take(numberOfPlayers)
-      val newCards = cards.drop(numberOfPlayers * numberOfCards)
-      val deck = Deck(newCards, trashCards)
-      (Option(slices), deck)
-    }
-  }
 
   def exchangeCard(card: PlayCard): (PlayCard, Deck) = {
     val newTrash = trashCards :+ card
@@ -92,15 +73,6 @@ case class Deck(cards: List[PlayCard], trashCards: List[PlayCard] = List.empty) 
   def drop(cardsToDrop: List[PlayCard]): Deck = Deck(cards, trashCards ::: cardsToDrop)
 
   // todo: unit test this
-  def deal(numberOfCards: Int): (List[PlayCard], Deck) = (cards.take(numberOfCards), Deck(cards, trashCards))
-
-}
-
-// todo: unit test this
-object DeckService {
-
-  def cardsContainCard(cards: List[PlayCard], card: PlayCard): Boolean = cards.contains(card)
-
-  def shuffle(cards: List[PlayCard]): List[PlayCard] = Random.shuffle(cards)
+  def deal(numberOfCards: Int): (List[PlayCard], Deck) = (cards.take(numberOfCards), Deck(cards.drop(numberOfCards), trashCards))
 
 }
