@@ -15,16 +15,18 @@ object Messages {
     case class CardRepresentation(name: String, id: String)
     case class ActionExchangeCardsPayload(playerId: String, gameId: String, cards: List[CardRepresentation])
     case class ActionLayTheEggPayload(playerId: String, gameId: String, cards: List[CardRepresentation])
+    case class ActionChickBirthPayload(playerId: String, gameId: String, cards: List[CardRepresentation], egg: CardRepresentation)
 
     implicit val incommingMessageDecoder: Decoder[IncommingMessage] = new Decoder[IncommingMessage] {
       override def apply(hCursor: HCursor): Result[IncommingMessage] =
         for {
           messageType <- hCursor.downField("messageType").as[String]
           payload <- messageType match {
-            case "SHOW_GAMES"      => hCursor.downField("payload").as[Option[String]]
-            case "JOIN_GAME"       => hCursor.downField("payload").as[JoinGamePayload]
-            case "ACTION_EXCHANGE" => hCursor.downField("payload").as[ActionExchangeCardsPayload]
-            case "ACTION_LAY_EGG"  => hCursor.downField("payload").as[ActionLayTheEggPayload]
+            case "SHOW_GAMES"         => hCursor.downField("payload").as[Option[String]]
+            case "JOIN_GAME"          => hCursor.downField("payload").as[JoinGamePayload]
+            case "ACTION_EXCHANGE"    => hCursor.downField("payload").as[ActionExchangeCardsPayload]
+            case "ACTION_LAY_EGG"     => hCursor.downField("payload").as[ActionLayTheEggPayload]
+            case "ACTION_CHICK_BIRTH" => hCursor.downField("payload").as[ActionChickBirthPayload]
           }
         } yield {
           IncommingMessage(messageType, Some(payload))
@@ -34,6 +36,7 @@ object Messages {
     implicit val joinGamePayloadDecoder: Decoder[JoinGamePayload] = deriveDecoder
     implicit val actionPayloadDecoder: Decoder[ActionExchangeCardsPayload] = deriveDecoder
     implicit val actionLayTheEggDecoder: Decoder[ActionLayTheEggPayload] = deriveDecoder
+    implicit val actionChickBirthDecoder: Decoder[ActionChickBirthPayload] = deriveDecoder
     implicit val cardRepresentationDecoder: Decoder[CardRepresentation] = deriveDecoder
   }
 

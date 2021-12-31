@@ -1,5 +1,6 @@
 package mcsims.typed
 
+import mcsims.typed.Cards._
 import mcsims.typed.Server._
 import mcsims.typed.Messages._
 import mcsims.typed.Messages.IncommingMessages._
@@ -108,6 +109,33 @@ object WSServer extends App {
                             )
                           )
                         })
+                      )
+                    }
+                    case None => ServerInputParsingError("Unknown payload.")
+                  }
+                case None => ServerInputParsingError("Unknown payload.")
+              }
+            case "ACTION_CHICK_BIRTH" =>
+              clientMessage.payload match {
+                case Some(payload) =>
+                  payload match {
+                    case ActionChickBirthPayload(gameId, playerId, cards, egg) => {
+                      val pId = UUID.fromString(playerId)
+                      val gId = UUID.fromString(gameId)
+                      ServerInputActionChickBirth(
+                        gId,
+                        pId,
+                        cards.map(
+                          { card =>
+                            Cards.PlayCard(
+                              CardName(card.name),
+                              CardId(
+                                card.id
+                              )
+                            )
+                          }
+                        ),
+                        Cards.EggCard(CardName(egg.name), CardId(egg.id))
                       )
                     }
                     case None => ServerInputParsingError("Unknown payload.")

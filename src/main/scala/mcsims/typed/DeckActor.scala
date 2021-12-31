@@ -23,7 +23,7 @@ object DeckActor {
   case class DeckDealCards(player: UUID, numberOfCards: Int = 5, outputRef: GameRef) extends Input
   case class DeckExchangeCards(player: UUID, cards: List[PlayCard], outputRef: GameRef) extends Input
   case class DeckProduceEgg(player: UUID, cards: List[PlayCard], outputRef: GameRef) extends Input
-  case class DeckProduceChick(player: UUID, cards: List[PlayCard], outputRef: GameRef) extends Input
+  case class DeckProduceChick(player: UUID, cards: List[PlayCard], egg: EggCard, outputRef: GameRef) extends Input
 
   def apply(deck: Deck): Behavior[DeckMessage] = {
     receive { (ctx, message) =>

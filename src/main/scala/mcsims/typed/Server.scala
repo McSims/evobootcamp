@@ -37,6 +37,7 @@ object Server {
   final case class ServerInputGameStateChanged(players: List[UUID]) extends ServerMessage
   final case class ServerInputActionExchange(playerId: UUID, gameId: UUID, cards: List[PlayCard]) extends ServerMessage
   final case class ServerInputActionLayTheEgg(playerId: UUID, gameId: UUID, cards: List[PlayCard]) extends ServerMessage
+  final case class ServerInputActionChickBirth(playerId: UUID, gameId: UUID, cards: List[PlayCard], egg: EggCard) extends ServerMessage
 
   final case class ServerOutputMessage(message: String) extends ServerMessage
   final case class ServerOutputError(errorMessage: String) extends ServerMessage
@@ -77,6 +78,9 @@ object Server {
         same
       case layTheEggAction: ServerInputActionLayTheEgg =>
         lobby ! LobbyActionLayTheEgg(layTheEggAction.playerId, layTheEggAction.gameId, layTheEggAction.cards)
+        same
+      case chickBirth: ServerInputActionChickBirth =>
+        lobby ! LobbyActionChickBirth(chickBirth.playerId, chickBirth.gameId, chickBirth.cards, chickBirth.egg)
         same
 
       // Outgoing

@@ -37,6 +37,7 @@ object Game {
 
   final case class GameActionExchangeCards(player: UUID, cards: List[PlayCard]) extends Input
   final case class GameActionLayTheEgg(player: UUID, cards: List[PlayCard]) extends Input
+  final case class GameActionChickBirth(player: UUID, cards: List[PlayCard], egg: EggCard) extends Input
 
   final case class GameAttack(attacker: UUID, defender: UUID) extends Input
   final case class GameDeffendAttack(attacker: UUID, defender: UUID) extends Input
@@ -101,15 +102,6 @@ object Game {
           player ! PlayerNewCardsMessage(newCards.cards)
           same
 
-        case newChick: GameProduceChick =>
-          val player = getPlayer(players, newChick.player)
-          // player ! PlayerRemoveCardsMessage(layTheEgg.cards)
-          // deck ! DeckExchangeCards(layTheEgg.player, layTheEgg.cards, context.self)
-          // gamePlay ! GamePlayNextTurn
-          player ! PlayerNewCardsMessage(newChick.cards)
-          player ! PlayerNewChickMessage(newChick.chick)
-          same
-
         case attackDefendedMessage: GameAttackDeffended =>
           val defender = getPlayer(players, attackDefendedMessage.defenderId)
           // todo: deck ! exchange two roosters card to new
@@ -142,6 +134,20 @@ object Game {
         case produceEgg: GameProduceEgg =>
           val player = getPlayer(players, produceEgg.player)
           player ! PlayerNewEggWithCardsMessage(produceEgg.egg, produceEgg.cards)
+          gamePlay ! GamePlayNextTurn
+          same
+
+        case chickBirth: GameActionChickBirth =>
+          val player = getPlayer(players, chickBirth.player)
+          // todo: possible leak... remove cards from player but produce chick checks fails
+          player ! PlayerRemoveCardsMessage(chickBirth.cards)
+          player ! PlayerRemoveEggMessage
+          deck ! DeckProduceChick(chickBirth.player, chickBirth.cards, chickBirth.egg, context.self)
+          same
+
+        case produceChick: GameProduceChick =>
+          val player = getPlayer(players, produceChick.player)
+          player ! PlayerNewChickWithCardsMessage(produceChick.chick, produceChick.cards)
           gamePlay ! GamePlayNextTurn
           same
       }

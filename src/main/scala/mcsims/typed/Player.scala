@@ -19,11 +19,12 @@ object Player {
   sealed trait Input extends PlayerMessage
 
   case class PlayerRemoveCardsMessage(cards: List[PlayCard]) extends Input
+  case object PlayerRemoveEggMessage extends Input
 
   case class PlayerNewCardsMessage(cards: List[PlayCard]) extends Input
   case class PlayerNewEggMessage(egg: EggCard) extends Input
   case class PlayerNewEggWithCardsMessage(egg: EggCard, cards: List[PlayCard]) extends Input
-  case class PlayerNewChickMessage(chick: ChickCard) extends Input
+  case class PlayerNewChickWithCardsMessage(chick: ChickCard, cards: List[PlayCard]) extends Input
 
   case object PlayerLooseEggMessage extends Input
 
@@ -46,8 +47,8 @@ object Player {
           server ! ServerInputPlayerCardsUpdated(newPlayer)
           apply(newPlayer, server)
 
-        case newChickMessage: PlayerNewChickMessage =>
-          val newPlayer = playerState.copy(chicks = playerState.chicks :+ newChickMessage.chick)
+        case newChickMessage: PlayerNewChickWithCardsMessage =>
+          val newPlayer = playerState.copy(cards = playerState.cards ++ newChickMessage.cards, chicks = playerState.chicks :+ newChickMessage.chick)
           server ! ServerInputPlayerCardsUpdated(newPlayer)
           apply(newPlayer, server)
 
@@ -61,6 +62,11 @@ object Player {
         case removeCardsMessage: PlayerRemoveCardsMessage =>
           val newCards = removeCards(playerState.cards, removeCardsMessage.cards)
           val newPlayer = playerState.copy(cards = newCards)
+          apply(newPlayer, server)
+
+        case PlayerRemoveEggMessage =>
+          val newEggs = playerState.eggs.tail
+          val newPlayer = playerState.copy(eggs = newEggs)
           apply(newPlayer, server)
       }
     }

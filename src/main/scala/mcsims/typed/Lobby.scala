@@ -34,6 +34,7 @@ object Lobby {
   final case class LobbyJoinGameMessage(gameId: String, playerId: String, nick: String) extends Input
   final case class LobbyActionExchange(playerId: UUID, gameId: UUID, cards: List[PlayCard]) extends Input
   final case class LobbyActionLayTheEgg(playerId: UUID, gameId: UUID, cards: List[PlayCard]) extends Input
+  final case class LobbyActionChickBirth(playerId: UUID, gameId: UUID, cards: List[PlayCard], egg: EggCard) extends Input
 
   def apply(games: Map[UUID, GameRef] = Map.empty, gamesInfo: Map[UUID, GameInfo] = Map.empty, randomGameNames: List[String] = randomGameNames, server: ServerRef): Behavior[LobbyMessage] = receive { (context, message) =>
     message match {
@@ -71,6 +72,11 @@ object Lobby {
       case actionLayTheEgg: LobbyActionLayTheEgg =>
         val game = getGame(games, actionLayTheEgg.gameId)
         game ! GameActionLayTheEgg(actionLayTheEgg.playerId, actionLayTheEgg.cards)
+        same
+
+      case actionChickBirth: LobbyActionChickBirth =>
+        val game = getGame(games, actionChickBirth.gameId)
+        game ! GameActionChickBirth(actionChickBirth.playerId, actionChickBirth.cards, actionChickBirth.egg)
         same
     }
   }
