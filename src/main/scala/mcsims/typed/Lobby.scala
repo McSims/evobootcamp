@@ -33,6 +33,7 @@ object Lobby {
   final case class LobbyGamesStateChangedMessage(gameId: UUID, stage: String) extends Input
   final case class LobbyJoinGameMessage(gameId: String, playerId: String, nick: String) extends Input
   final case class LobbyActionExchange(playerId: UUID, gameId: UUID, cards: List[PlayCard]) extends Input
+  final case class LobbyActionLayTheEgg(playerId: UUID, gameId: UUID, cards: List[PlayCard]) extends Input
 
   def apply(games: Map[UUID, GameRef] = Map.empty, gamesInfo: Map[UUID, GameInfo] = Map.empty, randomGameNames: List[String] = randomGameNames, server: ServerRef): Behavior[LobbyMessage] = receive { (context, message) =>
     message match {
@@ -65,6 +66,11 @@ object Lobby {
       case actionExchange: LobbyActionExchange =>
         val game = getGame(games, actionExchange.gameId)
         game ! GameActionExchangeCards(actionExchange.playerId, actionExchange.cards)
+        same
+
+      case actionLayTheEgg: LobbyActionLayTheEgg =>
+        val game = getGame(games, actionLayTheEgg.gameId)
+        game ! GameActionLayTheEgg(actionLayTheEgg.playerId, actionLayTheEgg.cards)
         same
     }
   }

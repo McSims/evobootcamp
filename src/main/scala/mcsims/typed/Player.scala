@@ -22,6 +22,7 @@ object Player {
 
   case class PlayerNewCardsMessage(cards: List[PlayCard]) extends Input
   case class PlayerNewEggMessage(egg: EggCard) extends Input
+  case class PlayerNewEggWithCardsMessage(egg: EggCard, cards: List[PlayCard]) extends Input
   case class PlayerNewChickMessage(chick: ChickCard) extends Input
 
   case object PlayerLooseEggMessage extends Input
@@ -37,6 +38,11 @@ object Player {
 
         case newEggMessage: PlayerNewEggMessage =>
           val newPlayer = playerState.copy(eggs = playerState.eggs :+ newEggMessage.egg)
+          server ! ServerInputPlayerCardsUpdated(newPlayer)
+          apply(newPlayer, server)
+
+        case newEggWithCards: PlayerNewEggWithCardsMessage =>
+          val newPlayer = playerState.copy(cards = playerState.cards ++ newEggWithCards.cards, eggs = playerState.eggs :+ newEggWithCards.egg)
           server ! ServerInputPlayerCardsUpdated(newPlayer)
           apply(newPlayer, server)
 

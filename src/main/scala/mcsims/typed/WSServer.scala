@@ -114,6 +114,30 @@ object WSServer extends App {
                   }
                 case None => ServerInputParsingError("Unknown payload.")
               }
+            case "ACTION_LAY_EGG" =>
+              clientMessage.payload match {
+                case Some(payload) =>
+                  payload match {
+                    case ActionLayTheEggPayload(gameId, playerId, cards) => {
+                      val pId = UUID.fromString(playerId)
+                      val gId = UUID.fromString(gameId)
+                      ServerInputActionLayTheEgg(
+                        gId,
+                        pId,
+                        cards.map({ card =>
+                          Cards.PlayCard(
+                            Cards.CardName(card.name),
+                            Cards.CardId(
+                              card.id
+                            )
+                          )
+                        })
+                      )
+                    }
+                    case None => ServerInputParsingError("Unknown payload.")
+                  }
+                case None => ServerInputParsingError("Unknown payload.")
+              }
           }
         case Left(error) => ServerInputParsingError(error.toString)
       }

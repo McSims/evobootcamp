@@ -38,17 +38,14 @@ case class Deck(cards: List[PlayCard], trashCards: List[PlayCard] = List.empty) 
   }
 
   def exchangeCardsToEgg(cards: List[PlayCard]): (Option[EggCard], Option[List[PlayCard]], Deck) = {
-    if (cards.length == 3) {
-      if (
-        cardsContainCard(cards, Cards.nest) &&
-        cardsContainCard(cards, Cards.chicken) &&
-        cardsContainCard(cards, Cards.rooster)
-      ) {
-        val exchanged = exchange(cards, List(), this)
-        (Option(Cards.egg), Option(exchanged._1), exchanged._2)
-      } else {
-        (Option.empty, Option.empty, this)
-      }
+    if (
+      cards.length == 3 &&
+      cardsContainCard(cards, Cards.nest) &&
+      cardsContainCard(cards, Cards.chicken) &&
+      cardsContainCard(cards, Cards.rooster)
+    ) {
+      val exchanged = exchange(cards, List(), this)
+      (Option(Cards.egg), Option(exchanged._1), exchanged._2)
     } else {
       (Option.empty, Option.empty, this)
     }

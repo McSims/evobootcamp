@@ -1,6 +1,6 @@
 import org.scalatest.flatspec.AnyFlatSpec
 import mcsims.typed.Deck._
-import mcsims.typed.Deck.DeckService._
+import mcsims.typed.DeckService._
 import mcsims.typed.Cards._
 import mcsims.typed.Cards
 
@@ -16,28 +16,28 @@ class DeckSpec extends AnyFlatSpec {
     List()
   )
 
-  "A deck" should "deal cards" in {
-    assert(fullDeck.cards.length == Cards.allAvailableCards.length)
-    val dealtCards = fullDeck.dealCards(3, 5)
-    assert(dealtCards._1.get.length == 3)
-    assert(dealtCards._1.get(0).length == 5)
-    assert(dealtCards._1.get(1).length == 5)
-    assert(dealtCards._1.get(2).length == 5)
-  }
+  // "A deck" should "deal cards" in {
+  //   assert(fullDeck.cards.length == Cards.allAvailableCards.length)
+  //   val dealtCards = fullDeck.dealCards(3, 5)
+  //   assert(dealtCards._1.get.length == 3)
+  //   assert(dealtCards._1.get(0).length == 5)
+  //   assert(dealtCards._1.get(1).length == 5)
+  //   assert(dealtCards._1.get(2).length == 5)
+  // }
 
-  it must "deal only for 2 to 5 players" in {
-    assert(fullDeck.dealCards(1, 5)._1 == Option.empty)
-    assert(fullDeck.dealCards(2, 5)._1 != Option.empty)
-    assert(fullDeck.dealCards(5, 5)._1 != Option.empty)
-    assert(fullDeck.dealCards(6, 5)._1 == Option.empty)
-  }
+  // it must "deal only for 2 to 5 players" in {
+  //   assert(fullDeck.dealCards(1, 5)._1 == Option.empty)
+  //   assert(fullDeck.dealCards(2, 5)._1 != Option.empty)
+  //   assert(fullDeck.dealCards(5, 5)._1 != Option.empty)
+  //   assert(fullDeck.dealCards(6, 5)._1 == Option.empty)
+  // }
 
-  it should "return itself if not enough cards" in {
-    // todo: maybe we should rewrite to validation return or throw?
-    val dealtCards = shortDeck.dealCards(2, 3)
-    assert(dealtCards._1 == Option.empty)
-    assert(dealtCards._2 == shortDeck)
-  }
+  // it should "return itself if not enough cards" in {
+  //   // todo: maybe we should rewrite to validation return or throw?
+  //   val dealtCards = shortDeck.dealCards(2, 3)
+  //   assert(dealtCards._1 == Option.empty)
+  //   assert(dealtCards._2 == shortDeck)
+  // }
 
   it should "exchange card" in {
     val result = shortDeck.exchangeCard(Cards.nest)

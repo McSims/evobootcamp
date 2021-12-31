@@ -17,7 +17,8 @@ class MessagesSpec extends AnyFlatSpec {
   val incommingMessages = List(
     """{"messageType": "SHOW_GAMES"}""".stripMargin,
     """{"messageType":"JOIN_GAME","payload":{"nick":"mcsims","gameId":"gid","playerId":"playerId"}}""".stripMargin,
-    """{"messageType":"ACTION_EXCHANGE","payload":{"gameId":"gid","playerId":"playerId","cards":[{"name": "Rooster","id": "3"}]}}""".stripMargin
+    """{"messageType":"ACTION_EXCHANGE","payload":{"gameId":"gid","playerId":"playerId","cards":[{"name": "Rooster","id": "3"}]}}""".stripMargin,
+    """{"payload":{"playerId":"44E7B7D6-7BCC-4AA2-AEF4-DCAC242F3E8A","cards":[{"id":"2","internalId":"A9BA118C-9C51-488C-BE4E-2139A0917004","name":"Nest"},{"id":"3","internalId":"994E8B93-CC75-46CA-9359-FC442E4B210F","name":"Rooster"},{"id":"4","internalId":"BAF720D3-B67D-4D86-9AB1-22A070088626","name":"Hen"}],"gameId":"2d1765ca-4a89-4b8a-b479-39f65e335788"},"messageType":"ACTION_LAY_EGG"}""".stripMargin
   )
 
   "Circe" should "parse incoming messages" in {

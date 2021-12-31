@@ -38,15 +38,15 @@ object DeckActor {
           cardsExchangeMessage.outputRef ! GameDealCards(cardsExchangeMessage.player, cards)
           apply(newDeck)
 
-        case newEggMessage: DeckProduceEgg =>
+        case produceEgg: DeckProduceEgg =>
           val (egg, newCards, newDeck) =
-            deck.exchangeCardsToEgg(newEggMessage.cards)
+            deck.exchangeCardsToEgg(produceEgg.cards)
           // todo: rework a bit func so it returns optional tuple if everything goes well
           egg match {
             case Some(egg) =>
               newCards match {
                 case Some(cards) =>
-                  newEggMessage.outputRef ! GameProduceEgg(newEggMessage.player, cards, egg)
+                  produceEgg.outputRef ! GameProduceEgg(produceEgg.player, cards, egg)
                 case None => new RuntimeException
               }
             case None => new RuntimeException

@@ -87,12 +87,11 @@ To exchange cards:
 // todo: bail out if game is in progress or finished
 // todo: rename turn -> gameplay
 // todo: tail throws...
-// todo: unite two playerRef messages into one
 // todo: publish attack event to server
 // todo: deck ! exchange fox card to new
 // todo: deck ! exchange two roosters card to new
 // todo: handle all messages here
 // todo: Try catch and bail with error message
 // todo: add game state
-// todo: delay game start message for a second. to see 2 players joined on FE.
+// todo: possible leak... remove cards from player but produce egg checks fails
 ```

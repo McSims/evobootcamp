@@ -36,6 +36,7 @@ object Server {
   // todo: add struct like GameInfo...
   final case class ServerInputGameStateChanged(players: List[UUID]) extends ServerMessage
   final case class ServerInputActionExchange(playerId: UUID, gameId: UUID, cards: List[PlayCard]) extends ServerMessage
+  final case class ServerInputActionLayTheEgg(playerId: UUID, gameId: UUID, cards: List[PlayCard]) extends ServerMessage
 
   final case class ServerOutputMessage(message: String) extends ServerMessage
   final case class ServerOutputError(errorMessage: String) extends ServerMessage
@@ -71,8 +72,11 @@ object Server {
       case joinGame: ServerInputJoinGame =>
         lobby ! LobbyJoinGameMessage(joinGame.gameId, joinGame.playerId, joinGame.nick)
         same
-      case gameAction: ServerInputActionExchange =>
-        lobby ! LobbyActionExchange(gameAction.playerId, gameAction.gameId, gameAction.cards)
+      case exchangeCardsAction: ServerInputActionExchange =>
+        lobby ! LobbyActionExchange(exchangeCardsAction.playerId, exchangeCardsAction.gameId, exchangeCardsAction.cards)
+        same
+      case layTheEggAction: ServerInputActionLayTheEgg =>
+        lobby ! LobbyActionLayTheEgg(layTheEggAction.playerId, layTheEggAction.gameId, layTheEggAction.cards)
         same
 
       // Outgoing

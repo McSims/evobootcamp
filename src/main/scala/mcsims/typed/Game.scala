@@ -31,11 +31,12 @@ object Game {
   final case class GameStartMessage(gameId: UUID) extends Input
   final case class GameFinishMessage(gameId: UUID) extends Input
 
-  case class GameDealCards(player: UUID, cards: List[PlayCard]) extends Input
-  case class GameProduceEgg(player: UUID, cards: List[PlayCard], egg: EggCard) extends Input
-  case class GameProduceChick(player: UUID, cards: List[PlayCard], chick: ChickCard) extends Input
+  final case class GameDealCards(player: UUID, cards: List[PlayCard]) extends Input
+  final case class GameProduceEgg(player: UUID, cards: List[PlayCard], egg: EggCard) extends Input
+  final case class GameProduceChick(player: UUID, cards: List[PlayCard], chick: ChickCard) extends Input
 
   final case class GameActionExchangeCards(player: UUID, cards: List[PlayCard]) extends Input
+  final case class GameActionLayTheEgg(player: UUID, cards: List[PlayCard]) extends Input
 
   final case class GameAttack(attacker: UUID, defender: UUID) extends Input
   final case class GameDeffendAttack(attacker: UUID, defender: UUID) extends Input
@@ -68,10 +69,11 @@ object Game {
 
         case startGameMessage: GameStartMessage =>
           players.keySet.foreach(playerId => deck ! DeckDealCards(playerId, outputRef = context.self))
+          server ! ServerInputGameStateChanged(players.keySet.toList)
+          Thread.sleep(1000)
           gamePlay ! GamePlayNextTurn
           lobby ! LobbyGamesStateChangedMessage(startGameMessage.gameId, IN_PROGRESS)
           lobby ! LobbyAllGamesMessage
-          server ! ServerInputGameStateChanged(players.keySet.toList)
           apply(gameId, name, IN_PROGRESS, players, deck, gamePlay, lobby, server)
 
         case closeGameMessage: GameFinishMessage =>
@@ -99,15 +101,11 @@ object Game {
           player ! PlayerNewCardsMessage(newCards.cards)
           same
 
-        case newEgg: GameProduceEgg =>
-          val player = getPlayer(players, newEgg.player)
-          // todo: unite two playerRef messages into one
-          player ! PlayerNewCardsMessage(newEgg.cards)
-          player ! PlayerNewEggMessage(newEgg.egg)
-          same
-
         case newChick: GameProduceChick =>
           val player = getPlayer(players, newChick.player)
+          // player ! PlayerRemoveCardsMessage(layTheEgg.cards)
+          // deck ! DeckExchangeCards(layTheEgg.player, layTheEgg.cards, context.self)
+          // gamePlay ! GamePlayNextTurn
           player ! PlayerNewCardsMessage(newChick.cards)
           player ! PlayerNewChickMessage(newChick.chick)
           same
@@ -131,6 +129,19 @@ object Game {
           val player = getPlayer(players, exchangeCards.player)
           player ! PlayerRemoveCardsMessage(exchangeCards.cards)
           deck ! DeckExchangeCards(exchangeCards.player, exchangeCards.cards, context.self)
+          gamePlay ! GamePlayNextTurn
+          same
+
+        case layTheEgg: GameActionLayTheEgg =>
+          val player = getPlayer(players, layTheEgg.player)
+          // todo: possible leak... remove cards from player but produce egg checks fails
+          player ! PlayerRemoveCardsMessage(layTheEgg.cards)
+          deck ! DeckProduceEgg(layTheEgg.player, layTheEgg.cards, context.self)
+          same
+
+        case produceEgg: GameProduceEgg =>
+          val player = getPlayer(players, produceEgg.player)
+          player ! PlayerNewEggWithCardsMessage(produceEgg.egg, produceEgg.cards)
           gamePlay ! GamePlayNextTurn
           same
       }
