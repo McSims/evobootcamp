@@ -12,7 +12,7 @@ object Cards {
   private def eggName = CardName("Egg")
   private def nestName = CardName("Nest")
   private def roosterName = CardName("Rooster")
-  private def chickenName = CardName("Hen")
+  private def henName = CardName("Hen")
   private def chickName = CardName("Chick")
   private def foxName = CardName("Fox")
 
@@ -29,7 +29,7 @@ object Cards {
 
   def nest = PlayCard(nestName, nestId)
   def rooster = PlayCard(roosterName, roosterId)
-  def chicken = PlayCard(chickenName, chickenId)
+  def chicken = PlayCard(henName, chickenId)
   def fox = PlayCard(foxName, foxId)
 
   def egg = EggCard(eggName, eggId)

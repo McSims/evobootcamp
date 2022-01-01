@@ -33,6 +33,7 @@ object Server {
   final case class ServerInputPlayerCardsUpdated(payerState: PlayerInGame) extends ServerMessage
   final case class ServerInputNextTurn(playerId: UUID) extends ServerMessage
   final case class ServerInputMessage(message: String) extends ServerMessage
+  final case class ServerInputGameWon(playerId: UUID) extends ServerMessage
   // todo: add struct like GameInfo...
   final case class ServerInputGameStateChanged(players: List[UUID]) extends ServerMessage
   final case class ServerInputActionExchange(playerId: UUID, gameId: UUID, cards: List[PlayCard]) extends ServerMessage
@@ -81,6 +82,9 @@ object Server {
         same
       case chickBirth: ServerInputActionChickBirth =>
         lobby ! LobbyActionChickBirth(chickBirth.playerId, chickBirth.gameId, chickBirth.cards, chickBirth.egg)
+        same
+      case gameWon: ServerInputGameWon =>
+        serverRef ! gameWon
         same
 
       // Outgoing

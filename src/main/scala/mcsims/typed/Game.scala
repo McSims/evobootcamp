@@ -39,6 +39,8 @@ object Game {
   final case class GameActionLayTheEgg(player: UUID, cards: List[PlayCard]) extends Input
   final case class GameActionChickBirth(player: UUID, cards: List[PlayCard], egg: EggCard) extends Input
 
+  final case class GameChicksUpdated(playerId: UUID, chicks: List[ChickCard]) extends Input
+
   final case class GameAttack(attacker: UUID, defender: UUID) extends Input
   final case class GameDeffendAttack(attacker: UUID, defender: UUID) extends Input
   final case class GameLooseAttack(attacker: UUID, defender: UUID) extends Input
@@ -147,9 +149,18 @@ object Game {
 
         case produceChick: GameProduceChick =>
           val player = getPlayer(players, produceChick.player)
-          player ! PlayerNewChickWithCardsMessage(produceChick.chick, produceChick.cards)
+          player ! PlayerNewChickWithCardsMessage(produceChick.chick, produceChick.cards, context.self)
           gamePlay ! GamePlayNextTurn
           same
+
+        case playerChicks: GameChicksUpdated =>
+          if (playerChicks.chicks.length == 3) {
+            server ! ServerInputGameWon(playerChicks.playerId)
+            context.self ! GameFinishMessage(gameId)
+            same
+          } else {
+            same
+          }
       }
     }
   }

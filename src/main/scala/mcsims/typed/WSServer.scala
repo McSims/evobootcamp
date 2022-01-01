@@ -67,6 +67,7 @@ object WSServer extends App {
           // todo: should only have output here... Fix traits.
           case ServerInputNextTurn(playerId)        => OutgoingMessage("NEXT_TURN", Some(PayloadNextTurn(playerId.toString))).asJson.toString
           case ServerInputGameStateChanged(players) => OutgoingMessage("GAME_STAGE_CHANGED", Some(PayloadGameUpdate(players))).asJson.toString
+          case ServerInputGameWon(playerId)         => OutgoingMessage("PLAYER_WON", Some(PayloadGameWon(playerId))).asJson.toString
         }
       )
       .map(m ⇒ TextMessage.Strict(m))

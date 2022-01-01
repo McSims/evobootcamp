@@ -20,7 +20,7 @@ object DeckActor {
   sealed trait DeckMessage
   sealed trait Input extends DeckMessage
 
-  case class DeckDealCards(player: UUID, numberOfCards: Int = 5, outputRef: GameRef) extends Input
+  case class DeckDealCards(player: UUID, numberOfCards: Int = 4, outputRef: GameRef) extends Input
   case class DeckExchangeCards(player: UUID, cards: List[PlayCard], outputRef: GameRef) extends Input
   case class DeckProduceEgg(player: UUID, cards: List[PlayCard], outputRef: GameRef) extends Input
   case class DeckProduceChick(player: UUID, cards: List[PlayCard], egg: EggCard, outputRef: GameRef) extends Input

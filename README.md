@@ -71,6 +71,18 @@ To exchange cards:
 }
 ```
 
+To lay the egg:
+```
+{
+  "messageType": "ACTION_LAY_EGG",
+  "payload": {
+    "gameId": "045a9180-5459-4d45-8981-886076f37557",
+    "playerId": "1c8019e8-44da-473a-9794-ba3b02a868d0",
+    "cards": [{"name": "Nest","id": "2"}, {"name": "Hen","id": "4"}, {"name": "Rooster","id": "3"}]
+  }
+}
+```
+
 # TODOS
 
 ```
