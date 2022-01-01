@@ -9,13 +9,12 @@ import akka.actor.typed.{ActorRef, Behavior}
 import mcsims.pioupiou.Deck._
 import mcsims.pioupiou.DeckService._
 import mcsims.pioupiou.Cards._
-import mcsims.pioupiou.Server._
 import mcsims.pioupiou.Player._
 import mcsims.pioupiou.Game._
 import mcsims.pioupiou.LobbyService._
 import mcsims.pioupiou.DeckActor._
-import mcsims.pioupiou.Messages._
-import mcsims.pioupiou.WSServer._
+import mcsims.pioupiou.server.Server._
+import mcsims.pioupiou.server.WSServer._
 
 /** Lobby is where all games are stored and players choose one to join.
   */
@@ -36,17 +35,17 @@ object Lobby {
   final case class LobbyActionLayTheEgg(playerId: UUID, gameId: UUID, cards: List[PlayCard]) extends LobbyInput
   final case class LobbyActionChickBirth(playerId: UUID, gameId: UUID, cards: List[PlayCard], egg: EggCard) extends LobbyInput
 
-  def apply(games: Map[UUID, GameRef] = Map.empty, gamesInfo: Map[UUID, GameInfo] = Map.empty, randomGameNames: List[String] = randomGameNames, server: ServerRef, clientRef: ClientRef): Behavior[LobbyMessage] = receive { (context, message) =>
+  def apply(games: Map[UUID, GameRef] = Map.empty, gamesInfo: Map[UUID, GameInfo] = Map.empty, randomGameNames: List[String] = randomGameNames, clientRef: ClientRef): Behavior[LobbyMessage] = receive { (context, message) =>
     message match {
       case LobbyCreateGameMessage =>
         val uuid = UUID.randomUUID
         val deckRef = context.spawnAnonymous(DeckActor(Deck(shuffle(Cards.allAvailableCards))))
-        val turnRef = context.spawnAnonymous(GamePlay(List.empty, server = server, clientRef = clientRef))
+        val turnRef = context.spawnAnonymous(GamePlay(List.empty, clientRef = clientRef))
         val gameNames = getRandomNameFrom(randomGameNames)
-        val game = Game(uuid, gameNames._1, deck = deckRef, gamePlay = turnRef, lobby = context.self, server = server, clientRef = clientRef)
+        val game = Game(uuid, gameNames._1, deck = deckRef, gamePlay = turnRef, lobby = context.self, clientRef = clientRef)
         val gameRef = context.spawnAnonymous(game)
         val gameInfo = GameInfo(uuid.toString, gameNames._1, 0)
-        apply(games + (uuid -> gameRef), gamesInfo + (uuid -> gameInfo), gameNames._2, server, clientRef)
+        apply(games + (uuid -> gameRef), gamesInfo + (uuid -> gameInfo), gameNames._2, clientRef)
 
       case joinMessage: LobbyJoinGameMessage =>
         val uuid = UUID.fromString(joinMessage.gameId)
@@ -54,11 +53,11 @@ object Lobby {
         val game = getGame(games, uuid)
         game ! GameJoinMessage(joinMessage.playerId, joinMessage.nick)
         context.self ! LobbyAllGamesMessage
-        apply(games, gamesInfo + (uuid -> (gameInfo.copy(players = gameInfo.players + 1))), randomGameNames, server, clientRef)
+        apply(games, gamesInfo + (uuid -> (gameInfo.copy(players = gameInfo.players + 1))), randomGameNames, clientRef)
 
       case gameStateChanged: LobbyGamesStateChangedMessage =>
         val gameInfo = getGameInfo(gamesInfo, gameStateChanged.gameId)
-        apply(games, gamesInfo + (gameStateChanged.gameId -> (gameInfo.copy(stage = gameStateChanged.stage))), randomGameNames, server, clientRef)
+        apply(games, gamesInfo + (gameStateChanged.gameId -> (gameInfo.copy(stage = gameStateChanged.stage))), randomGameNames, clientRef)
 
       case LobbyAllGamesMessage =>
         clientRef ! ServerOutputGames(gamesInfo.values.toList)

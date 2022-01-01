@@ -7,12 +7,11 @@ import java.util.UUID
 
 import mcsims.pioupiou.Cards._
 
-import mcsims.pioupiou.Server._
-import mcsims.pioupiou.Messages._
 import mcsims.pioupiou.GamePlayService._
 import mcsims.pioupiou.Player._
 import mcsims.pioupiou.Game._
-import mcsims.pioupiou.WSServer._
+import mcsims.pioupiou.server.Server._
+import mcsims.pioupiou.server.WSServer._
 
 /** GamePlay object operates infinite queue of players.
   */
@@ -32,20 +31,20 @@ object GamePlay {
 
   final case class Attack(attacker: UUID, defender: UUID)
 
-  def apply(turns: List[UUID], attack: Option[Attack] = None, server: ServerRef, clientRef: ClientRef): Behavior[GamePlayMessage] = receive { (context, message) =>
+  def apply(turns: List[UUID], attack: Option[Attack] = None, clientRef: ClientRef): Behavior[GamePlayMessage] = receive { (context, message) =>
     message match {
       case GamePlayNextTurn =>
         val (uuid, newTurns) = nextTurn(turns)
         clientRef ! ServerOutputNextTurn(uuid)
-        apply(newTurns, server = server, clientRef = clientRef)
+        apply(newTurns, clientRef = clientRef)
 
       case newPlayer: GamePlayAddPlayer =>
         val newTurns = addPlayer(turns, newPlayer.playerId)
-        apply(newTurns, server = server, clientRef = clientRef)
+        apply(newTurns, clientRef = clientRef)
 
       case attackMessage: GamePlayAttack =>
         // todo: publish attack event to server
-        apply(turns, Option(Attack(attackMessage.attackerId, attackMessage.defenderId)), server, clientRef = clientRef)
+        apply(turns, Option(Attack(attackMessage.attackerId, attackMessage.defenderId)), clientRef = clientRef)
 
       case defendMessage: GamePlayDeffendAttack =>
         if (!isValidAttack(attack, defendMessage.defenderId, defendMessage.attackerId)) {
@@ -53,7 +52,7 @@ object GamePlay {
         }
         defendMessage.outputRef ! GameAttackDeffended(defendMessage.attackerId, defendMessage.defenderId)
         context.self ! GamePlayNextTurn
-        apply(turns, None, server, clientRef = clientRef)
+        apply(turns, None, clientRef)
 
       case looseMessage: GamePlayLooseAttack =>
         if (!isValidAttack(attack, looseMessage.defenderId, looseMessage.attackerId)) {
@@ -61,7 +60,7 @@ object GamePlay {
         }
         looseMessage.outputRef ! GameAttackLost(looseMessage.attackerId, looseMessage.defenderId)
         context.self ! GamePlayNextTurn
-        apply(turns, None, server, clientRef = clientRef)
+        apply(turns, None, clientRef)
     }
   }
 }

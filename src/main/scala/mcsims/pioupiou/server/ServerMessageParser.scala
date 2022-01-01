@@ -1,9 +1,10 @@
-package mcsims.pioupiou
+package mcsims.pioupiou.server
 
+import mcsims.pioupiou.Cards
 import mcsims.pioupiou.Cards._
-import mcsims.pioupiou.Server._
-import mcsims.pioupiou.Messages.IncommingMessages._
-import mcsims.pioupiou.Messages.OutgoingMessages._
+import mcsims.pioupiou.server.Server._
+import mcsims.pioupiou.server.Messages.IncommingMessages._
+import mcsims.pioupiou.server.Messages.OutgoingMessages._
 
 import io.circe.syntax._
 import io.circe.parser._

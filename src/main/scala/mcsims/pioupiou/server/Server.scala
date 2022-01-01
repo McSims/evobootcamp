@@ -1,15 +1,16 @@
-package mcsims.pioupiou
+package mcsims.pioupiou.server
 
 import java.util.UUID
 
 import akka.actor.typed.scaladsl.Behaviors._
 import akka.actor.typed.{ActorRef, Behavior}
 
+import mcsims.pioupiou.Lobby
 import mcsims.pioupiou.Lobby._
 import mcsims.pioupiou.Cards._
 import mcsims.pioupiou.Messages._
 import mcsims.pioupiou.PlayerInGame._
-import mcsims.pioupiou.WSServer._
+import mcsims.pioupiou.server.WSServer._
 
 import io.circe.{Decoder, Encoder}
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
@@ -52,7 +53,7 @@ object Server {
   def apply(clientRef: ClientRef): Behavior[ServerInput] =
     setup { context =>
       {
-        val lobby = context.spawnAnonymous(Lobby(server = context.self, clientRef = clientRef))
+        val lobby = context.spawnAnonymous(Lobby(clientRef = clientRef))
         val server = startServer(lobby, clientRef)
         lobby ! LobbyCreateGameMessage
         server

@@ -7,11 +7,11 @@ import akka.actor.typed.{ActorRef, Behavior}
 
 import mcsims.pioupiou.Cards._
 import mcsims.pioupiou.Game._
-import mcsims.pioupiou.Server._
+import mcsims.pioupiou.server.Server._
 import mcsims.pioupiou.Messages._
 import mcsims.pioupiou.PlayerInGame._
 import mcsims.pioupiou.PlayerService._
-import mcsims.pioupiou.WSServer._
+import mcsims.pioupiou.server.WSServer._
 
 object Player {
 

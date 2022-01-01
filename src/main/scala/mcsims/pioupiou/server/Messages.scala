@@ -1,4 +1,4 @@
-package mcsims.pioupiou
+package mcsims.pioupiou.server
 
 import java.util.UUID
 
