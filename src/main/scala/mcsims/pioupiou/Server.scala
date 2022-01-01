@@ -20,11 +20,10 @@ object Server {
 
   type ServerRef = ActorRef[ServerMessage]
 
-  // unreviewed
-  final case class ServerPlayerWon(playerId: UUID) extends ServerMessage
-
   // reviewed
   sealed trait ServerMessage
+
+  sealed trait ServerOutput extends ServerMessage
 
   final case object ServerInputAllGames extends ServerMessage
   final case class ServerInputJoinGame(gameId: String, playerId: String, nick: String) extends ServerMessage
@@ -34,21 +33,26 @@ object Server {
   final case class ServerInputNextTurn(playerId: UUID) extends ServerMessage
   final case class ServerInputMessage(message: String) extends ServerMessage
   final case class ServerInputGameWon(playerId: UUID) extends ServerMessage
+
   // todo: add struct like GameInfo...
   final case class ServerInputGameStateChanged(players: List[UUID]) extends ServerMessage
   final case class ServerInputActionExchange(playerId: UUID, gameId: UUID, cards: List[PlayCard]) extends ServerMessage
   final case class ServerInputActionLayTheEgg(playerId: UUID, gameId: UUID, cards: List[PlayCard]) extends ServerMessage
   final case class ServerInputActionChickBirth(playerId: UUID, gameId: UUID, cards: List[PlayCard], egg: EggCard) extends ServerMessage
 
-  final case class ServerOutputMessage(message: String) extends ServerMessage
-  final case class ServerOutputError(errorMessage: String) extends ServerMessage
-  final case class ServerOutputGames(games: List[GameInfo]) extends ServerMessage
-  final case class ServerOutputGameJoined(playerId: UUID, gameId: UUID) extends ServerMessage
+  final case class ServerOutputGameStateChanged(players: List[UUID]) extends ServerOutput
+  final case class ServerOutputGameWon(playerId: UUID) extends ServerOutput
+  final case class ServerOutputNextTurn(playerId: UUID) extends ServerOutput
+  final case class ServerOutputPlayerCardsUpdated(payerState: PlayerInGame) extends ServerOutput
+  final case class ServerOutputMessage(message: String) extends ServerOutput
+  final case class ServerOutputError(errorMessage: String) extends ServerOutput
+  final case class ServerOutputGames(games: List[GameInfo]) extends ServerOutput
+  final case class ServerOutputGameJoined(playerId: UUID, gameId: UUID) extends ServerOutput
 
-  case object ServerComplete extends ServerMessage
-  final case class ServerFail(ex: Throwable) extends ServerMessage
+  case object ServerComplete extends ServerOutput
+  final case class ServerFail(ex: Throwable) extends ServerOutput
 
-  def apply(outputRef: ActorRef[ServerMessage]): Behavior[ServerMessage] =
+  def apply(outputRef: ActorRef[ServerOutput]): Behavior[ServerMessage] =
     setup { context =>
       {
         val lobby = context.spawnAnonymous(Lobby(server = context.self))
@@ -61,7 +65,7 @@ object Server {
       }
     }
 
-  def startServer(lobby: LobbyRef, serverRef: ServerRef): Behavior[ServerMessage] = receive { (context, message) =>
+  def startServer(lobby: LobbyRef, serverRef: ActorRef[ServerOutput]): Behavior[ServerMessage] = receive { (context, message) =>
     message match {
 
       // Incomming
@@ -83,9 +87,6 @@ object Server {
       case chickBirth: ServerInputActionChickBirth =>
         lobby ! LobbyActionChickBirth(chickBirth.playerId, chickBirth.gameId, chickBirth.cards, chickBirth.egg)
         same
-      case gameWon: ServerInputGameWon =>
-        serverRef ! gameWon
-        same
 
       // Outgoing
       case errorMessage: ServerInputParsingError =>
@@ -98,13 +99,16 @@ object Server {
         serverRef ! joinedMessage
         same
       case nextTurn: ServerInputNextTurn =>
-        serverRef ! nextTurn
+        serverRef ! ServerOutputNextTurn(nextTurn.playerId)
         same
       case cardsUpdated: ServerInputPlayerCardsUpdated =>
-        serverRef ! cardsUpdated
+        serverRef ! ServerOutputPlayerCardsUpdated(cardsUpdated.payerState)
         same
       case gameStageUpdate: ServerInputGameStateChanged =>
-        serverRef ! gameStageUpdate
+        serverRef ! ServerOutputGameStateChanged(gameStageUpdate.players)
+        same
+      case gameWon: ServerInputGameWon =>
+        serverRef ! ServerOutputGameWon(gameWon.playerId)
         same
     }
   }
