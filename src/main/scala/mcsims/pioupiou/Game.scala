@@ -1,20 +1,21 @@
-package mcsims.typed
+package mcsims.pioupiou
 
 import akka.actor.typed.scaladsl.Behaviors._
 import akka.actor.typed.{ActorRef, Behavior}
 
 import java.util.UUID
 
-import mcsims.typed.Cards
-import mcsims.typed.Cards._
+import mcsims.pioupiou.Cards
+import mcsims.pioupiou.Cards._
 
-import mcsims.typed.Server._
-import mcsims.typed.Lobby._
-import mcsims.typed.Player._
-import mcsims.typed.GamePlay._
-import mcsims.typed.DeckActor._
-import mcsims.typed.GameService._
-import mcsims.typed.PlayerInGame._
+import mcsims.pioupiou.Server._
+import mcsims.pioupiou.Lobby._
+import mcsims.pioupiou.Player._
+import mcsims.pioupiou.GamePlay._
+import mcsims.pioupiou.DeckActor._
+import mcsims.pioupiou.GameService._
+import mcsims.pioupiou.PlayerInGame._
+import mcsims.pioupiou.WSServer._
 
 /** Game object helds current game state.
   *
@@ -52,7 +53,7 @@ object Game {
   val IN_PROGRESS = "IN_PROGRESS"
   val FINISHED = "FINISHED"
 
-  def apply(gameId: UUID, name: String, stage: String = REGISTRATION_OPEN, players: Map[UUID, PlayerRef] = Map.empty, deck: DeckRef, gamePlay: GamePlayRef, lobby: LobbyRef, server: ServerRef): Behavior[GameMessage] = {
+  def apply(gameId: UUID, name: String, stage: String = REGISTRATION_OPEN, players: Map[UUID, PlayerRef] = Map.empty, deck: DeckRef, gamePlay: GamePlayRef, lobby: LobbyRef, server: ServerRef, clientRef: ClientRef): Behavior[GameMessage] = {
     receive { (context, message) =>
       message match {
 
@@ -60,44 +61,44 @@ object Game {
         case joinMessage: GameJoinMessage =>
           val newPlayerId = UUID.fromString(joinMessage.playerId)
           gamePlay ! GamePlayAddPlayer(newPlayerId)
-          server ! ServerOutputGameJoined(newPlayerId, gameId)
+          clientRef ! ServerOutputGamePlayerJoined(newPlayerId, gameId)
           val playerInGame = PlayerInGame(newPlayerId, joinMessage.nick)
-          val playerRef = context.spawnAnonymous(Player(playerInGame, server = server))
+          val playerRef = context.spawnAnonymous(Player(playerInGame, clientRef = clientRef))
           val newPlayers = players + (newPlayerId -> playerRef)
           if (newPlayers.keySet.toList.length == 2) {
             context.self ! GameStartMessage(gameId)
             lobby ! LobbyCreateGameMessage
           }
-          apply(gameId, name, stage, newPlayers, deck, gamePlay, lobby, server)
+          apply(gameId, name, stage, newPlayers, deck, gamePlay, lobby, server, clientRef)
 
         case startGameMessage: GameStartMessage =>
           players.keySet.foreach(playerId => deck ! DeckDealCards(playerId, outputRef = context.self))
-          server ! ServerInputGameStateChanged(players.keySet.toList)
+          clientRef ! ServerOutputGamePlayersJoined(players.keySet.toList)
           Thread.sleep(1000)
           gamePlay ! GamePlayNextTurn
           lobby ! LobbyGamesStateChangedMessage(startGameMessage.gameId, IN_PROGRESS)
           lobby ! LobbyAllGamesMessage
-          apply(gameId, name, IN_PROGRESS, players, deck, gamePlay, lobby, server)
+          apply(gameId, name, IN_PROGRESS, players, deck, gamePlay, lobby, server, clientRef)
 
         case closeGameMessage: GameFinishMessage =>
           // todo: send final message to close actor system?
           lobby ! LobbyGamesStateChangedMessage(closeGameMessage.gameId, FINISHED)
           lobby ! LobbyAllGamesMessage
-          apply(gameId, name, FINISHED, players, deck, gamePlay, lobby, server)
+          apply(gameId, name, FINISHED, players, deck, gamePlay, lobby, server, clientRef)
 
         case attackMessage: GameAttack =>
           val defender = getPlayer(players, attackMessage.defender)
           gamePlay ! GamePlayAttack(attackMessage.attacker, attackMessage.defender)
-          apply(gameId, name, stage, players, deck, gamePlay, lobby, server)
+          apply(gameId, name, stage, players, deck, gamePlay, lobby, server, clientRef)
 
         case defendAttackMessage: GameDeffendAttack =>
           gamePlay ! GamePlayDeffendAttack(defendAttackMessage.attacker, defendAttackMessage.defender, context.self)
-          apply(gameId, name, stage, players, deck, gamePlay, lobby, server)
+          apply(gameId, name, stage, players, deck, gamePlay, lobby, server, clientRef)
 
         case looseAttackMessage: GameLooseAttack =>
           val defender = getPlayer(players, looseAttackMessage.defender)
           gamePlay ! GamePlayLooseAttack(looseAttackMessage.attacker, looseAttackMessage.defender, context.self)
-          apply(gameId, name, stage, players, deck, gamePlay, lobby, server)
+          apply(gameId, name, stage, players, deck, gamePlay, lobby, server, clientRef)
 
         case newCards: GameDealCards =>
           val player = getPlayer(players, newCards.player)
@@ -155,7 +156,7 @@ object Game {
 
         case playerChicks: GameChicksUpdated =>
           if (playerChicks.chicks.length == 3) {
-            server ! ServerInputGameWon(playerChicks.playerId)
+            clientRef ! ServerOutputGameWon(playerChicks.playerId)
             context.self ! GameFinishMessage(gameId)
             same
           } else {

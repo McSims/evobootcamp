@@ -1,9 +1,9 @@
-package mcsims.typed
+package mcsims.pioupiou
 
 import java.util.UUID
 
-import mcsims.typed.Game._
-import mcsims.typed.Player._
+import mcsims.pioupiou.Game._
+import mcsims.pioupiou.Player._
 
 object GameService {
 

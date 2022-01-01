@@ -51,7 +51,8 @@ Join game:
 {
   "messageType": "JOIN_GAME",
   "payload": {
-    "gameId": "208c1eb9-983f-4e46-8a79-5566c207c408",
+    "gameId": "XXX",
+    "playerId": "XXX",
     "nick": "McSims"
   }
 }
@@ -83,6 +84,19 @@ To lay the egg:
 }
 ```
 
+To hatch the egg:
+```
+{
+  "messageType": "ACTION_CHICK_BIRTH",
+  "payload": {
+    "gameId": "045a9180-5459-4d45-8981-886076f37557",
+    "playerId": "1c8019e8-44da-473a-9794-ba3b02a868d0",
+    "cards": [{"name": "Nest","id": "2"}, {"name": "Hen","id": "4"}, {"name": "Rooster","id": "3"}],
+    "egg": {"name": "Egg","id": "1"}
+  }
+}
+```
+
 # TODOS
 
 ```
@@ -95,7 +109,6 @@ To lay the egg:
 // todo: send final message to close actor system?
 // todo: review all implementation and remove unnesasary things
 // todo: send response with updated list of available games. how to achieve this if you operate with list of actor ref?
-// todo: It seems that Server must hold reference to game in order to directly communicate with the game and avoid using Lobby as proxy @George?
 // todo: bail out if game is in progress or finished
 // todo: rename turn -> gameplay
 // todo: tail throws...

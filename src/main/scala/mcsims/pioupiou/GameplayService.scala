@@ -1,8 +1,8 @@
-package mcsims.typed
+package mcsims.pioupiou
 
 import java.util.UUID
 
-import mcsims.typed.GamePlay._
+import mcsims.pioupiou.GamePlay._
 
 // todo: unit test this
 object GamePlayService {

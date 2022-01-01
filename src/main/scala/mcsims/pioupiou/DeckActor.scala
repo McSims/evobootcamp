@@ -1,15 +1,15 @@
-package mcsims.typed
+package mcsims.pioupiou
 
 import java.util.UUID
 
 import akka.actor.typed.scaladsl.Behaviors._
 import akka.actor.typed.{ActorRef, Behavior}
 
-import mcsims.typed.Game._
-import mcsims.typed.Cards
-import mcsims.typed.Cards._
-import mcsims.typed.Player._
-import mcsims.typed.Deck._
+import mcsims.pioupiou.Game._
+import mcsims.pioupiou.Cards
+import mcsims.pioupiou.Cards._
+import mcsims.pioupiou.Player._
+import mcsims.pioupiou.Deck._
 
 /** Deck object helds current available cards, trash cards.
   */

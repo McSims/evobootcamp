@@ -1,14 +1,14 @@
-import mcsims.typed.Messages.IncommingMessages._
-import mcsims.typed.Messages.OutgoingMessages._
+import mcsims.pioupiou.Messages.IncommingMessages._
+import mcsims.pioupiou.Messages.OutgoingMessages._
 
 import org.scalatest.flatspec.AnyFlatSpec
 
 import io.circe.parser._
 import io.circe.syntax._
 
-import mcsims.typed.Lobby
-import mcsims.typed.Cards
-import mcsims.typed.PlayerInGame._
+import mcsims.pioupiou.Lobby
+import mcsims.pioupiou.Cards
+import mcsims.pioupiou.PlayerInGame._
 
 import java.util.UUID
 

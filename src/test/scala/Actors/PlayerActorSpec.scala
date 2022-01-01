@@ -8,8 +8,8 @@
 
 // import dev.PlayerInGame._
 // import dev.Actors._
-// import mcsims.typed.Cards._
-// import mcsims.typed.Cards
+// import mcsims.pioupiou.Cards._
+// import mcsims.pioupiou.Cards
 // import java.util.UUID
 
 // class PlayerSpec() extends TestKit(ActorSystem("PlayerSpec")) with ImplicitSender with AnyWordSpecLike with Matchers with BeforeAndAfterAll {

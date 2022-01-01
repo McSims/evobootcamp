@@ -1,4 +1,4 @@
-package mcsims.typed
+package mcsims.pioupiou
 
 import java.util.UUID
 
@@ -45,9 +45,9 @@ object Messages {
     import io.circe.generic.semiauto.{deriveEncoder, deriveDecoder}
     import io.circe.syntax._
 
-    import mcsims.typed.Cards._
-    import mcsims.typed.Lobby._
-    import mcsims.typed.PlayerInGame._
+    import mcsims.pioupiou.Cards._
+    import mcsims.pioupiou.Lobby._
+    import mcsims.pioupiou.PlayerInGame._
 
     case class OutgoingMessage(messageType: String, payload: Option[OutgoingPayload] = Option.empty)
 

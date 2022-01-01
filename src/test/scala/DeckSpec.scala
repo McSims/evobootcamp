@@ -1,8 +1,8 @@
 import org.scalatest.flatspec.AnyFlatSpec
-import mcsims.typed.Deck._
-import mcsims.typed.DeckService._
-import mcsims.typed.Cards._
-import mcsims.typed.Cards
+import mcsims.pioupiou.Deck._
+import mcsims.pioupiou.DeckService._
+import mcsims.pioupiou.Cards._
+import mcsims.pioupiou.Cards
 
 class DeckSpec extends AnyFlatSpec {
 

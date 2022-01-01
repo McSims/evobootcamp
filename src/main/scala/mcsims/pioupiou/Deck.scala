@@ -1,11 +1,11 @@
-package mcsims.typed.Deck
+package mcsims.pioupiou.Deck
 
 import java.{util => ju}
 import scala.annotation.tailrec
 
-import mcsims.typed.Cards
-import mcsims.typed.Cards._
-import mcsims.typed.DeckService._
+import mcsims.pioupiou.Cards
+import mcsims.pioupiou.Cards._
+import mcsims.pioupiou.DeckService._
 
 // todo: review all implementation and remove unnesasary things
 case class Deck(cards: List[PlayCard], trashCards: List[PlayCard] = List.empty) {

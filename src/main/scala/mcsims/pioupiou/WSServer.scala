@@ -1,8 +1,8 @@
-package mcsims.typed
+package mcsims.pioupiou
 
-import mcsims.typed.Server._
-import mcsims.typed.Messages._
-import mcsims.typed.Messages.IncommingMessages._
+import mcsims.pioupiou.Server._
+import mcsims.pioupiou.Messages._
+import mcsims.pioupiou.Messages.IncommingMessages._
 
 import akka.actor.typed.{ActorSystem, SpawnProtocol}
 
@@ -35,13 +35,15 @@ import akka.stream.scaladsl.BroadcastHub
 
 object WSServer extends App {
 
-  import mcsims.typed.Messages.OutgoingMessages._
-  import mcsims.typed.ServerMessageParser._
+  import mcsims.pioupiou.Messages.OutgoingMessages._
+  import mcsims.pioupiou.ServerMessageParser._
 
   implicit val system = ActorSystem(SpawnProtocol(), "PiouPiouSystem")
   implicit val materializer: Materializer = Materializer(system.classicSystem)
 
   val httpServer = Http(system).bind(interface = "localhost", port = 9001)
+
+  type ClientRef = ActorRef[ServerOutput]
 
   val outputSource =
     ActorSource.actorRef[ServerOutput](

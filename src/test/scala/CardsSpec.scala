@@ -1,8 +1,8 @@
 package dev
 
 import org.scalatest.flatspec.AnyFlatSpec
-import mcsims.typed.Cards._
-import mcsims.typed.Cards
+import mcsims.pioupiou.Cards._
+import mcsims.pioupiou.Cards
 
 class CardsSpec extends AnyFlatSpec {
   "Piou Piou game" should "have 47 card" in {

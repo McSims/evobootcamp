@@ -4,7 +4,7 @@
 // import dev.Game._
 // import dev.Deck._
 // import dev.PlayerInGame._
-// import mcsims.typed.Cards._
+// import mcsims.pioupiou.Cards._
 // import java.util.UUID
 
 // sealed trait PlayerMessage

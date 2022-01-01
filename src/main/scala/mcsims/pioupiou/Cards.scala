@@ -1,4 +1,4 @@
-package mcsims.typed
+package mcsims.pioupiou
 
 import io.circe.Encoder
 import io.circe.generic.extras.semiauto._

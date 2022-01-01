@@ -1,8 +1,8 @@
-package mcsims.typed
+package mcsims.pioupiou
 
 import java.util.UUID
 
-import mcsims.typed.Cards._
+import mcsims.pioupiou.Cards._
 
 import io.circe.Encoder
 import io.circe.generic.semiauto.{deriveEncoder}

@@ -3,9 +3,9 @@
 // import dev.Deck._
 // import Player._
 // import java.util.UUID
-// import mcsims.typed.Cards._
-// import mcsims.typed.Cards
-// import mcsims.typed.Deck._
+// import mcsims.pioupiou.Cards._
+// import mcsims.pioupiou.Cards
+// import mcsims.pioupiou.Deck._
 
 // class GameSpec extends AnyFlatSpec {
 

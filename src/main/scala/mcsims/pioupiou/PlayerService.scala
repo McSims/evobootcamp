@@ -1,6 +1,6 @@
-package mcsims.typed
+package mcsims.pioupiou
 
-import mcsims.typed.Cards._
+import mcsims.pioupiou.Cards._
 
 // todo: unit test this
 object PlayerService {

@@ -3,13 +3,13 @@
 // import akka.actor._
 
 // import Player._
-// import mcsims.typed.Deck._
+// import mcsims.pioupiou.Deck._
 // import dev.Game._
 
 // import java.util.UUID
 
-// import mcsims.typed.Cards
-// import mcsims.typed.Cards._
+// import mcsims.pioupiou.Cards
+// import mcsims.pioupiou.Cards._
 
 // sealed trait GamesMessage
 

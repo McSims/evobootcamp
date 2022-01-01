@@ -1,8 +1,8 @@
-package mcsims.typed
+package mcsims.pioupiou
 
 import java.util.UUID
-import mcsims.typed.Game._
-import mcsims.typed.Lobby._
+import mcsims.pioupiou.Game._
+import mcsims.pioupiou.Lobby._
 import scala.util.Random
 
 object LobbyService {
