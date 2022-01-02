@@ -1,8 +1,8 @@
 package mcsims.pioupiou.server
 
 import mcsims.pioupiou.server.Server._
-import mcsims.pioupiou.Messages._
-import mcsims.pioupiou.Messages.IncommingMessages._
+import mcsims.pioupiou.server.Messages._
+import mcsims.pioupiou.server.Messages.IncommingMessages._
 
 import akka.actor.typed.{ActorSystem, SpawnProtocol}
 
@@ -35,7 +35,7 @@ import akka.stream.scaladsl.BroadcastHub
 
 object WSServer extends App {
 
-  import mcsims.pioupiou.Messages.OutgoingMessages._
+  import mcsims.pioupiou.server.Messages.OutgoingMessages._
   import mcsims.pioupiou.server.ServerMessageParser._
 
   implicit val system = ActorSystem(SpawnProtocol(), "PiouPiouSystem")

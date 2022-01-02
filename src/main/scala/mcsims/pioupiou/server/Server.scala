@@ -8,7 +8,7 @@ import akka.actor.typed.{ActorRef, Behavior}
 import mcsims.pioupiou.Lobby
 import mcsims.pioupiou.Lobby._
 import mcsims.pioupiou.Cards._
-import mcsims.pioupiou.Messages._
+import mcsims.pioupiou.server.Messages._
 import mcsims.pioupiou.PlayerInGame._
 import mcsims.pioupiou.server.WSServer._
 

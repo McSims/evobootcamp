@@ -1,5 +1,5 @@
-import mcsims.pioupiou.Messages.IncommingMessages._
-import mcsims.pioupiou.Messages.OutgoingMessages._
+import mcsims.pioupiou.server.Messages.IncommingMessages._
+import mcsims.pioupiou.server.Messages.OutgoingMessages._
 
 import org.scalatest.flatspec.AnyFlatSpec
 
