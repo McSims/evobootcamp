@@ -4,7 +4,6 @@ import java.util.UUID
 
 import mcsims.pioupiou.GamePlay._
 
-// todo: unit test this
 object GamePlayService {
 
   def nextTurn(turns: List[UUID]): (UUID, List[UUID]) = {

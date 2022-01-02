@@ -36,8 +36,12 @@ sbt run pioupiou
 
 WS server will be available to connect on `localhost:9001/pioupiou`
 
-### Client message examples 
+
 </br>
+
+<details>
+<summary> Client message examples </summary>
+<br>
 
 Available games:
 ```
@@ -96,27 +100,21 @@ To hatch the egg:
   }
 }
 ```
+</br>
+</details>
+</br>
 
-# TODOS
+### TODOS
 
 ```
 // todos: new RuntimeException
-// todo: looks better to wrap into PlayerInGame...
-// todo: unit test this
-// todo: looks redundand with typed actors approach
-// todo: it seems private functionality not needed to be exposed. How do we test this?
 // todo: rework a bit func so it returns optional tuple if everything goes well
 // todo: send final message to close actor system?
-// todo: review all implementation and remove unnesasary things
-// todo: send response with updated list of available games. how to achieve this if you operate with list of actor ref?
 // todo: bail out if game is in progress or finished
-// todo: rename turn -> gameplay
 // todo: tail throws...
 // todo: publish attack event to server
 // todo: deck ! exchange fox card to new
 // todo: deck ! exchange two roosters card to new
-// todo: handle all messages here
 // todo: Try catch and bail with error message
-// todo: add game state
 // todo: possible leak... remove cards from player but produce egg checks fails
 ```

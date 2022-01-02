@@ -2,7 +2,6 @@ package mcsims.pioupiou
 
 import mcsims.pioupiou.Cards._
 
-// todo: unit test this
 object PlayerService {
 
   def removeCards(fromList: List[PlayCard], listToRemove: List[PlayCard]): List[PlayCard] = {

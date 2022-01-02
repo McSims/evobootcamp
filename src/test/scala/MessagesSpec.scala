@@ -36,35 +36,7 @@ class MessagesSpec extends AnyFlatSpec {
     """{"messageType": "NEXT_TURN", "payload":{"playerId": "playerId"}}""",
     """{"messageType": "ALL_GAMES", "payload":{"games": [{"uuid":"gameId", "name": "gameName", "players":0, "stage": "FINISHED"}]}}""",
     """{"messageType": "GAME_JOINED", "payload":{"playerId": "playerId", "gameId": "gameId"}}""",
-    """
-    {
-      "messageType": "PLAYER_CARDS",
-      "payload": {
-        "playerState": {
-          "playerId": "029c4bd3-afdf-4d21-9fe9-406f4583ef6c",
-          "name": "McSims",
-          "cards": [
-            {
-              "name": "Rooster",
-              "id": "3"
-            }
-          ],
-          "eggs": [
-            {
-              "name": "Egg",
-              "id": "1"
-            }
-          ],
-          "chicks": [
-            {
-              "name": "Chick",
-              "id": "5"
-            }
-          ]
-        }
-      }
-    }
-    """
+    """{"messageType":"PLAYER_CARDS","payload":{"playerState":{"playerId":"029c4bd3-afdf-4d21-9fe9-406f4583ef6c","name":"McSims","cards":[{"name":"Rooster","id":"3"}],"eggs":[{"name":"Egg","id":"1"}],"chicks":[{"name":"Chick","id":"5"}]}}}"""
   )
 
   val outgoingMessages = List(

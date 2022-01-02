@@ -8,42 +8,24 @@ class DeckSpec extends AnyFlatSpec {
 
   def fullDeck: Deck = {
     val cards = Cards.allAvailableCards
-    Deck(cards, List())
+    Deck(cards)
   }
 
-  def shortDeck = Deck(
-    List(Cards.rooster, Cards.fox, Cards.chicken),
-    List()
-  )
+  def shortDeck = Deck(List(Cards.rooster, Cards.fox, Cards.chicken))
 
-  // "A deck" should "deal cards" in {
-  //   assert(fullDeck.cards.length == Cards.allAvailableCards.length)
-  //   val dealtCards = fullDeck.dealCards(3, 5)
-  //   assert(dealtCards._1.get.length == 3)
-  //   assert(dealtCards._1.get(0).length == 5)
-  //   assert(dealtCards._1.get(1).length == 5)
-  //   assert(dealtCards._1.get(2).length == 5)
-  // }
-
-  // it must "deal only for 2 to 5 players" in {
-  //   assert(fullDeck.dealCards(1, 5)._1 == Option.empty)
-  //   assert(fullDeck.dealCards(2, 5)._1 != Option.empty)
-  //   assert(fullDeck.dealCards(5, 5)._1 != Option.empty)
-  //   assert(fullDeck.dealCards(6, 5)._1 == Option.empty)
-  // }
-
-  // it should "return itself if not enough cards" in {
-  //   // todo: maybe we should rewrite to validation return or throw?
-  //   val dealtCards = shortDeck.dealCards(2, 3)
-  //   assert(dealtCards._1 == Option.empty)
-  //   assert(dealtCards._2 == shortDeck)
-  // }
+  "A deck" should "exchange cards" in {
+    val cardsToExchange = List(Cards.nest, Cards.nest)
+    var result = shortDeck.exchangeCards(cardsToExchange)
+    assert(result._1 == List(Cards.rooster, Cards.fox))
+    assert(result._2.cards == List(Cards.chicken))
+    assert(result._2.trashCards == cardsToExchange)
+  }
 
   it should "exchange card" in {
     val result = shortDeck.exchangeCard(Cards.nest)
     assert(result._1 == Cards.rooster)
-    assert(result._2.trashCards.length == 1)
-    assert(result._2.cards.length == 2)
+    assert(result._2.cards == List(Cards.fox, Cards.chicken))
+    assert(result._2.trashCards == List(Cards.nest))
   }
 
   it should "shuffle trash cards" in {
@@ -71,4 +53,12 @@ class DeckSpec extends AnyFlatSpec {
     assert(result.cards == shortDeck.cards)
   }
 
+  it should "deal cards" in {
+    val totalCards = fullDeck.cards.length
+    val totalTrash = fullDeck.trashCards.length
+    val dealtCards = fullDeck.deal(10)
+    assert(dealtCards._1.length == 10)
+    assert(dealtCards._2.cards.length == totalCards - 10)
+    assert(dealtCards._2.trashCards.length == totalTrash)
+  }
 }

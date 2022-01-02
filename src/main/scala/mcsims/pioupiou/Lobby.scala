@@ -40,7 +40,7 @@ object Lobby {
       case LobbyCreateGameMessage =>
         val uuid = UUID.randomUUID
         val deckRef = context.spawnAnonymous(DeckActor(Deck(shuffle(Cards.allAvailableCards))))
-        val turnRef = context.spawnAnonymous(GamePlay(List.empty, clientRef = clientRef))
+        val turnRef = context.spawnAnonymous(GamePlay(clientRef = clientRef))
         val gameNames = getRandomNameFrom(randomGameNames)
         val game = Game(uuid, gameNames._1, deck = deckRef, gamePlay = turnRef, lobby = context.self, clientRef = clientRef)
         val gameRef = context.spawnAnonymous(game)

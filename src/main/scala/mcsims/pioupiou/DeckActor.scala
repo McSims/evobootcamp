@@ -10,9 +10,8 @@ import mcsims.pioupiou.Cards
 import mcsims.pioupiou.Cards._
 import mcsims.pioupiou.Player._
 import mcsims.pioupiou.Deck._
+import mcsims.pioupiou.DeckService._
 
-/** Deck object helds current available cards, trash cards.
-  */
 object DeckActor {
 
   type DeckRef = ActorRef[DeckMessage]
@@ -39,8 +38,7 @@ object DeckActor {
           apply(newDeck)
 
         case produceEgg: DeckProduceEgg =>
-          val (egg, newCards, newDeck) =
-            deck.exchangeCardsToEgg(produceEgg.cards)
+          val (egg, newCards, newDeck) = exchangeCardsToEgg(produceEgg.cards, deck)
           // todo: rework a bit func so it returns optional tuple if everything goes well
           egg match {
             case Some(egg) =>
@@ -54,7 +52,7 @@ object DeckActor {
           apply(newDeck)
 
         case newChickMessage: DeckProduceChick =>
-          val (chick, newCards, newDeck) = deck.exchangeEggToChick(newChickMessage.cards)
+          val (chick, newCards, newDeck) = exchangeEggToChick(newChickMessage.cards, deck)
           // todo: rework a bit func so it returns optional tuple if everything goes well
           chick match {
             case Some(chick) =>
@@ -69,4 +67,5 @@ object DeckActor {
       }
     }
   }
+
 }

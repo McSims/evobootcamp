@@ -31,7 +31,7 @@ object GamePlay {
 
   final case class Attack(attacker: UUID, defender: UUID)
 
-  def apply(turns: List[UUID], attack: Option[Attack] = None, clientRef: ClientRef): Behavior[GamePlayMessage] = receive { (context, message) =>
+  def apply(turns: List[UUID] = List.empty, attack: Option[Attack] = None, clientRef: ClientRef): Behavior[GamePlayMessage] = receive { (context, message) =>
     message match {
       case GamePlayNextTurn =>
         val (uuid, newTurns) = nextTurn(turns)
@@ -44,7 +44,7 @@ object GamePlay {
 
       case attackMessage: GamePlayAttack =>
         // todo: publish attack event to server
-        apply(turns, Option(Attack(attackMessage.attackerId, attackMessage.defenderId)), clientRef = clientRef)
+        apply(turns, Option(Attack(attackMessage.attackerId, attackMessage.defenderId)), clientRef)
 
       case defendMessage: GamePlayDeffendAttack =>
         if (!isValidAttack(attack, defendMessage.defenderId, defendMessage.attackerId)) {
