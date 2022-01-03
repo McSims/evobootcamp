@@ -7,6 +7,7 @@ import io.circe.parser._
 import io.circe.syntax._
 
 import mcsims.pioupiou.Lobby
+import mcsims.pioupiou.Game._
 import mcsims.pioupiou.Cards
 import mcsims.pioupiou.PlayerInGame._
 
@@ -43,7 +44,7 @@ class MessagesSpec extends AnyFlatSpec {
     OutgoingMessage("INFO", Option(PayloadInfo("Alert message!"))),
     OutgoingMessage("ERROR", Option(PayloadError("Error occured!"))),
     OutgoingMessage("NEXT_TURN", Option(PayloadNextTurn("playerId"))),
-    OutgoingMessage("ALL_GAMES", Option(PayloadAllGames(List(Lobby.GameInfo("gameId", "gameName", 0, "FINISHED"))))),
+    OutgoingMessage("ALL_GAMES", Option(PayloadAllGames(List(Lobby.GameInfo("gameId", "gameName", 0, FINISHED))))),
     OutgoingMessage("GAME_JOINED", Option(PayloadGameJoined("playerId", "gameId"))),
     OutgoingMessage(
       "PLAYER_CARDS",
