@@ -25,11 +25,11 @@ object Lobby {
   sealed trait LobbyMessage
   sealed trait LobbyInput extends LobbyMessage
 
-  final case class GameInfo(uuid: String, name: String, players: Int, stage: String = REGISTRATION_OPEN)
+  final case class GameInfo(uuid: String, name: String, players: Int, stage: GameStage = REGISTRATION_OPEN)
 
   final object LobbyCreateGameMessage extends LobbyInput
   final object LobbyAllGamesMessage extends LobbyInput
-  final case class LobbyGamesStateChangedMessage(gameId: UUID, stage: String) extends LobbyInput
+  final case class LobbyGamesStateChangedMessage(gameId: UUID, stage: GameStage) extends LobbyInput
   final case class LobbyJoinGameMessage(gameId: String, playerId: String, nick: String) extends LobbyInput
   final case class LobbyActionExchange(playerId: UUID, gameId: UUID, cards: List[PlayCard]) extends LobbyInput
   final case class LobbyActionLayTheEgg(playerId: UUID, gameId: UUID, cards: List[PlayCard]) extends LobbyInput

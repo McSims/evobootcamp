@@ -55,6 +55,7 @@ object Messages {
     import io.circe.syntax._
 
     import mcsims.pioupiou.Cards._
+    import mcsims.pioupiou.Game._
     import mcsims.pioupiou.Lobby._
     import mcsims.pioupiou.PlayerInGame._
 
@@ -96,6 +97,12 @@ object Messages {
     implicit val gameUpdateEncoder: Encoder[PayloadGameUpdate] = deriveEncoder
     implicit val gameWonEncoder: Encoder[PayloadGameWon] = deriveEncoder
     implicit val attackEncoder: Encoder[PayloadAttack] = deriveEncoder
+
+    implicit val encodeMode: Encoder[GameStage] = Encoder[String].contramap {
+      case IN_PROGRESS       => "IN_PROGRESS"
+      case FINISHED          => "FINISHED"
+      case REGISTRATION_OPEN => "REGISTRATION_OPEN"
+    }
   }
 
 }

@@ -49,11 +49,13 @@ object Game {
   final case class GameAttackDefended(attackerId: UUID, defenderId: UUID) extends Input
   final case class GameAttackLost(attackerId: UUID, defenderId: UUID) extends Input
 
-  val REGISTRATION_OPEN = "REGISTRATION_OPEN"
-  val IN_PROGRESS = "IN_PROGRESS"
-  val FINISHED = "FINISHED"
+  sealed trait GameStage
 
-  def apply(gameId: UUID, name: String, stage: String = REGISTRATION_OPEN, players: Map[UUID, PlayerRef] = Map.empty, deck: DeckRef, gamePlay: GamePlayRef, lobby: LobbyRef, clientRef: ClientRef): Behavior[GameMessage] = {
+  case object REGISTRATION_OPEN extends GameStage
+  case object IN_PROGRESS extends GameStage
+  case object FINISHED extends GameStage
+
+  def apply(gameId: UUID, name: String, stage: GameStage = REGISTRATION_OPEN, players: Map[UUID, PlayerRef] = Map.empty, deck: DeckRef, gamePlay: GamePlayRef, lobby: LobbyRef, clientRef: ClientRef): Behavior[GameMessage] = {
     receive { (context, message) =>
       message match {
 
