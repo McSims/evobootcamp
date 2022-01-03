@@ -33,6 +33,9 @@ object Server {
   final case class ServerInputActionExchange(playerId: UUID, gameId: UUID, cards: List[PlayCard]) extends ServerInput
   final case class ServerInputActionLayTheEgg(playerId: UUID, gameId: UUID, cards: List[PlayCard]) extends ServerInput
   final case class ServerInputActionChickBirth(playerId: UUID, gameId: UUID, cards: List[PlayCard], egg: EggCard) extends ServerInput
+  final case class ServerInputActionAttack(playerId: UUID, defenderId: UUID, gameId: UUID, fox: PlayCard) extends ServerInput
+  final case class ServerInputActionAttackLoose(attackerId: UUID, defenderId: UUID, gameId: UUID) extends ServerInput
+  final case class ServerInputActionAttackDefend(attackerId: UUID, defenderId: UUID, gameId: UUID) extends ServerInput
 
   sealed trait ServerOutput extends ServerMessage
   // General messages
@@ -46,6 +49,7 @@ object Server {
   final case class ServerOutputNextTurn(playerId: UUID) extends ServerOutput
   final case class ServerOutputPlayerCardsUpdated(payerState: PlayerInGame) extends ServerOutput
   final case class ServerOutputGameWon(playerId: UUID) extends ServerOutput
+  final case class ServerOutputAttack(attackerId: UUID, defenderId: UUID) extends ServerOutput
   // Lifecycle
   case object ServerComplete extends ServerOutput
   final case class ServerFail(ex: Throwable) extends ServerOutput
@@ -76,6 +80,15 @@ object Server {
         same
       case chickBirth: ServerInputActionChickBirth =>
         lobby ! LobbyActionChickBirth(chickBirth.playerId, chickBirth.gameId, chickBirth.cards, chickBirth.egg)
+        same
+      case attack: ServerInputActionAttack =>
+        lobby ! LobbyActionAttack(attack.playerId, attack.defenderId, attack.gameId, attack.fox)
+        same
+      case attackLoose: ServerInputActionAttackLoose =>
+        lobby ! LobbyActionAttackLoose(attackLoose.attackerId, attackLoose.defenderId, attackLoose.gameId)
+        same
+      case attackDefend: ServerInputActionAttackDefend =>
+        lobby ! LobbyActionAttackDefend(attackDefend.attackerId, attackDefend.defenderId, attackDefend.gameId)
         same
       case errorMessage: ServerInputParsingError =>
         clientRef ! ServerOutputError(errorMessage.error)

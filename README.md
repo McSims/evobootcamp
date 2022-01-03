@@ -112,9 +112,6 @@ To hatch the egg:
 // todo: send final message to close actor system?
 // todo: bail out if game is in progress or finished
 // todo: tail throws...
-// todo: publish attack event to server
-// todo: deck ! exchange fox card to new
-// todo: deck ! exchange two roosters card to new
 // todo: Try catch and bail with error message
 // todo: possible leak... remove cards from player but produce egg checks fails
 ```

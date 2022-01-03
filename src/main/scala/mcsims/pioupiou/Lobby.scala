@@ -34,6 +34,9 @@ object Lobby {
   final case class LobbyActionExchange(playerId: UUID, gameId: UUID, cards: List[PlayCard]) extends LobbyInput
   final case class LobbyActionLayTheEgg(playerId: UUID, gameId: UUID, cards: List[PlayCard]) extends LobbyInput
   final case class LobbyActionChickBirth(playerId: UUID, gameId: UUID, cards: List[PlayCard], egg: EggCard) extends LobbyInput
+  final case class LobbyActionAttack(playerId: UUID, defenderId: UUID, gameId: UUID, fox: PlayCard) extends LobbyInput
+  final case class LobbyActionAttackLoose(attackerId: UUID, defenderId: UUID, gameId: UUID) extends LobbyInput
+  final case class LobbyActionAttackDefend(attackerId: UUID, defenderId: UUID, gameId: UUID) extends LobbyInput
 
   def apply(games: Map[UUID, GameRef] = Map.empty, gamesInfo: Map[UUID, GameInfo] = Map.empty, randomGameNames: List[String] = randomGameNames, clientRef: ClientRef): Behavior[LobbyMessage] = receive { (context, message) =>
     message match {
@@ -76,6 +79,21 @@ object Lobby {
       case actionChickBirth: LobbyActionChickBirth =>
         val game = getGame(games, actionChickBirth.gameId)
         game ! GameActionChickBirth(actionChickBirth.playerId, actionChickBirth.cards, actionChickBirth.egg)
+        same
+
+      case attack: LobbyActionAttack =>
+        val game = getGame(games, attack.gameId)
+        game ! GameAttack(attack.playerId, attack.defenderId)
+        same
+
+      case attackLoose: LobbyActionAttackLoose =>
+        val game = getGame(games, attackLoose.gameId)
+        game ! GameLooseAttack(attackLoose.attackerId, attackLoose.defenderId)
+        same
+
+      case attackDefend: LobbyActionAttackDefend =>
+        val game = getGame(games, attackDefend.gameId)
+        game ! GameDefendAttack(attackDefend.attackerId, attackDefend.defenderId)
         same
     }
   }

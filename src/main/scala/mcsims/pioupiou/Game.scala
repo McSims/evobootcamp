@@ -43,10 +43,10 @@ object Game {
   final case class GameChicksUpdated(playerId: UUID, chicks: List[ChickCard]) extends Input
 
   final case class GameAttack(attacker: UUID, defender: UUID) extends Input
-  final case class GameDeffendAttack(attacker: UUID, defender: UUID) extends Input
-  final case class GameLooseAttack(attacker: UUID, defender: UUID) extends Input
+  final case class GameDefendAttack(attackerId: UUID, defenderId: UUID) extends Input
+  final case class GameLooseAttack(attackerId: UUID, defenderId: UUID) extends Input
 
-  final case class GameAttackDeffended(attackerId: UUID, defenderId: UUID) extends Input
+  final case class GameAttackDefended(attackerId: UUID, defenderId: UUID) extends Input
   final case class GameAttackLost(attackerId: UUID, defenderId: UUID) extends Input
 
   val REGISTRATION_OPEN = "REGISTRATION_OPEN"
@@ -89,35 +89,39 @@ object Game {
         case attackMessage: GameAttack =>
           val defender = getPlayer(players, attackMessage.defender)
           gamePlay ! GamePlayAttack(attackMessage.attacker, attackMessage.defender)
-          apply(gameId, name, stage, players, deck, gamePlay, lobby, clientRef)
+          val attacker = getPlayer(players, attackMessage.attacker)
+          attacker ! PlayerRemoveCardsMessage(List(fox))
+          attacker ! PlayerNewCardsMessage(List.empty)
+          same
 
-        case defendAttackMessage: GameDeffendAttack =>
-          gamePlay ! GamePlayDeffendAttack(defendAttackMessage.attacker, defendAttackMessage.defender, context.self)
-          apply(gameId, name, stage, players, deck, gamePlay, lobby, clientRef)
+        case defendAttackMessage: GameDefendAttack =>
+          gamePlay ! GamePlayDefendAttack(defendAttackMessage.attackerId, defendAttackMessage.defenderId, context.self)
+          same
 
         case looseAttackMessage: GameLooseAttack =>
-          val defender = getPlayer(players, looseAttackMessage.defender)
-          gamePlay ! GamePlayLooseAttack(looseAttackMessage.attacker, looseAttackMessage.defender, context.self)
-          apply(gameId, name, stage, players, deck, gamePlay, lobby, clientRef)
+          val defender = getPlayer(players, looseAttackMessage.defenderId)
+          gamePlay ! GamePlayLooseAttack(looseAttackMessage.attackerId, looseAttackMessage.defenderId, context.self)
+          same
 
         case newCards: GameDealCards =>
           val player = getPlayer(players, newCards.player)
           player ! PlayerNewCardsMessage(newCards.cards)
           same
 
-        case attackDefendedMessage: GameAttackDeffended =>
+        case attackDefendedMessage: GameAttackDefended =>
           val defender = getPlayer(players, attackDefendedMessage.defenderId)
-          // todo: deck ! exchange two roosters card to new
+          defender ! PlayerRemoveCardsMessage(List(rooster, rooster))
+          deck ! DeckDealCards(attackDefendedMessage.defenderId, 2, context.self)
           val attacker = getPlayer(players, attackDefendedMessage.attackerId)
-          // todo: deck ! exchange fox card to new
+          deck ! DeckDealCards(attackDefendedMessage.attackerId, 1, context.self)
           same
 
         case attackLostMessage: GameAttackLost =>
-          val defender = getPlayer(players, attackLostMessage.attackerId)
+          val defender = getPlayer(players, attackLostMessage.defenderId)
           defender ! PlayerLooseEggMessage
-          val attacker = getPlayer(players, attackLostMessage.defenderId)
+          val attacker = getPlayer(players, attackLostMessage.attackerId)
           attacker ! PlayerNewEggMessage(Cards.egg)
-          // todo: deck ! exchange fox card to new
+          deck ! DeckDealCards(attackLostMessage.attackerId, 1, context.self)
           same
 
         case exchangeCards: GameActionExchangeCards =>

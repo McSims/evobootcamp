@@ -13,8 +13,6 @@ import mcsims.pioupiou.Game._
 import mcsims.pioupiou.server.Server._
 import mcsims.pioupiou.server.WSServer._
 
-/** GamePlay object operates infinite queue of players.
-  */
 object GamePlay {
 
   type GamePlayRef = ActorRef[GamePlayMessage]
@@ -26,7 +24,7 @@ object GamePlay {
   final case class GamePlayAddPlayer(playerId: UUID) extends Input
 
   final case class GamePlayAttack(attackerId: UUID, defenderId: UUID) extends Input
-  final case class GamePlayDeffendAttack(attackerId: UUID, defenderId: UUID, outputRef: GameRef) extends Input
+  final case class GamePlayDefendAttack(attackerId: UUID, defenderId: UUID, outputRef: GameRef) extends Input
   final case class GamePlayLooseAttack(attackerId: UUID, defenderId: UUID, outputRef: GameRef) extends Input
 
   final case class Attack(attacker: UUID, defender: UUID)
@@ -43,14 +41,14 @@ object GamePlay {
         apply(newTurns, clientRef = clientRef)
 
       case attackMessage: GamePlayAttack =>
-        // todo: publish attack event to server
+        clientRef ! ServerOutputAttack(attackMessage.attackerId, attackMessage.defenderId)
         apply(turns, Option(Attack(attackMessage.attackerId, attackMessage.defenderId)), clientRef)
 
-      case defendMessage: GamePlayDeffendAttack =>
+      case defendMessage: GamePlayDefendAttack =>
         if (!isValidAttack(attack, defendMessage.defenderId, defendMessage.attackerId)) {
           new RuntimeException()
         }
-        defendMessage.outputRef ! GameAttackDeffended(defendMessage.attackerId, defendMessage.defenderId)
+        defendMessage.outputRef ! GameAttackDefended(defendMessage.attackerId, defendMessage.defenderId)
         context.self ! GamePlayNextTurn
         apply(turns, None, clientRef)
 

@@ -22,6 +22,7 @@ object ServerMessageParser {
     case ServerOutputNextTurn(playerId)                 => OutgoingMessage("NEXT_TURN", Some(PayloadNextTurn(playerId.toString))).asJson.toString
     case ServerOutputGamePlayersJoined(players)         => OutgoingMessage("GAME_STAGE_CHANGED", Some(PayloadGameUpdate(players))).asJson.toString
     case ServerOutputGameWon(playerId)                  => OutgoingMessage("PLAYER_WON", Some(PayloadGameWon(playerId))).asJson.toString
+    case ServerOutputAttack(attackerId, defenderId)     => OutgoingMessage("ACTION_ATTACK", Some(PayloadAttack(attackerId, defenderId))).asJson.toString
     case ServerComplete                                 => OutgoingMessage("INFO", Some(PayloadInfo("Closing down the server"))).asJson.toString
     case ServerFail(exception)                          => OutgoingMessage("ERROR", Some(PayloadError(exception.getMessage))).asJson.toString
   }
@@ -104,6 +105,56 @@ object ServerMessageParser {
                         )
                       )
                     })
+                  )
+                }
+                case None => ServerInputParsingError("Unknown payload.")
+              }
+            case None => ServerInputParsingError("Unknown payload.")
+          }
+        case "ACTION_ATTACK" =>
+          clientMessage.payload match {
+            case Some(payload) =>
+              payload match {
+                case ActionAttackPayload(playerId, defenderId, gameId, foxCard) => {
+                  ServerInputActionAttack(
+                    UUID.fromString(playerId),
+                    UUID.fromString(defenderId),
+                    UUID.fromString(gameId),
+                    Cards.PlayCard(
+                      Cards.CardName(foxCard.name),
+                      Cards.CardId(foxCard.id)
+                    )
+                  )
+                }
+                case None => ServerInputParsingError("Unknown payload.")
+              }
+            case None => ServerInputParsingError("Unknown payload.")
+          }
+
+        case "ACTION_ATTACK_LOOSE" =>
+          clientMessage.payload match {
+            case Some(payload) =>
+              payload match {
+                case ActionAttackLoosePayload(attackerId, defenderId, gameId) => {
+                  ServerInputActionAttackLoose(
+                    UUID.fromString(attackerId),
+                    UUID.fromString(defenderId),
+                    UUID.fromString(gameId)
+                  )
+                }
+                case None => ServerInputParsingError("Unknown payload.")
+              }
+            case None => ServerInputParsingError("Unknown payload.")
+          }
+        case "ACTION_ATTACK_DEFEND" =>
+          clientMessage.payload match {
+            case Some(payload) =>
+              payload match {
+                case ActionAttackDefendPayload(attackerId, defenderId, gameId) => {
+                  ServerInputActionAttackDefend(
+                    UUID.fromString(attackerId),
+                    UUID.fromString(defenderId),
+                    UUID.fromString(gameId)
                   )
                 }
                 case None => ServerInputParsingError("Unknown payload.")
