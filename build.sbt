@@ -4,9 +4,6 @@ name := "pioupiou"
 organization := "com.github.mcsims"
 version := "1.0"
 
-val catsVersion = "2.2.0"
-val catsEffectVersion = "2.2.0"
-
 val akkaVersion = "2.6.17"
 val akkaHttpVersion = "10.1.11"
 
@@ -15,9 +12,6 @@ val scalaTestVersion = "3.2.10"
 val circeVersion = "0.13.0"
 
 libraryDependencies ++= Seq(
-// Cats
-  "org.typelevel" %% "cats-core" % catsVersion,
-  "org.typelevel" %% "cats-effect" % catsEffectVersion,
 // Testing
   "org.scalatest" %% "scalatest" % scalaTestVersion % "test",
   "org.scalatest" %% "scalatest-flatspec" % scalaTestVersion % "test",
